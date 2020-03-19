@@ -517,7 +517,10 @@ export class GridPanel extends Component {
 
         if (!cellComp) { return; }
 
-        const gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
+        const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(
+            this.gridOptionsWrapper, keyboardEvent, cellComp.getRenderedRow().getRowNode(),
+            cellComp.getColumn(), cellComp.isEditing()
+        );
 
         if (gridProcessingAllowed) {
             switch (eventName) {
@@ -536,41 +539,6 @@ export class GridPanel extends Component {
                     break;
             }
         }
-    }
-
-    private isUserSuppressingKeyboardEvent(keyboardEvent: KeyboardEvent, cellComp: CellComp): boolean {
-
-        const rowNode = cellComp.getRenderedRow().getRowNode();
-        const column = cellComp.getColumn();
-
-        const colDefFunc = column.getColDef().suppressKeyboardEvent;
-
-        // if no callbacks provided by user, then do nothing
-        if (!colDefFunc || _.missing(colDefFunc)) {
-            return false;
-        }
-
-        const params: SuppressKeyboardEventParams = {
-            event: keyboardEvent,
-            editing: cellComp.isEditing(),
-            column: column,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            node: rowNode,
-            data: rowNode.data,
-            colDef: column.getColDef(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-        };
-
-        // colDef get first preference on suppressing events
-        if (colDefFunc) {
-            const colDefFuncResult = colDefFunc(params);
-            // if colDef func suppressed, then return now, no need to call gridOption func
-            if (colDefFuncResult) { return true; }
-        }
-
-        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-        return false;
     }
 
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
