@@ -41,6 +41,7 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { _ } from "../utils";
+import {SuppressKeyboardEventParams} from "../entities/colDef";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -512,25 +513,64 @@ export class GridPanel extends Component {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        const cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
 
-        if (!renderedCell) { return; }
+        if (!cellComp) { return; }
 
-        switch (eventName) {
-            case 'keydown':
-                // first see if it's a scroll key, page up / down, home / end etc
-                const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+        const gridProcessingAllowed = !this.isUserSuppressingKeyboardEvent(keyboardEvent, cellComp);
 
-                // if not a scroll key, then we pass onto cell
-                if (!wasScrollKey) {
-                    renderedCell.onKeyDown(keyboardEvent);
-                }
+        if (gridProcessingAllowed) {
+            switch (eventName) {
+                case 'keydown':
+                    // first see if it's a scroll key, page up / down, home / end etc
+                    const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
 
-                break;
-            case 'keypress':
-                renderedCell.onKeyPress(keyboardEvent);
-                break;
+                    // if not a scroll key, then we pass onto cell
+                    if (!wasScrollKey) {
+                        cellComp.onKeyDown(keyboardEvent);
+                    }
+
+                    break;
+                case 'keypress':
+                    cellComp.onKeyPress(keyboardEvent);
+                    break;
+            }
         }
+    }
+
+    private isUserSuppressingKeyboardEvent(keyboardEvent: KeyboardEvent, cellComp: CellComp): boolean {
+
+        const rowNode = cellComp.getRenderedRow().getRowNode();
+        const column = cellComp.getColumn();
+
+        const colDefFunc = column.getColDef().suppressKeyboardEvent;
+
+        // if no callbacks provided by user, then do nothing
+        if (!colDefFunc || _.missing(colDefFunc)) {
+            return false;
+        }
+
+        const params: SuppressKeyboardEventParams = {
+            event: keyboardEvent,
+            editing: cellComp.isEditing(),
+            column: column,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+        };
+
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            const colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) { return true; }
+        }
+
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
     }
 
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top

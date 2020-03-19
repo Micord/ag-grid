@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0-cg.4
+// Type definitions for ag-grid-community v20.0.0-cg.5
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -153,6 +153,7 @@ export { IDateParams, IDate, IDateComp } from "./dist/lib/rendering/dateComponen
 export { IAfterGuiAttachedParams, IComponent } from "./dist/lib/interfaces/iComponent";
 export { IFilter, IFilterComp } from "./dist/lib/interfaces/iFilter";
 export { IHeaderParams } from "./dist/lib/headerRendering/header/headerComp";
+export { HeaderComp } from "./dist/lib/headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./dist/lib/entities/colDef";
 export { IHeaderGroupParams, IHeaderGroup } from "./dist/lib/headerRendering/headerGroup/headerGroupComp";
 export { TextAndNumberFilterParameters } from "./dist/lib/filter/textAndNumberFilterParameters";
