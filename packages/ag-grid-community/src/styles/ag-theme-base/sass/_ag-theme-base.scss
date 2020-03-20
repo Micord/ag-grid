@@ -113,7 +113,7 @@
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-ltr {
         .ag-row-group-leaf-indent {
-            margin-left: $icon-size + $grid-size * 3;
+            margin-left: $grid-size * 3;
         }
         .ag-cell-no-focus {
             border-right: $cell-horizontal-border;
@@ -130,7 +130,7 @@
 
     .ag-rtl {
         .ag-row-group-leaf-indent {
-            margin-right: $icon-size + $grid-size * 3;
+            margin-right: $grid-size * 3;
         }
         .ag-cell-no-focus {
             border-left: $cell-horizontal-border;
