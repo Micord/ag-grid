@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0-cg.4
+ * @version v20.0.0-cg.5
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -107,8 +107,6 @@ var headerRootComp_1 = require("./dist/lib/headerRendering/headerRootComp");
 exports.HeaderRootComp = headerRootComp_1.HeaderRootComp;
 var headerRowComp_1 = require("./dist/lib/headerRendering/headerRowComp");
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-var headerComp_1 = require("./dist/lib/headerRendering/header/headerComp");
-exports.HeaderComp = headerComp_1.HeaderComp;
 var horizontalResizeService_1 = require("./dist/lib/headerRendering/horizontalResizeService");
 exports.HorizontalResizeService = horizontalResizeService_1.HorizontalResizeService;
 var moveColumnController_1 = require("./dist/lib/headerRendering/moveColumnController");
@@ -260,6 +258,8 @@ var expressionService_1 = require("./dist/lib/valueService/expressionService");
 exports.ExpressionService = expressionService_1.ExpressionService;
 var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
+var headerComp_1 = require("./dist/lib/headerRendering/header/headerComp");
+exports.HeaderComp = headerComp_1.HeaderComp;
 var columnApi_1 = require("./dist/lib/columnController/columnApi");
 exports.ColumnApi = columnApi_1.ColumnApi;
 var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frameworkComponentWrapper");

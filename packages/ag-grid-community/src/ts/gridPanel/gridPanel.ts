@@ -41,6 +41,7 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { _ } from "../utils";
+import {SuppressKeyboardEventParams} from "../entities/colDef";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -512,24 +513,31 @@ export class GridPanel extends Component {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const renderedCell = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
+        const cellComp = this.mouseEventService.getRenderedCellForEvent(keyboardEvent);
 
-        if (!renderedCell) { return; }
+        if (!cellComp) { return; }
 
-        switch (eventName) {
-            case 'keydown':
-                // first see if it's a scroll key, page up / down, home / end etc
-                const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+        const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(
+            this.gridOptionsWrapper, keyboardEvent, cellComp.getRenderedRow().getRowNode(),
+            cellComp.getColumn(), cellComp.isEditing()
+        );
 
-                // if not a scroll key, then we pass onto cell
-                if (!wasScrollKey) {
-                    renderedCell.onKeyDown(keyboardEvent);
-                }
+        if (gridProcessingAllowed) {
+            switch (eventName) {
+                case 'keydown':
+                    // first see if it's a scroll key, page up / down, home / end etc
+                    const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
 
-                break;
-            case 'keypress':
-                renderedCell.onKeyPress(keyboardEvent);
-                break;
+                    // if not a scroll key, then we pass onto cell
+                    if (!wasScrollKey) {
+                        cellComp.onKeyDown(keyboardEvent);
+                    }
+
+                    break;
+                case 'keypress':
+                    cellComp.onKeyPress(keyboardEvent);
+                    break;
+            }
         }
     }
 

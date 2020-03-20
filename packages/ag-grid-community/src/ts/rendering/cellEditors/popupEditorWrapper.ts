@@ -20,7 +20,16 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        this.params.onKeyDown(event);
+        const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(
+            this.gridOptionsWrapper, event, this.params.node,
+            this.params.column, true
+        );
+        if (gridProcessingAllowed) {
+            this.params.onKeyDown(event);
+        }
+        else {
+            event.stopPropagation(); // don't emit escape event on popup wrapper
+        }
     }
 
     public getGui(): HTMLElement {

@@ -2,6 +2,7 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
+import { SuppressKeyboardEventParams } from "./entities/colDef";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -544,6 +545,45 @@ export class Utils {
             // accents for non-English, but don't care much, as most users are on modern browsers
             return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
         }
+    }
+
+    // allows user to tell the grid to skip specific keyboard events
+    static isUserSuppressingKeyboardEvent(
+        gridOptionsWrapper: GridOptionsWrapper,
+        keyboardEvent: KeyboardEvent,
+        rowNode: RowNode,
+        column: Column,
+        editing: boolean
+    ): boolean {
+
+        const colDefFunc = column.getColDef().suppressKeyboardEvent;
+
+        // if no callbacks provided by user, then do nothing
+        if (!colDefFunc || _.missing(colDefFunc)) {
+            return false;
+        }
+
+        const params: SuppressKeyboardEventParams = {
+            event: keyboardEvent,
+            editing,
+            column,
+            api: gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: gridOptionsWrapper.getContext(),
+            columnApi: gridOptionsWrapper.getColumnApi()
+        };
+
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            const colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) { return true; }
+        }
+
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
     }
 
     //adds all type of change listeners to an element, intended to be a text field

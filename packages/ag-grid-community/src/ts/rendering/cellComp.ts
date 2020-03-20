@@ -1202,12 +1202,6 @@ export class CellComp extends Component {
     public onKeyDown(event: KeyboardEvent): void {
         const key = event.which || event.keyCode;
 
-        // give user a chance to cancel event processing
-        if (this.doesUserWantToCancelKeyboardEvent(event)) {
-            event.stopPropagation(); // don't emit escape event on popup wrapper
-            return;
-        }
-
         switch (key) {
             case Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1231,27 +1225,6 @@ export class CellComp extends Component {
             case Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
-        }
-    }
-
-    public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
-        const callback = this.column.getColDef().suppressKeyboardEvent;
-        if (!callback || _.missing(callback)) {
-            return false;
-        } else {
-            // if editing is null or undefined, this sets it to false
-            const params: SuppressKeyboardEventParams = {
-                event: event,
-                editing: this.editingCell,
-                column: this.column,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                node: this.rowNode,
-                data: this.rowNode.data,
-                colDef: this.column.getColDef(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
-            };
-            return callback(params);
         }
     }
 
