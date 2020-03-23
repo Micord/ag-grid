@@ -774,6 +774,11 @@ export class GridApi {
         this.setDomLayout(gridAutoHeight ? 'autoHeight' : 'normal');
     }
 
+    public setAutoStretchColumns(autoStretchColumns: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_AUTO_STRETCH_COLUMNS, autoStretchColumns);
+        this.doLayout();
+    }
+
     public setDomLayout(domLayout: string) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }

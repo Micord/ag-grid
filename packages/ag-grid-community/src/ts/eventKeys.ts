@@ -135,7 +135,9 @@ export class Events {
 
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
+    public static EVENT_BODY_WIDTH_CHANGED = 'bodyWidthChanged';
     public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';

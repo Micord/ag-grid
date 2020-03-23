@@ -87,6 +87,7 @@ export class GridOptionsWrapper {
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_POPUP_PARENT = 'popupParent';
 
+    public static PROP_AUTO_STRETCH_COLUMNS= 'autoStretchColumns';
     public static PROP_DOM_LAYOUT = 'domLayout';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
@@ -440,6 +441,10 @@ export class GridOptionsWrapper {
 
     public isSuppressRowDrag() {
         return isTrue(this.gridOptions.suppressRowDrag);
+    }
+
+    public isAutoStretchColumns() {
+        return isTrue(this.gridOptions.autoStretchColumns);
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)

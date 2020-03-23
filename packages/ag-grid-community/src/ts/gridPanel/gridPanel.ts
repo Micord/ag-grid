@@ -4,7 +4,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "../context/context";
 import { EventService } from "../eventService";
-import { BodyHeightChangedEvent, BodyScrollEvent, Events } from "../events";
+import { BodyWidthChangedEvent, BodyHeightChangedEvent, BodyScrollEvent, Events } from "../events";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { Constants } from "../constants";
@@ -41,7 +41,6 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { _ } from "../utils";
-import {SuppressKeyboardEventParams} from "../entities/colDef";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -179,6 +178,7 @@ export class GridPanel extends Component {
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
     private readonly resetLastHorizontalScrollElementDebounce: () => void;
 
+    private bodyWidth: number;
     private bodyHeight: number;
 
     // properties we use a lot, so keep reference
@@ -402,6 +402,7 @@ export class GridPanel extends Component {
     }
 
     private addEventListeners(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_WIDTH_CHANGED, this.onBodyWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
@@ -827,6 +828,9 @@ export class GridPanel extends Component {
         // results in updating anything that depends on scroll showing
         this.updateScrollVisibleService();
 
+        // fires event if width changes, used by sizeColumnToFit
+        this.checkBodyWidth();
+
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
         this.checkBodyHeight();
 
@@ -987,6 +991,10 @@ export class GridPanel extends Component {
         }
     }
 
+    private onBodyWidthChanged() {
+        this.autoStretchColumnsIfNeeded();
+    }
+
     // used by autoWidthCalculator and autoHeightCalculator
     public getCenterContainer(): HTMLElement {
         return this.eCenterContainer;
@@ -1079,6 +1087,13 @@ export class GridPanel extends Component {
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
+        this.autoStretchColumnsIfNeeded();
+    }
+
+    private autoStretchColumnsIfNeeded(): void {
+        if (this.gridOptionsWrapper.isAutoStretchColumns()) {
+            this.sizeColumnsToFit();
+        }
     }
 
     private onDisplayedColumnsWidthChanged(): void {
@@ -1184,6 +1199,20 @@ export class GridPanel extends Component {
             leftSpacing += this.scrollWidth;
         }
         _.setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
+    }
+
+    private checkBodyWidth(): void {
+        const bodyWidth = this.eBodyViewport.clientWidth;
+
+        if (this.bodyWidth !== bodyWidth) {
+            this.bodyWidth = bodyWidth;
+            const event: BodyWidthChangedEvent = {
+                type: Events.EVENT_BODY_WIDTH_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private checkBodyHeight(): void {

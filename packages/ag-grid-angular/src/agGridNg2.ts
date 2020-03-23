@@ -413,6 +413,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public suppressRowHoverHighlight : any = undefined;
     @Input() public gridAutoHeight : any = undefined;
+    @Input() public autoStretchColumns : any = undefined;
     @Input() public suppressRowTransform : any = undefined;
     @Input() public suppressClipboardPaste : any = undefined;
     @Input() public serverSideSortingAlwaysResets : any = undefined;
@@ -485,6 +486,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public heightScaleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public paginationChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public componentStateChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public bodyWidthChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public bodyHeightChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public displayedColumnsWidthChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public scrollVisibilityChanged: EventEmitter<any> = new EventEmitter<any>();

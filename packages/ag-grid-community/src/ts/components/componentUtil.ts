@@ -188,6 +188,10 @@ export class ComponentUtil {
             api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
         }
 
+        if (changes.autoStretchColumns) {
+            api.setAutoStretchColumns(ComponentUtil.toBoolean(changes.autoStretchColumns.currentValue));
+        }
+
         if (changes.suppressClipboardPaste) {
             api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }
