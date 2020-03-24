@@ -180,6 +180,7 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
     gridAutoHeight?: boolean;
+    autoStretchColumns?: boolean;
     domLayout?: string;
     suppressChangeDetection?: boolean;
     aggregateOnlyChangedColumns?: boolean;

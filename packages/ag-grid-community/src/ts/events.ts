@@ -90,6 +90,8 @@ export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent {
 } // not documented
 export interface ColumnHoverChangedEvent extends AgGridEvent {
 } // not documented
+export interface BodyWidthChangedEvent extends AgGridEvent {
+} // not documented
 export interface BodyHeightChangedEvent extends AgGridEvent {
 } // not documented
 
