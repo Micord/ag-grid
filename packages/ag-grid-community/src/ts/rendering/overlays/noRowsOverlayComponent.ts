@@ -8,7 +8,7 @@ export interface INoRowsOverlayParams {}
 export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}
 
 export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
-    private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+    private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center" ref="noRowsMessage">[NO_ROWS_TO_SHOW]</span>';
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 

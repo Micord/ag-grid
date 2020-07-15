@@ -877,8 +877,16 @@ export class GridOptionsWrapper {
         return this.gridOptions.overlayLoadingTemplate;
     }
 
+    public getOverlayCustomTemplate() {
+        return this.gridOptions.overlayCustomTemplate;
+    }
+
     public getOverlayNoRowsTemplate() {
         return this.gridOptions.overlayNoRowsTemplate;
+    }
+
+    public getOverlayErrorTemplate() {
+        return this.gridOptions.overlayErrorTemplate;
     }
 
     public isSuppressAutoSize() {

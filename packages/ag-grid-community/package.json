@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "20.0.0-cg.7",
+  "version": "20.0.0-cg.8",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
@@ -9,6 +9,10 @@
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "watchWebpack": "webpack --watch",
     "build": "gulp release"
+  },
+  "private": false,
+  "publishConfig": {
+    "registry": "https://repo.micord.ru/repository/npm-private/"
   },
   "typings": "./main.d.ts",
   "repository": {

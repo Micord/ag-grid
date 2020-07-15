@@ -281,7 +281,9 @@ export interface GridOptions {
     rowMultiSelectWithClick?: boolean;
     isRowSelectable?: IsRowSelectable;
     overlayLoadingTemplate?: string;
+    overlayCustomTemplate?: string;
     overlayNoRowsTemplate?: string;
+    overlayErrorTemplate?: string;
     rowHeight?: number;
     detailRowHeight?: number;
     popupParent?: HTMLElement;

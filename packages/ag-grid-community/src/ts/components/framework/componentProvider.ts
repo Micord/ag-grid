@@ -23,6 +23,8 @@ import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEd
 import { TextFilter } from "../../filter/textFilter";
 import { NumberFilter } from "../../filter/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
+import { CustomOverlayComponent } from "../../rendering/overlays/customOverlayComponent";
+import { ErrorOverlayComponent } from "../../rendering/overlays/errorOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
@@ -97,7 +99,9 @@ export class ComponentProvider {
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,
-        agNoRowsOverlay: NoRowsOverlayComponent
+        agErrorOverlay: ErrorOverlayComponent,
+        agNoRowsOverlay: NoRowsOverlayComponent,
+        agCustomOverlay: CustomOverlayComponent
     };
 
     private agDeprecatedNames: { [key: string]: DeprecatedComponentName } = {
