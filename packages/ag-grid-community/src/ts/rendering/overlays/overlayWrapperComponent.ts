@@ -100,10 +100,11 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
             const loadingOverlayWrapper: HTMLElement = this.getRefElement("loadingOverlayWrapper");
             _.removeAllChildren(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
+
+            if (message) {
+                this.getRefElement("loadingMessage").innerText = message;
+            }
         });
-        if (message) {
-            this.getRefElement("loadingMessage").innerText = message;
-        }
         this.showOverlay(eOverlayWrapper, this.getGui());
     }
 
@@ -114,10 +115,11 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
             const customOverlayWrapper: HTMLElement = this.getRefElement("customOverlayWrapper");
             _.removeAllChildren(customOverlayWrapper);
             customOverlayWrapper.appendChild(renderer.getGui());
+
+            if (message) {
+                this.getRefElement("customMessage").innerText = message;
+            }
         });
-        if (message) {
-            this.getRefElement("customMessage").innerText = message;
-        }
         this.showOverlay(eOverlayWrapper, this.getGui());
     }
 
@@ -128,10 +130,11 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
             const errorOverlayWrapper: HTMLElement = this.getRefElement("errorOverlayWrapper");
             _.removeAllChildren(errorOverlayWrapper);
             errorOverlayWrapper.appendChild(renderer.getGui());
+
+            if (message) {
+                this.getRefElement("errorMessage").innerText = message;
+            }
         });
-        if (message) {
-            this.getRefElement("errorMessage").innerText = message;
-        }
         this.showOverlay(eOverlayWrapper, this.getGui());
     }
 
@@ -155,10 +158,11 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
             const noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
             _.removeAllChildren(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());
+
+            if (message) {
+                this.getRefElement("noRowsMessage").innerText = message;
+            }
         });
-        if (message) {
-            this.getRefElement("noRowsMessage").innerText = message;
-        }
         this.showOverlay(eOverlayWrapper, this.getGui());
     }
 
