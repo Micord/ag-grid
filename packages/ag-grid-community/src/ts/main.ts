@@ -232,6 +232,12 @@ export {ValueService} from "./valueService/valueService";
 export {ExpressionService} from "./valueService/expressionService";
 export {LoggerFactory} from "./logger";
 
+// menu
+export {ContextMenuFactory} from "./menu/contextMenu";
+export {MenuItemComponent} from  "./menu/menuItemComponent";
+export {MenuItemMapper} from "./menu/menuItemMapper";
+export {MenuList} from "./menu/menuList";
+
 // uncatalogued
 export {IRowModel, RowBounds} from "./interfaces/iRowModel";
 export {IAggFuncService} from "./interfaces/iAggFuncService";
@@ -314,3 +320,4 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
     PasteEndEvent, PasteStartEvent, GridSizeChangedEvent}
     from "./events";
+export {MenuItemSelectedEvent} from "./menu/menuItemComponent";
