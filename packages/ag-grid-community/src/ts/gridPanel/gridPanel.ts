@@ -959,6 +959,26 @@ export class GridPanel extends Component {
         }
     }
 
+    public showLoadingOverlayWithText(message?: string | null) {
+        if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+            this.overlayWrapper.showLoadingOverlayWithText(this.eOverlay, message);
+        }
+    }
+
+    public showErrorOverlayWithText(message?: string | null) {
+        this.overlayWrapper.showErrorOverlayWithText(this.eOverlay, message);
+    }
+
+    public showCustomOverlayWithText(message?: string | null) {
+        this.overlayWrapper.showCustomOverlayWithText(this.eOverlay, message);
+    }
+
+    public showNoRowsOverlayWithText(message?: string | null) {
+        if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+            this.overlayWrapper.showNoRowsOverlayWithText(this.eOverlay, message);
+        }
+    }
+
     public hideOverlay() {
         this.overlayWrapper.hideOverlay(this.eOverlay);
     }

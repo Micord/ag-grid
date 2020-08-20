@@ -29,6 +29,8 @@ import { Promise } from "../../utils";
 import { IOverlayWrapperComp, OverlayWrapperComponent } from "../../rendering/overlays/overlayWrapperComponent";
 import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { IErrorOverlayComp } from "../../rendering/overlays/errorOverlayComponent";
+import { ICustomOverlayComp } from "../../rendering/overlays/customOverlayComponent";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 
@@ -216,6 +218,32 @@ export class ComponentRecipes {
                 columnApi: this.columnApi
             },
             "agLoadingOverlay"
+        );
+    }
+
+    public newCustomOverlayComponent(): Promise<ICustomOverlayComp> {
+        return this.componentResolver.createAgGridComponent<ICustomOverlayComp>(
+            this.gridOptions,
+            null,
+            "customOverlayComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agCustomOverlay"
+        );
+    }
+
+    public newErrorOverlayComponent(): Promise<IErrorOverlayComp> {
+        return this.componentResolver.createAgGridComponent<IErrorOverlayComp>(
+            this.gridOptions,
+            null,
+            "errorOverlayComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agErrorOverlay"
         );
     }
 

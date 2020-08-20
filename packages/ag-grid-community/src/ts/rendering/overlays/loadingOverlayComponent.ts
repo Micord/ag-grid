@@ -9,7 +9,7 @@ export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> {
 
 export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
 
-    private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+    private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center" ref="loadingMessage">[LOADING...]</span>';
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 

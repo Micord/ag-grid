@@ -618,6 +618,22 @@ export class GridApi {
         this.gridPanel.showNoRowsOverlay();
     }
 
+    public showLoadingOverlayWithText(message?: string | null): void {
+        this.gridPanel.showLoadingOverlayWithText(message);
+    }
+
+    public showNoRowsOverlayWithText(message?: string | null): void {
+        this.gridPanel.showNoRowsOverlayWithText(message);
+    }
+
+    public showCustomOverlayWithText(message?: string | null): void {
+        this.gridPanel.showCustomOverlayWithText(message);
+    }
+
+    public showErrorOverlayWithText(message?: string | null): void {
+        this.gridPanel.showErrorOverlayWithText(message);
+    }
+
     public hideOverlay(): void {
         this.gridPanel.hideOverlay();
     }
