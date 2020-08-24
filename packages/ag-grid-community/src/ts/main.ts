@@ -256,7 +256,8 @@ export {ValueSetterParams,
     ValueGetterParams,
     NewValueParams,
     CellClassParams,
-    TooltipParams} from "./entities/colDef";
+    TooltipParams,
+    BaseWithValueColDefParams} from "./entities/colDef";
 export {
     GridOptions,
     GetContextMenuItemsParams,

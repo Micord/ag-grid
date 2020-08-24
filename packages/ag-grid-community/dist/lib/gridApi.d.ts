@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.3-cg
+// Type definitions for ag-grid-community v20.0.0-cg.9
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -167,6 +167,10 @@ export declare class GridApi {
     sizeColumnsToFit(): void;
     showLoadingOverlay(): void;
     showNoRowsOverlay(): void;
+    showLoadingOverlayWithText(message?: string | null): void;
+    showNoRowsOverlayWithText(message?: string | null): void;
+    showCustomOverlayWithText(message?: string | null): void;
+    showErrorOverlayWithText(message?: string | null): void;
     hideOverlay(): void;
     isNodeSelected(node: any): any;
     getSelectedNodesById(): {
@@ -205,6 +209,7 @@ export declare class GridApi {
     setSuppressRowDrag(value: boolean): void;
     setHeaderHeight(headerHeight: number): void;
     setGridAutoHeight(gridAutoHeight: boolean): void;
+    setAutoStretchColumns(autoStretchColumns: boolean): void;
     setDomLayout(domLayout: string): void;
     getPreferredWidth(): number;
     setGroupHeaderHeight(headerHeight: number): void;
@@ -252,6 +257,7 @@ export declare class GridApi {
     getEditingCells(): GridCellDef[];
     stopEditing(cancel?: boolean): void;
     startEditingCell(params: StartEditingCellParams): void;
+    refreshCssClasses(): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     addAggFuncs(aggFuncs: {
         [key: string]: IAggFunc;
