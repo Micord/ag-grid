@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0-cg.5
+// Type definitions for ag-grid-community v20.0.0-cg.9
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -131,6 +131,10 @@ export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./dist/lib/u
 export { ValueService } from "./dist/lib/valueService/valueService";
 export { ExpressionService } from "./dist/lib/valueService/expressionService";
 export { LoggerFactory } from "./dist/lib/logger";
+export { ContextMenuFactory } from "./dist/lib/menu/contextMenu";
+export { MenuItemComponent } from "./dist/lib/menu/menuItemComponent";
+export { MenuItemMapper } from "./dist/lib/menu/menuItemMapper";
+export { MenuList } from "./dist/lib/menu/menuList";
 export { IRowModel, RowBounds } from "./dist/lib/interfaces/iRowModel";
 export { IAggFuncService } from "./dist/lib/interfaces/iAggFuncService";
 export { IClipboardService } from "./dist/lib/interfaces/iClipboardService";
@@ -169,3 +173,4 @@ export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
 export { Environment } from "./dist/lib/environment";
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent, PasteEndEvent, PasteStartEvent, GridSizeChangedEvent } from "./dist/lib/events";
+export { MenuItemSelectedEvent } from "./dist/lib/menu/menuItemComponent";

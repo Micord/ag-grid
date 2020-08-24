@@ -308,7 +308,7 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,
     RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
     FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
-    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
+    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyWidthChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
     ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
     BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
     ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
