@@ -232,6 +232,12 @@ export {ValueService} from "./valueService/valueService";
 export {ExpressionService} from "./valueService/expressionService";
 export {LoggerFactory} from "./logger";
 
+// menu
+export {ContextMenuFactory} from "./menu/contextMenu";
+export {MenuItemComponent} from  "./menu/menuItemComponent";
+export {MenuItemMapper} from "./menu/menuItemMapper";
+export {MenuList} from "./menu/menuList";
+
 // uncatalogued
 export {IRowModel, RowBounds} from "./interfaces/iRowModel";
 export {IAggFuncService} from "./interfaces/iAggFuncService";
@@ -250,7 +256,8 @@ export {ValueSetterParams,
     ValueGetterParams,
     NewValueParams,
     CellClassParams,
-    TooltipParams} from "./entities/colDef";
+    TooltipParams,
+    BaseWithValueColDefParams} from "./entities/colDef";
 export {
     GridOptions,
     GetContextMenuItemsParams,
@@ -302,7 +309,7 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,
     RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
     FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
-    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
+    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyWidthChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
     ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
     BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
     ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
@@ -314,3 +321,4 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
     PasteEndEvent, PasteStartEvent, GridSizeChangedEvent}
     from "./events";
+export {MenuItemSelectedEvent} from "./menu/menuItemComponent";

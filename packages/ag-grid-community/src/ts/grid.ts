@@ -76,6 +76,8 @@ import { PaginationComp } from "./rowModels/pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
+import {ContextMenuFactory} from "./menu/contextMenu";
+import {MenuItemMapper} from "./menu/menuItemMapper";
 
 export interface GridParams {
     // used by Web Components
@@ -199,7 +201,8 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer],
+                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer,
+                ContextMenuFactory, MenuItemMapper],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug

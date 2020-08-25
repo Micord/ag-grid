@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.0.0-cg.5
+ * @version v20.0.0-cg.9
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -258,6 +258,15 @@ var expressionService_1 = require("./dist/lib/valueService/expressionService");
 exports.ExpressionService = expressionService_1.ExpressionService;
 var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
+// menu
+var contextMenu_1 = require("./dist/lib/menu/contextMenu");
+exports.ContextMenuFactory = contextMenu_1.ContextMenuFactory;
+var menuItemComponent_1 = require("./dist/lib/menu/menuItemComponent");
+exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
+var menuItemMapper_1 = require("./dist/lib/menu/menuItemMapper");
+exports.MenuItemMapper = menuItemMapper_1.MenuItemMapper;
+var menuList_1 = require("./dist/lib/menu/menuList");
+exports.MenuList = menuList_1.MenuList;
 var headerComp_1 = require("./dist/lib/headerRendering/header/headerComp");
 exports.HeaderComp = headerComp_1.HeaderComp;
 var columnApi_1 = require("./dist/lib/columnController/columnApi");
