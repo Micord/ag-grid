@@ -5,6 +5,9 @@ import {GridApi} from "../gridApi";
 import {MenuItemDef} from "../entities/gridOptions";
 import {Column} from "../entities/column";
 import {_, Utils} from "../utils";
+import {ChartingService} from "../../../../ag-grid-enterprise/src/charts/chartingService";
+import {ClipboardService} from "../../../../ag-grid-enterprise/src/clipboardService";
+import {AggFuncService} from "../../../../ag-grid-enterprise/src/aggregation/aggFuncService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -12,6 +15,10 @@ export class MenuItemMapper {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('chartingService') private chartingService: ChartingService;
+    @Autowired('clipboardService') private clipboardService: ClipboardService;
+    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) { return []; }
@@ -63,6 +70,11 @@ export class MenuItemMapper {
                 action: () => this.columnController.setColumnPinned(column, null, "contextMenu"),
                 checked: !(column as Column).isPinned()
             };
+            case 'valueAggSubMenu': return {
+                name: localeTextFunc('valueAggregation', 'Value Aggregation'),
+                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                subMenu: this.createAggregationSubMenu((column as Column))
+            };
             case 'autoSizeThis': return {
                 name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
                 action: () => this.columnController.autoSizeColumn(column, "contextMenu")
@@ -93,6 +105,25 @@ export class MenuItemMapper {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: () => this.gridApi.collapseAll()
             };
+            case 'copy': return {
+                name: localeTextFunc('copy', 'Copy'),
+                shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.copyToClipboard(false)
+            };
+            case 'copyWithHeaders': return {
+                name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.copyToClipboard(true)
+            };
+            case 'paste': return {
+                name: localeTextFunc('paste', 'Paste'),
+                shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                disabled: true,
+                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.pasteFromClipboard()
+            };
             case 'export':
                 const exportSubMenuItems:string[] = [];
                 if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
@@ -113,19 +144,54 @@ export class MenuItemMapper {
             case 'excelExport': return {
                 name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
                 action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xlsx'
-                })
+                                                                 exportMode: 'xlsx'
+                                                             })
             };
             case 'excelXMLExport': return {
                 name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
                 action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xml'
-                })
+                                                                 exportMode: 'xml'
+                                                             })
             };
             case 'separator': return 'separator';
+            case 'createChart': return {
+                name: 'Create Chart',
+                action: () => {
+                    this.chartingService.createChart();
+                }
+            };
             default:
                 console.warn(`ag-Grid: unknown menu item type ${key}`);
                 return null;
         }
+    }
+
+    private createAggregationSubMenu(column: Column): MenuItemDef[] {
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const columnIsAlreadyAggValue = column.isValueActive();
+        const funcNames = this.aggFuncService.getFuncNames(column);
+
+        let columnToUse: Column | undefined;
+        if (column.isPrimary()) {
+            columnToUse = column;
+        } else {
+            const pivotValueColumn = column.getColDef().pivotValueColumn;
+            columnToUse = _.exists(pivotValueColumn) ? pivotValueColumn! : undefined;
+        }
+
+        const result: MenuItemDef[] = [];
+
+        funcNames.forEach(funcName => {
+            result.push({
+                            name: localeTextFunc(funcName, funcName),
+                            action: () => {
+                                this.columnController.setColumnAggFunc(columnToUse, funcName, "contextMenu");
+                                this.columnController.addValueColumn(columnToUse, "contextMenu");
+                            },
+                            checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
+                        });
+        });
+
+        return result;
     }
 }
