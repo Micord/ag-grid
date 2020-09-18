@@ -231,6 +231,7 @@ export {Utils, NumberSequence, _, Promise, ExternalPromise} from "./utils";
 export {ValueService} from "./valueService/valueService";
 export {ExpressionService} from "./valueService/expressionService";
 export {LoggerFactory} from "./logger";
+export {ClipboardService} from "./clipboardService"
 
 // menu
 export {ContextMenuFactory} from "./menu/contextMenu";
