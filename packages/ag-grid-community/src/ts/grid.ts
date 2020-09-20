@@ -78,6 +78,8 @@ import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { _ } from "./utils";
 import {ContextMenuFactory} from "./menu/contextMenu";
 import {MenuItemMapper} from "./menu/menuItemMapper";
+import {ClipboardService} from "./clipboardService";
+import {RangeController} from "./rangeController";
 
 export interface GridParams {
     // used by Web Components
@@ -202,7 +204,7 @@ export class Grid {
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer,
-                ContextMenuFactory, MenuItemMapper],
+                ContextMenuFactory, MenuItemMapper, ClipboardService, RangeController],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug
