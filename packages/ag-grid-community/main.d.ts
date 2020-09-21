@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.0.0-cg.9
+// Type definitions for ag-grid-community v20.0.0-cg.10
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -131,6 +131,7 @@ export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./dist/lib/u
 export { ValueService } from "./dist/lib/valueService/valueService";
 export { ExpressionService } from "./dist/lib/valueService/expressionService";
 export { LoggerFactory } from "./dist/lib/logger";
+export { ClipboardService } from "./dist/lib/clipboardService";
 export { ContextMenuFactory } from "./dist/lib/menu/contextMenu";
 export { MenuItemComponent } from "./dist/lib/menu/menuItemComponent";
 export { MenuItemMapper } from "./dist/lib/menu/menuItemMapper";

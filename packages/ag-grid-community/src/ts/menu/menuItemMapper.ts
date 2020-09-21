@@ -5,6 +5,7 @@ import {GridApi} from "../gridApi";
 import {MenuItemDef} from "../entities/gridOptions";
 import {Column} from "../entities/column";
 import {_, Utils} from "../utils";
+import {ClipboardService} from "../clipboardService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -12,6 +13,7 @@ export class MenuItemMapper {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('clipboardService') private clipboardService: ClipboardService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) { return []; }
@@ -93,8 +95,27 @@ export class MenuItemMapper {
                 name: localeTextFunc('collapseAll', 'Collapse All'),
                 action: () => this.gridApi.collapseAll()
             };
+            case 'copy': return {
+                name: localeTextFunc('copy', 'Copy'),
+                shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.copyToClipboard(false)
+            };
+            case 'copyWithHeaders': return {
+                name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.copyToClipboard(true)
+            };
+            case 'paste': return {
+                name: localeTextFunc('paste', 'Paste'),
+                shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                disabled: true,
+                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                action: () => this.clipboardService.pasteFromClipboard()
+            };
             case 'export':
-                const exportSubMenuItems:string[] = [];
+                const exportSubMenuItems: string[] = [];
                 if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
                     exportSubMenuItems.push('csvExport');
                 }
@@ -113,14 +134,14 @@ export class MenuItemMapper {
             case 'excelExport': return {
                 name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
                 action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xlsx'
-                })
+                                                                 exportMode: 'xlsx'
+                                                             })
             };
             case 'excelXMLExport': return {
                 name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
                 action: () => this.gridApi.exportDataAsExcel({
-                    exportMode: 'xml'
-                })
+                                                                 exportMode: 'xml'
+                                                             })
             };
             case 'separator': return 'separator';
             default:
@@ -128,4 +149,5 @@ export class MenuItemMapper {
                 return null;
         }
     }
+
 }
