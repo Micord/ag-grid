@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "20.0.0-cg.10",
+  "version": "20.0.0-cg.11",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -43,7 +43,7 @@
     "@angular/compiler": "^4.4.7",
     "@angular/compiler-cli": "^4.4.7",
     "@angular/core": "^4.4.7",
-    "ag-grid-community": "20.0.0-cg.10",
+    "ag-grid-community": "20.0.0-cg.11",
     "core-js": "^2.5.7",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
