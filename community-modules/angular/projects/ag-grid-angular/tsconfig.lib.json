@@ -6,6 +6,7 @@
     "declarationMap": true,
     "target": "es2015",
     "declaration": true,
+    "skipLibCheck": true,
     "inlineSources": true,
     "types": [],
     "lib": [

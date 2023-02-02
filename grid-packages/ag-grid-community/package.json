@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "29.0.0",
+  "version": "29.0.0-micord.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/ag-grid-community.cjs.js",
   "module": "./dist/ag-grid-community.auto.esm.js",
@@ -36,6 +36,9 @@
     "vue",
     "vuejs"
   ],
+  "publishConfig": {
+    "registry": "https://repo.micord.ru/repository/npm-private/"
+  },
   "jspm": {
     "main": "jspm-main"
   },
@@ -55,7 +58,7 @@
   "dependencies": {},
   "devDependencies": {
     "@ag-grid-community/all-modules": "~29.0.0",
-    "@ag-grid-community/core": "~29.0.0",
+    "@ag-grid-community/core": "29.0.0-micord.1",
     "@ag-grid-community/client-side-row-model": "~29.0.0",
     "@ag-grid-community/csv-export": "~29.0.0",
     "@ag-grid-community/infinite-row-model": "~29.0.0",

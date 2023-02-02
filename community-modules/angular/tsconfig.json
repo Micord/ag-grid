@@ -13,10 +13,11 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "module": "es2020",
+    "skipLibCheck": true,
+    "module": "es2015",
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2017",
+     "target": "es5",
     "lib": [
       "es2018",
       "dom"
@@ -32,6 +33,10 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "alwaysCompileGeneratedCode":true,
+    "fullTemplateTypeCheck": true,
+    "annotationsAs": "decorators",
+    "mainPath": "./src/ts"
   }
 }
