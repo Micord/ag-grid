@@ -1,12 +1,15 @@
 {
   "packages": [
-    "community-modules/*",
-    "enterprise-modules/*",
-    "charts-packages/*",
-    "grid-packages/*",
-    "examples-charts/*",
-    "examples-grid/*",
-    "grid-packages/ag-grid-docs/documentation/"
+    "community-modules/core",
+    "community-modules/angular",
+    "community-modules/solid",
+    "community-modules/styles",
+    "community-modules/client-side-row-model",
+    "community-modules/infinite-row-model",
+    "community-modules/csv-export",
+    "community-modules/all-modules",
+    "grid-packages/ag-grid-community",
+    "grid-packages/ag-grid-angular"
   ],
   "useNx": false,
   "command": {
