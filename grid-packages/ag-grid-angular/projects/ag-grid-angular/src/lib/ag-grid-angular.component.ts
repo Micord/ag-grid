@@ -199,16 +199,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     ngAfterViewInit(): void {
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
-        this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
          this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
+      let providedBeanInstances = this.providedBeanInstances ? this.providedBeanInstances : {};
+
+      if (!providedBeanInstances.frameworkComponentWrapper){
+        providedBeanInstances.frameworkComponentWrapper = this.frameworkComponentWrapper;
+      }
+
+      let frameworkOverrides: AngularFrameworkOverrides = this.fwOverrides
+                                                          ? this.fwOverrides
+                                                          : this.angularFrameworkOverrides;
+      frameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
+
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkOverrides: this.angularFrameworkOverrides,
-            providedBeanInstances: {
-                frameworkComponentWrapper: this.frameworkComponentWrapper
-            },
+        frameworkOverrides: frameworkOverrides,
+        providedBeanInstances: providedBeanInstances,
             modules: (this.modules || []) as any
         };
 
@@ -282,6 +290,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
+     @Input() public providedBeanInstances: any;
+     @Input() public fwOverrides: AngularFrameworkOverrides;
      @Input() public gridOptions: GridOptions<TData> | undefined;
      @Input() public modules: Module[] | undefined;
 
@@ -751,7 +761,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /** 
+    /**
          * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * Default: `false`
          */
@@ -1118,8 +1128,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
-    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
-    // https://angular.io/guide/template-typecheck#input-setter-coercion 
+    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"'
+    // https://angular.io/guide/template-typecheck#input-setter-coercion
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellSelection: boolean | null | '';

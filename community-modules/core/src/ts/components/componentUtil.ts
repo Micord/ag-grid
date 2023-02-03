@@ -18,6 +18,7 @@ export class ComponentUtil {
         Events.EVENT_CHECKBOX_CHANGED,
         Events.EVENT_HEIGHT_SCALE_CHANGED,
         Events.EVENT_BODY_HEIGHT_CHANGED,
+        Events.EVENT_BODY_WIDTH_CHANGED,
         Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
         Events.EVENT_SCROLL_VISIBILITY_CHANGED,
         Events.EVENT_COLUMN_HOVER_CHANGED,
@@ -96,7 +97,7 @@ export class ComponentUtil {
                 case 'boolean': {
                     newValue = ComponentUtil.toBoolean(rawValue);
                     break;
-                }                    
+                }
                 case 'none': {
                     // if groupAggFiltering exists and isn't a function, handle as a boolean.
                     if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
@@ -111,7 +112,7 @@ export class ComponentUtil {
     }
 
     private static getGridOptionKeys(component: any, isVue: boolean) {
-        // Vue does not have keys in prod so instead need to run through all the 
+        // Vue does not have keys in prod so instead need to run through all the
         // gridOptions checking for presence of a gridOption key.
         return isVue
             ? Object.keys(ComponentUtil.coercionLookup)

@@ -107,7 +107,7 @@ export type SelectionEventSourceType =
     'uiSelectAll' |
     'uiSelectAllFiltered';
 
-export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> { 
+export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: SelectionEventSourceType;
 }
 
@@ -151,6 +151,7 @@ export interface GridReadyEvent<TData = any> extends AgGridEvent<TData> { }
 export interface DisplayedColumnsWidthChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 export interface BodyHeightChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+export interface BodyWidthChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
 
 // this event is 'odd one out' as it should have properties for all the properties
 // in gridOptions that can be bound by the framework. for example, the gridOptions

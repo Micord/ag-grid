@@ -3,10 +3,10 @@ import { Autowired, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
-import { BodyHeightChangedEvent, Events } from "../events";
+import {BodyHeightChangedEvent, BodyWidthChangedEvent, Events} from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight } from "../utils/dom";
+import {getInnerHeight, getInnerWidth} from "../utils/dom";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
@@ -23,6 +23,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
     private bodyHeight: number;
+    private bodyWidth: number;
 
     constructor(centerContainerCtrl: RowContainerCtrl) {
         super();
@@ -78,6 +79,9 @@ export class ViewportSizeFeature extends BeanStub {
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
         this.checkBodyHeight();
 
+        // fires event if width changes
+        this.checkBodyWidth();
+
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
 
@@ -96,6 +100,19 @@ export class ViewportSizeFeature extends BeanStub {
             this.bodyHeight = bodyHeight;
             const event: WithoutGridCommon<BodyHeightChangedEvent> = {
                 type: Events.EVENT_BODY_HEIGHT_CHANGED
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private checkBodyWidth(): void {
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
+        const bodyWidth = getInnerWidth(eBodyViewport);
+
+        if (this.bodyWidth !== bodyWidth) {
+            this.bodyWidth = bodyWidth;
+            const event: WithoutGridCommon<BodyWidthChangedEvent> = {
+                type: Events.EVENT_BODY_WIDTH_CHANGED
             };
             this.eventService.dispatchEvent(event);
         }

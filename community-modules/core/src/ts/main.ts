@@ -453,7 +453,7 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeaderComp, IHeader } from "./headerRendering/cells/column/headerComp";
+export { IHeaderParams, IHeaderComp, IHeader, HeaderComp } from "./headerRendering/cells/column/headerComp";
 export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
