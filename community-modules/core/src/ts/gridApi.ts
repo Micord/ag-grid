@@ -240,7 +240,7 @@ export class GridApi<TData = any> {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
         this.gridOptionsService.set(propertyName, value);
-        // If the dynamic api does update GridOptions then change detection in the 
+        // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
         const dynamicApi = (this as any);
@@ -377,13 +377,16 @@ export class GridApi<TData = any> {
 
     /**
      * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
-     * 
+     *
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */
     public setCacheBlockSize(blockSize: number) {
         if (this.serverSideRowModel) {
             this.gridOptionsService.set('cacheBlockSize', blockSize);
             this.serverSideRowModel.resetRootStore();
+        } else if (this.infiniteRowModel) {
+            this.gridOptionsService.set('cacheBlockSize', blockSize);
+            (<any>this.infiniteRowModel)["reset"]();
         } else {
             this.logMissingRowModel('setCacheBlockSize', 'serverSide');
         }
@@ -829,7 +832,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns the filter component instance for a column.     
+     * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
@@ -1446,7 +1449,7 @@ export class GridApi<TData = any> {
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
         if (this.rangeService) {
-            this.rangeService.removeAllCellRanges();    
+            this.rangeService.removeAllCellRanges();
         }
         ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection');
     }
