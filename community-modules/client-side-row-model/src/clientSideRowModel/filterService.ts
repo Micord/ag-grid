@@ -3,6 +3,7 @@ import {
     Bean,
     ChangedPath,
     FilterManager,
+    PostConstruct,
     RowNode,
     BeanStub
 } from "@ag-grid-community/core";
@@ -12,9 +13,16 @@ export class FilterService extends BeanStub {
 
     @Autowired('filterManager') private filterManager: FilterManager;
 
+    private doingLegacyTreeData: boolean;
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.doingLegacyTreeData = !!this.gridOptionsService.getNodeChildDetailsFunc();
+    }
+
     public filter(changedPath: ChangedPath): void {
         const filterActive: boolean = this.filterManager.isColumnFilterPresent()
-                                    || this.filterManager.isQuickFilterPresent() 
+                                    || this.filterManager.isQuickFilterPresent()
                                     || this.filterManager.isExternalFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
@@ -46,8 +54,16 @@ export class FilterService extends BeanStub {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
                 }
 
+                if (this.doingLegacyTreeData) {
+                    this.setAllChildrenCount(rowNode);
+                }
+
             } else {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+
+                if (this.doingLegacyTreeData) {
+                    rowNode.setAllChildrenCount(null);
+                }
             }
 
             if (rowNode.sibling) {
@@ -84,6 +100,25 @@ export class FilterService extends BeanStub {
 
             const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
             changedPath.forEachChangedNodeDepthFirst(defaultFilterCallback, true);
+        }
+    }
+
+    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+        // for grid data, we only count the leafs
+        let allChildrenCount = 0;
+        rowNode.childrenAfterFilter!.forEach((child: RowNode) => {
+            if (child.group) {
+                allChildrenCount += child.allChildrenCount as any;
+            } else {
+                allChildrenCount++;
+            }
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCount(rowNode: RowNode) {
+        if (this.doingLegacyTreeData) {
+            this.setAllChildrenCountGridGrouping(rowNode);
         }
     }
 

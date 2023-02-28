@@ -1,7 +1,12 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { DomLayoutType, GridOptions } from "./entities/gridOptions";
+import {
+    DomLayoutType,
+    GetNodeChildDetails,
+    GridOptions,
+    NodeChildDetails
+} from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
@@ -427,5 +432,9 @@ export class GridOptionsService {
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType ? matchesGroupDisplayType('groupRows', this.gridOptions.groupDisplayType) : false;
+    }
+
+    public getNodeChildDetailsFunc(): GetNodeChildDetails | undefined {
+        return this.gridOptions.getNodeChildDetails;
     }
 }

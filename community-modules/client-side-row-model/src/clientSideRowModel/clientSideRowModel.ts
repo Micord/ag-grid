@@ -496,7 +496,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
-            type: Events.EVENT_MODEL_UPDATED,            
+            type: Events.EVENT_MODEL_UPDATED,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
@@ -507,7 +507,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isEmpty(): boolean {
-        const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        let rowsMissing: boolean;
+        const doingLegacyTreeData = _.exists(this.gridOptionsService.getNodeChildDetailsFunc());
+
+        if (doingLegacyTreeData) {
+            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
+        } else {
+            rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        }
+
         return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
     }
 
@@ -619,7 +627,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             // infinite loops happen when there is space between rows. this can happen
             // when Auto Height is active, cos we re-calculate row tops asyncronously
             // when row heights change, which can temporarly result in gaps between rows.
-            const caughtInInfiniteLoop = oldBottomPointer === bottomPointer 
+            const caughtInInfiniteLoop = oldBottomPointer === bottomPointer
                                         && oldTopPointer === topPointer;
             if (caughtInInfiniteLoop) { return midPointer; }
 
@@ -643,9 +651,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
         this.recursivelyWalkNodesAndCallback({
-            nodes: [...(this.rootNode.childrenAfterGroup || [])], 
+            nodes: [...(this.rootNode.childrenAfterGroup || [])],
             callback,
-            recursionType: RecursionType.Normal, 
+            recursionType: RecursionType.Normal,
             index: 0,
             includeFooterNodes
         });
@@ -655,7 +663,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.recursivelyWalkNodesAndCallback({
             nodes: [...(this.rootNode.childrenAfterAggFilter || [])],
             callback,
-            recursionType: RecursionType.AfterFilter, 
+            recursionType: RecursionType.AfterFilter,
             index: 0,
             includeFooterNodes
         });
@@ -700,7 +708,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         if (includeFooterNodes && firstNode?.parent?.sibling) {
             nodes.push(firstNode.parent.sibling);
-        } 
+        }
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -799,7 +807,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {            
+        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {
             type: Events.EVENT_EXPAND_COLLAPSE_ALL,
             source: eventSource
         };
@@ -821,6 +829,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
     ) {
+        // grouping is enterprise only, so if service missing, skip the step
+        const doingLegacyTreeData = _.exists(this.gridOptionsService.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) { return; }
+
         if (this.groupStage) {
 
             if (rowNodeTransactions) {
@@ -997,7 +1009,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         if (rowNodeTrans.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: rowNodeTrans
             };
@@ -1065,7 +1077,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.filterManager.onNewRowsLoaded('rowDataUpdated');
 
         const event: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED            
+            type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(event);
     }

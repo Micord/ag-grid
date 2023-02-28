@@ -444,7 +444,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gridOptionsService.isTreeData()) { return true; }
+        if (this.gridOptionsService.isTreeData() || this.gridOptionsService.getNodeChildDetailsFunc()) { return true; }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 

@@ -407,7 +407,9 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    DomLayoutType
+    DomLayoutType,
+    GetNodeChildDetails,
+    NodeChildDetails
 } from "./entities/gridOptions";
 
 export {

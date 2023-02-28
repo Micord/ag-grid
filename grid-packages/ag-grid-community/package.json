@@ -59,7 +59,7 @@
   "devDependencies": {
     "@ag-grid-community/all-modules": "~29.0.0",
     "@ag-grid-community/core": "29.0.0-micord.1",
-    "@ag-grid-community/client-side-row-model": "~29.0.0",
+    "@ag-grid-community/client-side-row-model": "29.0.0-micord.1",
     "@ag-grid-community/csv-export": "~29.0.0",
     "@ag-grid-community/infinite-row-model": "~29.0.0",
     "@ag-grid-community/styles": "~29.0.0",

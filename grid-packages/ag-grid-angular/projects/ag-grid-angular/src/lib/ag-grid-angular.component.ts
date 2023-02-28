@@ -80,6 +80,7 @@ import {
     GetGroupRowAggParams,
     GetLocaleTextParams,
     GetMainMenuItems,
+    GetNodeChildDetails,
     GetRowIdFunc,
     GetRowNodeIdFunc,
     GetServerSideGroupKey,
@@ -873,6 +874,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
+    /** Legacy tree data */
+    @Input() public getNodeChildDetails : any = undefined;
     /** Allows you to process header values for the clipboard.      */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process group header values for the clipboard.      */

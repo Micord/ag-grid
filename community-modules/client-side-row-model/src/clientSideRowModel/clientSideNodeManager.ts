@@ -9,7 +9,9 @@ import {
     SelectionService, _,
     WithoutGridCommon,
     GridOptionsService,
-    SelectionEventSourceType
+    SelectionEventSourceType,
+    GetNodeChildDetails,
+    NodeChildDetails
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -30,9 +32,11 @@ export class ClientSideNodeManager {
 
     private isRowMasterFunc?: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
+    private getNodeChildDetails: GetNodeChildDetails | undefined;
 
     private doingTreeData: boolean;
     private doingMasterDetail: boolean;
+    private doingLegacyTreeData: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
@@ -66,6 +70,8 @@ export class ClientSideNodeManager {
         this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
         this.doingTreeData = this.gridOptionsService.isTreeData();
         this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.getNodeChildDetails = this.gridOptionsService.getNodeChildDetailsFunc();
+        this.doingLegacyTreeData = !this.doingTreeData && _.exists(this.getNodeChildDetails);
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
@@ -99,7 +105,15 @@ export class ClientSideNodeManager {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map(dataItem => this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
+
+            const result = rowData.map(dataItem => this.createNode(dataItem, rootNode, ClientSideNodeManager.TOP_LEVEL));
+
+            if (this.doingLegacyTreeData) {
+                rootNode.childrenAfterGroup = result;
+                this.setLeafChildren(rootNode);
+            } else {
+                rootNode.allLeafChildren = result;
+            }
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -116,6 +130,7 @@ export class ClientSideNodeManager {
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
+        if (this.isLegacyTreeData()) { return null as any; }
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
@@ -289,8 +304,26 @@ export class ClientSideNodeManager {
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         const node = new RowNode(this.beans);
 
-        node.group = false;
-        this.setMasterForRow(node, dataItem, level, true);
+        const nodeChildDetails: NodeChildDetails | null = this.doingLegacyTreeData && this.getNodeChildDetails
+                                                          ? this.getNodeChildDetails(dataItem)
+                                                          : null;
+
+        if (nodeChildDetails && nodeChildDetails.group) {
+            node.group = true;
+
+            if (nodeChildDetails.children) {
+                node.childrenAfterGroup = nodeChildDetails.children.map(
+                    (item: any) => this.createNode(item, node, level + 1));
+            }
+            node.expanded = nodeChildDetails.expanded === true;
+            node.field = <string | null> nodeChildDetails.field;
+            node.key = nodeChildDetails.key;
+            // pull out all the leaf children and add to our node
+            this.setLeafChildren(node);
+        } else {
+            node.group = false;
+            this.setMasterForRow(node, dataItem, level, true);
+        }
 
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
@@ -346,5 +379,32 @@ export class ClientSideNodeManager {
             return true;
         }
         return level < expandByDefault!;
+    }
+
+    // this is only used for doing legacy tree data
+    private setLeafChildren(node: RowNode): void {
+        node.allLeafChildren = [];
+        if (node.childrenAfterGroup) {
+            node.childrenAfterGroup.forEach(childAfterGroup => {
+                if (childAfterGroup.group) {
+                    if (childAfterGroup.allLeafChildren) {
+                        childAfterGroup.allLeafChildren.forEach(leafChild => node.allLeafChildren.push(leafChild));
+                    }
+                } else {
+                    node.allLeafChildren.push(childAfterGroup);
+                }
+            });
+        }
+    }
+
+    // this is only used for doing legacy tree data
+    public isLegacyTreeData(): boolean {
+        const rowsAlreadyGrouped = _.exists(this.gridOptionsService.getNodeChildDetailsFunc());
+
+        if (rowsAlreadyGrouped) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

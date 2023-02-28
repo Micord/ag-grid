@@ -666,7 +666,7 @@ export interface GridOptions<TData = any> {
     /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
     serverSideFilterAllLevels?: boolean;
     /**
-     * 
+     *
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * Default: `false`
      */
@@ -891,6 +891,9 @@ export interface GridOptions<TData = any> {
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
+
+    /** @deprecated */
+    getNodeChildDetails?: GetNodeChildDetails;
     /**
      * @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
      * Allows you to set the ID for a particular row node based on the data. */
@@ -903,6 +906,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
     isRowSelectable?: IsRowSelectable<TData>;
+
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */
     isRowMaster?: IsRowMaster<TData>;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
@@ -1149,6 +1153,18 @@ export interface IsApplyServerSideTransaction {
 }
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
+}
+
+export interface GetNodeChildDetails {
+    (dataItem: any): NodeChildDetails;
+}
+
+export interface NodeChildDetails {
+    group: boolean;
+    children?: any[];
+    expanded?: boolean;
+    field?: string;
+    key?: any;
 }
 
 export interface IsRowMaster<TData = any> {

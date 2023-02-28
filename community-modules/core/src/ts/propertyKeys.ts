@@ -19,7 +19,7 @@ export type AnyGridOptions = {
 
 /**
  * Get all the GridOptions properties of the provided type.
- * Will also include `any` properties. 
+ * Will also include `any` properties.
  */
 type KeysLike<U> = Exclude<GetKeys<GridOptions, U>, undefined>;
 /**
@@ -66,7 +66,7 @@ export class PropertyKeys {
     ];
 
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
-        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellSelection', 'suppressCellFocus', 'suppressHorizontalScroll', 
+        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellSelection', 'suppressCellFocus', 'suppressHorizontalScroll',
         'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions',
         'groupSelectsChildren', 'groupIncludeFooter',
         'groupIncludeTotalFooter', 'groupSuppressBlankHeader', 'suppressMenuHide', 'suppressRowDeselection',
@@ -119,7 +119,7 @@ export class PropertyKeys {
         'processGroupHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
         'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams', 'getServerSideGroupLevelParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'initialGroupOrderComparator',
-        'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
+        'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering', 'getNodeChildDetails'
     ];
 
     public static FUNCTION_PROPERTIES: GridOptionKey[] = [
