@@ -60,9 +60,9 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const dataFileContent = dataFileExists ? cleanTs(fs.readFileSync(dataFile)) : [];
     const exampleFileLines = cleanTs(fs.readFileSync(exampleFile));
 
-    let evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
+    const evalExpr = `${dataFileContent.join('\n')} \n ${exampleFileLines.join('\n')}; ${evalFn};`;
     // @ts-ignore - used in the eval() call.
-    const agCharts = require('../../main');
+    const { AgChart, time, Marker } = require('../../main');
     try {
         return eval(evalExpr);
     } catch (error) {
@@ -782,7 +782,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_LABELS: AgCartesianChartOptions = {
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -814,7 +814,7 @@ export const LINE_TIME_X_AXIS_POSITION_TOP_NUMBER_Y_AXIS_LABELS: AgCartesianChar
             type: 'number',
             position: 'left',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -846,7 +846,7 @@ export const LINE_TIME_X_AXIS_NUMBER_Y_AXIS_POSITION_RIGHT_LABELS: AgCartesianCh
             type: 'number',
             position: 'right',
             tick: {
-                count: 100,
+                maxSpacing: 20,
             },
         },
     ],
@@ -1202,6 +1202,32 @@ export const TRUNCATED_LEGEND_ITEMS: AgCartesianChartOptions = {
             maxWidth: 100,
         },
     },
+};
+
+export const CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS = (
+    data: any[],
+    seriesType: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'
+): AgCartesianChartOptions => {
+    return {
+        data,
+        series: [
+            {
+                type: seriesType,
+                xKey: 'os',
+                yKey: 'share',
+            },
+        ],
+        axes: [
+            {
+                type: 'category',
+                position: 'bottom',
+            },
+            {
+                type: 'log',
+                position: 'left',
+            },
+        ],
+    };
 };
 
 // START ADVANCED EXAMPLES =========================================================================

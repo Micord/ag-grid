@@ -6,14 +6,13 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { isContinuous } from '../../../util/value';
 import {
     BOOLEAN,
     NUMBER,
@@ -231,7 +230,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         }
 
         const xData = this.data.map((datum) => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(extent(xData, isContinuous));
+        const xDomain = this.fixNumericExtent(extent(xData));
 
         if (this.binCount === undefined) {
             if (bins) {
@@ -252,7 +251,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     private calculateNiceBins(domain: number[], binCount: number): [number, number][] {
         let start = Math.floor(domain[0]);
-        let stop = domain[1];
+        const stop = domain[1];
         let binSize;
 
         const segments = binCount || 1;
@@ -265,7 +264,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         const bins: [number, number][] = [];
 
         for (let i = 0; i < count; i++) {
-            let a = Math.round((start + i * step) * 10) / 10;
+            const a = Math.round((start + i * step) * 10) / 10;
             let b = Math.round((start + (i + 1) * step) * 10) / 10;
             if (i === count - 1) {
                 b = Math.max(b, stop);
@@ -342,7 +341,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
 
         const yData = this.binnedData.map((b) => b.getY(this.areaPlot));
-        const yMinMax = extent(yData, isContinuous);
+        const yMinMax = extent(yData);
 
         this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
 

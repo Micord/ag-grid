@@ -11,7 +11,7 @@ function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request)
             };
         }
     };
@@ -82,6 +82,10 @@ function FakeServer(allData) {
                 return key + " LIKE '" + item.filter + "%'";
             case 'endsWith':
                 return key + " LIKE '%" + item.filter + "'";
+            case 'blank':
+                return key + " IS NULL or " + key + " = ''";
+            case 'notBlank':
+                return key + " IS NOT NULL and " + key + " != ''";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -103,6 +107,10 @@ function FakeServer(allData) {
                 return key + ' <= ' + item.filter;
             case 'inRange':
                 return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
+            case 'blank':
+                return key + " IS NULL";
+            case 'notBlank':
+                return key + " IS NOT NULL";
             default:
                 console.log('unknown number filter type: ' + item.type);
         }
@@ -124,17 +132,10 @@ function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) { return ''; }
         var blockSize = request.endRow - request.startRow;
 
-        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
-    function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) {
-            return request.startRow;
-        }
-        if (request.endRow == undefined || request.startRow == undefined) { return results.length; }
-
-        var currentLastRow = request.startRow + results.length;
-
-        return currentLastRow <= request.endRow ? currentLastRow : -1;
+    function getLastRowIndex(request) {
+        return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

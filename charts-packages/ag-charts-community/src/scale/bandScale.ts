@@ -6,13 +6,14 @@ function clamp(x: number, min: number, max: number) {
 
 /**
  * Maps a discrete domain to a continuous numeric range.
- * See https://github.com/d3/d3-scale#band-scales for more info.
  */
-export class BandScale<D> implements Scale<D, number> {
+export class BandScale<D> implements Scale<D, number, number> {
     readonly type = 'band';
 
+    interval?: number;
+
     private cache: any = null;
-    private cacheProps: string[] = ['_domain', 'range', '_paddingInner', '_paddingOuter', 'round'];
+    private cacheProps: string[] = ['_domain', 'range', '_paddingInner', '_paddingOuter', 'round', 'interval'];
     private didChange() {
         const { cache } = this;
         const didChange = !cache || this.cacheProps.some((p) => this[p as keyof BandScale<any>] !== cache[p]);
@@ -73,7 +74,9 @@ export class BandScale<D> implements Scale<D, number> {
 
     ticks(): D[] {
         this.refresh();
-        return this._domain;
+        const { interval = 1 } = this;
+        const step = Math.abs(Math.round(interval));
+        return this._domain.filter((_, i) => i % step === 0);
     }
 
     convert(d: D): number {

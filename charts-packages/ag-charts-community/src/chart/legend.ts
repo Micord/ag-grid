@@ -1,4 +1,4 @@
-import { Node } from '../scene/node';
+import { Node, RedrawType } from '../scene/node';
 import { Group } from '../scene/group';
 import { Selection } from '../scene/selection';
 import { MarkerLabel } from './markerLabel';
@@ -16,11 +16,9 @@ import {
 } from './agChartOptions';
 import { getMarker } from './marker/util';
 import { createId } from '../util/id';
-import { RedrawType } from '../scene/node';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import {
     BOOLEAN,
-    FUNCTION,
     NUMBER,
     OPT_BOOLEAN,
     OPT_FONT_STYLE,
@@ -36,35 +34,21 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { Series } from './series/series';
-import { ChartUpdateType } from './chart';
+import { ChartUpdateType } from './chartUpdateType';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
+import { TooltipManager } from './interaction/tooltipManager';
+import { toTooltipHtml } from './tooltip/tooltip';
+import { LegendDatum } from './legendDatum';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
     `expecting an orientation keyword such as 'horizontal' or 'vertical'`
 );
-
-export interface LegendDatum {
-    id: string; // component ID
-    itemId: any; // sub-component ID
-    seriesId: string;
-    enabled: boolean; // the current state of the sub-component
-    marker: {
-        shape?: string | (new () => Marker);
-        fill: string;
-        stroke: string;
-        fillOpacity: number;
-        strokeOpacity: number;
-    };
-    label: {
-        text: string; // display name for the sub-component
-    };
-}
 
 class LegendLabel {
     @Validate(OPT_NUMBER(0))
@@ -146,13 +130,9 @@ class LegendItem {
     toggleSeriesVisible: boolean = true;
 }
 
-const NO_OP_LISTENER = () => {
-    // Default listener that does nothing.
-};
-
-class LegendListeners implements Required<AgChartLegendListeners> {
-    @Validate(FUNCTION)
-    legendItemClick: (event: AgChartLegendClickEvent) => void = NO_OP_LISTENER;
+class LegendListeners implements AgChartLegendListeners {
+    @Validate(OPT_FUNCTION)
+    legendItemClick?: (event: AgChartLegendClickEvent) => void = undefined;
 }
 
 export class Legend {
@@ -249,7 +229,6 @@ export class Legend {
         private readonly chart: {
             readonly series: Series<any>[];
             readonly element: HTMLElement;
-            togglePointer(visible: boolean): void;
             update(
                 type: ChartUpdateType,
                 opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -257,7 +236,8 @@ export class Legend {
         },
         private readonly interactionManager: InteractionManager,
         private readonly cursorManager: CursorManager,
-        private readonly highlightManager: HighlightManager
+        private readonly highlightManager: HighlightManager,
+        private readonly tooltipManager: TooltipManager
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
@@ -362,14 +342,12 @@ export class Legend {
         const bboxes: BBox[] = [];
 
         const font = label.getFont();
-        const ellipsis = `...`;
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         itemSelection.each((markerLabel, datum) => {
-            let text = datum.label.text ?? '<unknown>';
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
@@ -377,47 +355,10 @@ export class Legend {
             markerLabel.fontSize = fontSize;
             markerLabel.fontFamily = fontFamily;
 
-            const textChars = text.split('');
-            let addEllipsis = false;
-
-            if (text.length > maxLength) {
-                text = `${text.substring(0, maxLength)}`;
-                addEllipsis = true;
-            }
-
-            const labelWidth = Math.floor(paddedMarkerWidth + HdpiCanvas.getTextSize(text, font).width);
-            if (labelWidth > maxItemWidth) {
-                let truncatedText = '';
-                const characterWidths = this.getCharacterWidths(font);
-                let cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
-
-                for (const char of textChars) {
-                    if (!characterWidths[char]) {
-                        characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
-                    }
-
-                    cumulativeWidth += characterWidths[char];
-
-                    if (cumulativeWidth > maxItemWidth) {
-                        break;
-                    }
-
-                    truncatedText += char;
-                }
-
-                text = truncatedText;
-                addEllipsis = true;
-            }
-
             const id = datum.itemId || datum.id;
-            if (addEllipsis) {
-                text += ellipsis;
-                this.truncatedItems.add(id);
-            } else {
-                this.truncatedItems.delete(id);
-            }
+            const text = datum.label.text ?? '<unknown>';
+            markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
-            markerLabel.text = text;
             bboxes.push(markerLabel.computeBBox());
         });
 
@@ -460,6 +401,58 @@ export class Legend {
         this.update();
     }
 
+    truncate(
+        text: string,
+        maxCharLength: number,
+        maxItemWidth: number,
+        paddedMarkerWidth: number,
+        font: string,
+        id: string
+    ): string {
+        const ellipsis = `...`;
+
+        const textChars = text.split('');
+        let addEllipsis = false;
+
+        if (text.length > maxCharLength) {
+            text = `${text.substring(0, maxCharLength)}`;
+            addEllipsis = true;
+        }
+
+        const labelWidth = Math.floor(paddedMarkerWidth + HdpiCanvas.getTextSize(text, font).width);
+        if (labelWidth > maxItemWidth) {
+            let truncatedText = '';
+            const characterWidths = this.getCharacterWidths(font);
+            let cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
+
+            for (const char of textChars) {
+                if (!characterWidths[char]) {
+                    characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
+                }
+
+                cumulativeWidth += characterWidths[char];
+
+                if (cumulativeWidth > maxItemWidth) {
+                    break;
+                }
+
+                truncatedText += char;
+            }
+
+            text = truncatedText;
+            addEllipsis = true;
+        }
+
+        if (addEllipsis) {
+            text += ellipsis;
+            this.truncatedItems.add(id);
+        } else {
+            this.truncatedItems.delete(id);
+        }
+
+        return text;
+    }
+
     updatePagination(
         bboxes: BBox[],
         width: number,
@@ -469,14 +462,54 @@ export class Legend {
         maxPageWidth: number;
         pages: Page[];
     } {
-        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
-
         const orientation = this.getOrientation();
-        const verticalOrientation = orientation === 'vertical';
+        const trackingIndex = Math.min(this.paginationTrackingIndex, bboxes.length);
+
         this.pagination.orientation = orientation;
 
         this.pagination.translationX = 0;
         this.pagination.translationY = 0;
+
+        const { pages, maxPageHeight, maxPageWidth, paginationBBox, paginationVertical } = this.calculatePagination(
+            bboxes,
+            width,
+            height
+        );
+
+        const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
+        this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
+
+        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
+        const paginationComponentPadding = 8;
+        const legendItemsWidth = maxPageWidth - itemPaddingX;
+        const legendItemsHeight = maxPageHeight - itemPaddingY;
+
+        let paginationX = 0;
+        let paginationY = -paginationBBox.y - this.item.marker.size / 2;
+        if (paginationVertical) {
+            paginationY += legendItemsHeight + paginationComponentPadding;
+        } else {
+            paginationX += -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
+            paginationY += (legendItemsHeight - paginationBBox.height) / 2;
+        }
+
+        this.pagination.translationX = paginationX;
+        this.pagination.translationY = paginationY;
+        this.pagination.update();
+        this.pagination.updateMarkers();
+
+        return {
+            maxPageHeight,
+            maxPageWidth,
+            pages,
+        };
+    }
+
+    calculatePagination(bboxes: BBox[], width: number, height: number) {
+        const { paddingX: itemPaddingX, paddingY: itemPaddingY } = this.item;
+
+        const orientation = this.getOrientation();
+        const paginationVertical = ['left', 'right'].includes(this.position);
 
         let paginationBBox: BBox = this.pagination.computeBBox();
         let lastPassPaginationBBox: BBox = new BBox(0, 0, 0, 0);
@@ -484,8 +517,6 @@ export class Legend {
         let maxPageWidth = 0;
         let maxPageHeight = 0;
         let count = 0;
-
-        const trackingIndex = Math.min(this.paginationTrackingIndex, bboxes.length);
 
         const stableOutput = (lastPassPaginationBBox: BBox) => {
             const { width, height } = lastPassPaginationBBox;
@@ -501,8 +532,8 @@ export class Legend {
             }
 
             paginationBBox = lastPassPaginationBBox;
-            const maxWidth = width - (verticalOrientation ? 0 : paginationBBox.width);
-            const maxHeight = height - (verticalOrientation ? paginationBBox.height : 0);
+            const maxWidth = width - (paginationVertical ? 0 : paginationBBox.width);
+            const maxHeight = height - (paginationVertical ? paginationBBox.height : 0);
 
             const layout = gridLayout({
                 orientation,
@@ -514,11 +545,9 @@ export class Legend {
                 forceResult,
             });
 
-            if (layout) {
-                pages = layout.pages;
-                maxPageWidth = layout.maxPageWidth;
-                maxPageHeight = layout.maxPageHeight;
-            }
+            pages = layout?.pages ?? [];
+            maxPageWidth = layout?.maxPageWidth ?? 0;
+            maxPageHeight = layout?.maxPageHeight ?? 0;
 
             const totalPages = pages.length;
             this.pagination.visible = totalPages > 1;
@@ -532,31 +561,7 @@ export class Legend {
             }
         } while (!stableOutput(lastPassPaginationBBox));
 
-        const newCurrentPage = pages.findIndex((p) => p.endIndex >= trackingIndex);
-        this.pagination.currentPage = Math.min(Math.max(newCurrentPage, 0), pages.length - 1);
-
-        const paginationComponentPadding = 8;
-        const legendItemsWidth = maxPageWidth - itemPaddingX;
-        const legendItemsHeight = maxPageHeight - itemPaddingY;
-
-        this.pagination.translationX = verticalOrientation
-            ? 0
-            : -paginationBBox.x + legendItemsWidth + paginationComponentPadding;
-        this.pagination.translationY =
-            -paginationBBox.y -
-            this.item.marker.size / 2 +
-            (verticalOrientation
-                ? legendItemsHeight + paginationComponentPadding
-                : (legendItemsHeight - paginationBBox.height) / 2);
-
-        this.pagination.update();
-        this.pagination.updateMarkers();
-
-        return {
-            maxPageHeight,
-            maxPageWidth,
-            pages,
-        };
+        return { maxPageWidth, maxPageHeight, pages, paginationBBox, paginationVertical };
     }
 
     updatePositions(pageNumber: number = 0) {
@@ -602,7 +607,7 @@ export class Legend {
             }
 
             markerLabel.visible = true;
-            let column = columns[columnIndex];
+            const column = columns[columnIndex];
 
             if (!column) {
                 return;
@@ -738,7 +743,6 @@ export class Legend {
         }
 
         if (!newEnabled) {
-            chart.togglePointer(false);
             highlightManager.updateHighlight(this.id);
         } else {
             highlightManager.updateHighlight(this.id, {
@@ -750,7 +754,7 @@ export class Legend {
 
         this.chart.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
 
-        legendItemClick({ enabled: newEnabled, itemId, seriesId: series.id });
+        legendItemClick?.({ enabled: newEnabled, itemId, seriesId: series.id });
     }
 
     private handleLegendMouseMove(event: InteractionEvent<'hover'>) {
@@ -764,15 +768,13 @@ export class Legend {
         }
 
         const legendBBox = this.computeBBox();
-        const { offsetX, offsetY } = event;
+        const { pageX, pageY, offsetX, offsetY } = event;
         const pointerInsideLegend = this.group.visible && legendBBox.containsPoint(offsetX, offsetY);
 
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
-            if (this.chart.element.title) {
-                this.chart.element.title = '';
-            }
+            this.tooltipManager.updateTooltip(this.id);
             return;
         }
 
@@ -788,17 +790,21 @@ export class Legend {
             return;
         }
 
+        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
-            this.chart.element.title = datum.label.text;
+            this.tooltipManager.updateTooltip(
+                this.id,
+                { pageX, pageY, offsetX, offsetY, event },
+                toTooltipHtml({ content: datum.label.text })
+            );
         } else {
-            this.chart.element.title = '';
+            this.tooltipManager.updateTooltip(this.id);
         }
 
-        if (toggleSeriesVisible || listeners.legendItemClick !== NO_OP_LISTENER) {
+        if (toggleSeriesVisible || listeners.legendItemClick != null) {
             this.cursorManager.updateCursor(this.id, 'pointer');
         }
 
-        const series = datum ? this.chart.series.find((series) => series.id === datum?.id) : undefined;
         if (datum?.enabled && series) {
             this.highlightManager.updateHighlight(this.id, {
                 series,

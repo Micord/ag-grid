@@ -1,15 +1,15 @@
 import { CountableTimeInterval } from './interval';
-import { durationSecond } from './duration';
+import { durationSecond, durationMinute } from './duration';
 
-function floor(date: Date) {
-    date.setTime(date.getTime() - date.getMilliseconds());
-}
-function offset(date: Date, seconds: number) {
-    date.setTime(date.getTime() + seconds * durationSecond);
-}
-function count(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / durationSecond;
+const offset = new Date().getTimezoneOffset() * durationMinute;
+
+function encode(date: Date) {
+    return Math.floor((date.getTime() - offset) / durationSecond);
 }
 
-export const second = new CountableTimeInterval(floor, offset, count);
+function decode(encoded: number) {
+    return new Date(offset + encoded * durationSecond);
+}
+
+export const second = new CountableTimeInterval(encode, decode);
 export default second;

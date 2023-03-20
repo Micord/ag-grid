@@ -565,13 +565,29 @@ export interface AgAxisBaseTickOptions {
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
+    /** Array of values in axis units to display as ticks along the axis.
+     * The values in this array must be compatible with the axis type.
+     */
+    values?: any[];
+    /** Minimum gap in pixels between tick lines.
+     */
+    minSpacing?: number;
+    /** Maximum gap in pixels between tick lines.
+     */
+    maxSpacing?: number;
 }
+
+export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
 
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
+     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.
      */
     count?: number;
+    /** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.
+     */
+    interval?: number;
 }
 
 export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
@@ -581,6 +597,9 @@ export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
      * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.
      * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */
     count?: any;
+    /** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.
+     */
+    interval?: any;
 }
 export interface AgAxisLabelFormatterParams {
     readonly value: any;
@@ -614,7 +633,7 @@ export interface AgAxisLabelOptions {
     minSpacing?: PixelSize;
     // mirrored?: boolean;
     // parallel?: boolean;
-    /** Format string used when rendering labels for time axes. */
+    /** Format string used when rendering labels. */
     format?: string;
     /** Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4` */
     formatter?: (params: AgAxisLabelFormatterParams) => string | undefined;
@@ -728,9 +747,9 @@ export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'log';
     /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
-    /** User override for the automatically determined min value (based on series data). */
+    /** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */
     min?: number;
-    /** User override for the automatically determined max value (based on series data). */
+    /** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */
     max?: number;
     /** The base of the logarithm used. */
     base?: number;
@@ -753,13 +772,13 @@ export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
      */
     groupPaddingInner?: Ratio;
     /** Configuration for the axis ticks. */
-    tick?: AgAxisNumberTickOptions;
+    tick?: AgAxisCategoryTickOptions;
 }
 
 export interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'groupedCategory';
     /** Configuration for the axis ticks. */
-    tick?: AgAxisNumberTickOptions;
+    tick?: AgAxisCategoryTickOptions;
 }
 
 export interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
@@ -1687,8 +1706,8 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
+    /** If specified overrides the default series type. */
+    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
@@ -1698,15 +1717,15 @@ export interface AgCartesianChartOptions extends AgBaseChartOptions {
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
-    type?: 'polar' | 'pie';
+    /** If specified overrides the default series type. */
+    type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
-    /** Type of chart to render. Inherited from the first declared series if unspecified. */
-    type?: 'hierarchy' | 'treemap';
+    /** If specified overrides the default series type. */
+    type?: 'treemap';
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];

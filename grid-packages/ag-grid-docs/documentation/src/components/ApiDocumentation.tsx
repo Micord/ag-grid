@@ -1,13 +1,11 @@
 import classnames from 'classnames';
-import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
-import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
+import anchorIcon from '../images/anchor';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, ChildDocEntry } from './ApiDocumentation.types';
+import { ApiProps, ChildDocEntry, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, InterfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink, getInterfaceWithGenericParams } from './documentation-helpers';
+import { addMoreLink, convertMarkdown, convertUrl, escapeGenericCode, extractInterfaces, formatJsDocString, getInterfaceWithGenericParams, getJsonFromFile, getLinkedType, getLongestNameLength, getTypeUrl, inferType, sortAndFilterProperties, writeAllInterfaces } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
-import { getJsonFromFile } from './documentation-helpers';
 
 /**
  * This generates tabulated interface documentation based on information in JSON files.
@@ -32,6 +30,10 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
     const htmlLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.HTML.json`);
 
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup, htmlLookup: htmlLookup[interfacename] };
     let hideHeader = true;
     if (config.hideHeader !== undefined) {
@@ -40,7 +42,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     if (config.sortAlphabetically !== undefined) {
         config.sortAlphabetically = String(config.sortAlphabetically).toLowerCase() == 'true';
     }
-    config = { ...config, lookups, codeSrcProvided, hideHeader };
+    config = { ...config, lookupRoot, lookups, codeSrcProvided, hideHeader };
 
     const li = interfaceLookup[interfacename];
 
@@ -50,7 +52,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
             return <h2 style={{ color: 'red' }}>Could not find interface {interfacename} for interface-documentation component!</h2>
         }
         const lines = [];
-        lines.push(...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, { lineBetweenProps: true, hideName: config.hideName, exclude: excludeArr, applyOptionalOrdering: true }));
+        lines.push(...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, { lineBetweenProps: config.lineBetweenProps ?? true, hideName: config.hideName, exclude: excludeArr, applyOptionalOrdering: true }));
         const escapedLines = escapeGenericCode(lines);
         return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
     }
@@ -157,9 +159,14 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             config = { ...config, suppressMissingPropCheck: true }
         }
     })
-    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+
+    const { lookupRoot = 'grid-api' } = config;
+    const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
     const lookups = { codeLookup, interfaces: interfaceLookup };
-    config = { ...config, lookups, codeSrcProvided }
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+    config = { ...config, lookupRoot, lookups, codeSrcProvided }
 
     if (section == null) {
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
@@ -379,7 +386,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     let propertyType = getPropertyType(type, config);
-    const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
+    const typeUrl = isObject
+        ? `#reference-${id}.${name}` :
+        (propertyType !== 'Function' ?
+            getTypeUrl(type, framework) : null);
 
     const codeSection = <FunctionCodeSample framework={framework} name={name} type={type} config={config} />;
 
@@ -718,8 +728,15 @@ function getPropertyType(type: string | PropertyType, config: Config) {
         }
     }
     // We hide generics from this part of the display for simplicity
-    propertyType = propertyType.replace(/<TData>/g, '');
-    //.replace(/TData\[\]/g, 'any[]').replace(/TData/g, 'any');
+    // Could be done with a Regex...
+    propertyType = propertyType
+        .replace(/<TData>/g, '')
+        .replace(/<TData, TValue>/g, '')
+        .replace(/<TData, TValue, TContext>/g, '')
+        .replace(/<TData, TContext>/g, '')
+        .replace(/<TData, TContext, TValue>/g, '')
+        .replace(/<TValue>/g, '')
+        .replace(/<TContext>/g, '');
 
     return propertyType;
 }

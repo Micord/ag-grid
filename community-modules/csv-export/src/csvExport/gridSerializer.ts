@@ -19,7 +19,10 @@ import {
     RowNode,
     SelectionService,
     ShouldRowBeSkippedParams,
-    RowPositionUtils
+    RowPositionUtils,
+    SortedRowNode,
+    RowNodeSorter,
+    SortController
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -36,6 +39,8 @@ export class GridSerializer extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
@@ -57,9 +62,9 @@ export class GridSerializer extends BeanStub {
 
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const context = this.gridOptionsService.get('context');
-        const api = this.gridOptionsService.get('api')!;
-        const columnApi = this.gridOptionsService.get('columnApi')!;
+        const context = this.gridOptionsService.context;
+        const api = this.gridOptionsService.api;
+        const columnApi = this.gridOptionsService.columnApi;
         const skipSingleChildrenGroup = this.gridOptionsService.is('groupRemoveSingleChildren');
         const skipLowestSingleChildrenGroup = this.gridOptionsService.is('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
@@ -228,6 +233,8 @@ export class GridSerializer extends BeanStub {
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
                     const selectedNodes = this.selectionService.getSelectedNodes();
+                    this.replicateSortedOrder(selectedNodes);
+                    // serialize each node
                     selectedNodes.forEach(processRow);
                 } else {
                     // here is everything else - including standard row model and selected. we don't use
@@ -246,6 +253,43 @@ export class GridSerializer extends BeanStub {
             }
             return gridSerializingSession;
         };
+    }
+
+    private replicateSortedOrder(rows: RowNode[]) {
+        const sortOptions = this.sortController.getSortOptions();
+        const compareNodes = (rowA: RowNode, rowB: RowNode): number => {
+            if (rowA.rowIndex != null && rowB.rowIndex != null) {
+                // if the rows have rowIndexes, this is the easiest way to compare,
+                // as they're already ordered
+                return rowA.rowIndex - rowB.rowIndex;
+            }
+
+
+            // if the level is the same, compare these nodes, or their parents
+            if (rowA.level === rowB.level) {
+                if (rowA.parent?.id === rowB.parent?.id) {
+                    return this.rowNodeSorter.compareRowNodes(sortOptions, {
+                        rowNode: rowA,
+                        currentPos: rowA.rowIndex ?? -1,
+                    }, {
+                        rowNode: rowB,
+                        currentPos: rowB.rowIndex ?? -1,
+                    });
+                }
+
+                // level is same, but parent isn't, compare parents
+                return compareNodes(rowA.parent!, rowB.parent!);
+            }
+
+            // if level is different, match levels
+            if (rowA.level > rowB.level) {
+                return compareNodes(rowA.parent!, rowB);
+            }
+            return compareNodes(rowA, rowB.parent!);
+        }
+
+        // sort the nodes either by existing row index or compare them
+        rows.sort(compareNodes);
     }
 
     private processPinnedBottomRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -313,9 +357,9 @@ export class GridSerializer extends BeanStub {
             if (processGroupHeaderCallback) {
                 name = processGroupHeaderCallback({
                     columnGroup: columnGroup,
-                    api: this.gridOptionsService.get('api')!,
-                    columnApi: this.gridOptionsService.get('columnApi')!,
-                    context: this.gridOptionsService.get('context')
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context
                 });
             } else {
                 name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;

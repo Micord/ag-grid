@@ -129,12 +129,12 @@ describe('update', () => {
         expect(chart.padding.right).toBe(40);
         expect(chart.padding.bottom).toBe(50);
         expect(chart.padding.left).toBe(60);
-        expect(chart.title!.enabled).toBe(theme.getConfig('cartesian.title.enabled'));
-        expect(chart.title!.text).toBe(theme.getConfig('cartesian.title.text'));
-        expect(chart.title!.fontSize).toBe(theme.getConfig('cartesian.title.fontSize'));
-        expect(chart.title!.fontFamily).toBe(theme.getConfig('cartesian.title.fontFamily'));
-        expect(chart.title!.fontStyle).toBe(theme.getConfig('cartesian.title.fontStyle'));
-        expect(chart.title!.fontWeight).toBe(theme.getConfig('cartesian.title.fontWeight'));
+        expect(chart.title!.enabled).toBe(theme.config.cartesian.title.enabled);
+        expect(chart.title!.text).toBe(theme.config.cartesian.title.text);
+        expect(chart.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);
+        expect(chart.title!.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
+        expect(chart.title!.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
+        expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
         expect(chart.subtitle!.text).toBe('My Subtitle');
         expect(chart.subtitle!.fontSize).toBe(20);
         expect(chart.subtitle!.enabled).toBe(false);
@@ -165,12 +165,12 @@ describe('update', () => {
         });
         await waitForChartStability(chartProxy);
 
-        expect(chart.title!.enabled).toBe(theme.getConfig('cartesian.title.enabled'));
-        expect(chart.title!.text).toBe(theme.getConfig('cartesian.title.text'));
-        expect(chart.title!.fontSize).toBe(theme.getConfig('cartesian.title.fontSize'));
-        expect(chart.title!.fontFamily).toBe(theme.getConfig('cartesian.title.fontFamily'));
-        expect(chart.title!.fontStyle).toBe(theme.getConfig('cartesian.title.fontStyle'));
-        expect(chart.title!.fontWeight).toBe(theme.getConfig('cartesian.title.fontWeight'));
+        expect(chart.title!.enabled).toBe(theme.config.cartesian.title.enabled);
+        expect(chart.title!.text).toBe(theme.config.cartesian.title.text);
+        expect(chart.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);
+        expect(chart.title!.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
+        expect(chart.title!.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
+        expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
 
         expect(chart.subtitle!.enabled).toBe(false);
         expect(chart.subtitle!.text).toBe('My Subtitle');
@@ -363,7 +363,7 @@ describe('update', () => {
     });
 
     test('axes', async () => {
-        let chartProxy = AgChart.create({
+        const chartProxy = AgChart.create({
             data: revenueProfitData,
             series: [
                 {
@@ -378,7 +378,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],
@@ -399,7 +399,7 @@ describe('update', () => {
         await waitForChartStability(chartProxy);
 
         const chart = deproxy(chartProxy);
-        let axes = chart.axes;
+        const axes = chart.axes;
         expect(axes.length).toBe(2);
         expect(axes[0] instanceof NumberAxis).toBe(true);
         expect(axes[1] instanceof NumberAxis).toBe(true);
@@ -418,7 +418,7 @@ describe('update', () => {
             data: revenueProfitData,
             series: [
                 {
-                    xKey: 'blah',
+                    xKey: 'profit',
                     yKey: 'revenue',
                 },
             ],

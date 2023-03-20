@@ -2,8 +2,8 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/
 import { ICellEditorParams } from "@ag-grid-community/core";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
+// backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 
 @Component({
     selector: 'editor-cell',
@@ -28,8 +28,8 @@ export class MySimpleEditor implements ICellEditorAngularComp, AfterViewInit {
     getInitialValue(params: ICellEditorParams): any {
         let startValue = params.value;
 
-        const isBackspaceOrDelete = params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE;
-        if (isBackspaceOrDelete) {
+        const isBackspace = params.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
             startValue = '';
         } else if (params.charPress) {
             startValue = params.charPress;

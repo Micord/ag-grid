@@ -9,8 +9,8 @@ import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
-import { ChartAxisDirection } from '../../chartAxis';
-import { LegendDatum } from '../../legend';
+import { ChartAxisDirection } from '../../chartAxisDirection';
+import { LegendDatum } from '../../legendDatum';
 import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
@@ -407,7 +407,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 children: [] as TreemapNodeDatum[],
             };
             if (isLeaf) {
-                nodeDatum.value = sizeKey ? datum[sizeKey] : 1;
+                nodeDatum.value = sizeKey ? datum[sizeKey] ?? 1 : 1;
             } else {
                 datum.children!.forEach((child) => {
                     const childNodeDatum = createTreeNodeDatum(child, depth + 1, nodeDatum);
@@ -840,6 +840,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 }),
                 defaults
             );
+        }
+
+        if (!title && !content) {
+            return '';
         }
 
         return toTooltipHtml(defaults);

@@ -1,23 +1,15 @@
 import { CountableTimeInterval } from './interval';
-import { durationHour, durationMinute, durationSecond } from './duration';
+import { durationHour, durationMinute } from './duration';
 
-function floor(date: Date) {
-    date.setTime(
-        date.getTime() -
-            date.getMilliseconds() -
-            date.getSeconds() * durationSecond -
-            date.getMinutes() * durationMinute
-    );
-}
-function offset(date: Date, hours: number) {
-    date.setTime(date.getTime() + hours * durationHour);
-}
-function count(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / durationHour;
-}
-function field(date: Date): number {
-    return Math.floor(date.getTime() / durationHour);
+const offset = new Date().getTimezoneOffset() * durationMinute;
+
+function encode(date: Date) {
+    return Math.floor((date.getTime() - offset) / durationHour);
 }
 
-export const hour = new CountableTimeInterval(floor, offset, count, field);
+function decode(encoded: number) {
+    return new Date(offset + encoded * durationHour);
+}
+
+export const hour = new CountableTimeInterval(encode, decode);
 export default hour;

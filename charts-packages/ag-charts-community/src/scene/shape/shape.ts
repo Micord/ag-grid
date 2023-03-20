@@ -1,5 +1,4 @@
 import { Node, RedrawType, SceneChangeDetection } from '../node';
-import { chainObjects } from '../../util/object';
 import { DropShadow } from '../dropShadow';
 
 export type ShapeLineCap = 'butt' | 'round' | 'square';
@@ -38,7 +37,7 @@ export abstract class Shape extends Node {
      * has been applied (using the `restoreOwnStyles` and `restoreAllStyles` methods).
      * These static defaults are meant to be inherited by subclasses.
      */
-    protected static defaultStyles = chainObjects(
+    protected static defaultStyles = Object.assign(
         {},
         {
             fill: 'black',
@@ -124,7 +123,7 @@ export abstract class Shape extends Node {
      * of a device pixel.
      */
     align(start: number, length?: number) {
-        const pixelRatio = this.scene?.canvas?.pixelRatio ?? 1;
+        const pixelRatio = this.layerManager?.canvas?.pixelRatio ?? 1;
 
         const alignedStart = Math.round(start * pixelRatio) / pixelRatio;
         if (length == undefined) {
@@ -169,11 +168,11 @@ export abstract class Shape extends Node {
     protected fillStroke(
         ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath
     ) {
-        if (!this.scene) {
+        if (!this.layerManager) {
             return;
         }
 
-        const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const pixelRatio = this.layerManager.canvas.pixelRatio || 1;
         const { globalAlpha } = ctx;
 
         if (this.fill) {

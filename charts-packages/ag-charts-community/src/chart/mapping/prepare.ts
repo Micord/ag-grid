@@ -33,12 +33,18 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         return true;
     }
 
+    if ((specifiedType as string) === 'cartesian') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'cartesian':
         case 'area':
         case 'bar':
         case 'column':
-        case 'groupedCategory':
         case 'histogram':
         case 'line':
         case 'scatter':
@@ -55,9 +61,15 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return false;
     }
 
+    if ((specifiedType as string) === 'hierarchy') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'hierarchy':
-        // fall-through - hierarchy and treemap are synonyms.
         case 'treemap':
             return true;
 
@@ -72,9 +84,15 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return false;
     }
 
+    if ((specifiedType as string) === 'polar') {
+        doOnce(
+            () => console.warn(`AG Charts - type '${specifiedType}' is deprecated, use a series type instead`),
+            `factory options type ${specifiedType}`
+        );
+        return true;
+    }
+
     switch (specifiedType) {
-        case 'polar':
-        // fall-through - polar and pie are synonyms.
         case 'pie':
             return true;
 
@@ -83,11 +101,12 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     }
 }
 
+const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }
-    return ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'].indexOf(input) >= 0;
+    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -129,6 +148,20 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
+
+    const checkSeriesType = (type?: string) => {
+        if (type != null && !isSeriesOptionType(type)) {
+            throw new Error(
+                `AG Charts - unknown series type: ${type}; expected one of: ${SERIES_OPTION_TYPES.join(', ')}`
+            );
+        }
+    };
+    checkSeriesType(type);
+    for (const { type: seriesType } of options.series ?? []) {
+        if (seriesType == null) continue;
+        checkSeriesType(seriesType);
+    }
+
     options = { ...options, type };
 
     const defaultSeriesType = isAgCartesianChartOptions(options)
@@ -216,7 +249,7 @@ function prepareMainOptions<T>(
 
 function prepareTheme<T extends AgChartOptions>(options: T) {
     const theme = getChartTheme(options.theme);
-    const themeConfig = theme.getConfig(optionsType(options) || 'cartesian');
+    const themeConfig = theme.config[optionsType(options) || 'cartesian'];
 
     const seriesThemes = Object.entries<any>(theme.config).reduce((result, [seriesType, { series }]) => {
         result[seriesType] = series?.[seriesType];
@@ -242,7 +275,7 @@ function prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext
 }
 
 function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: PreparationContext, input: T): T {
-    let paletteOptions: {
+    const paletteOptions: {
         stroke?: string;
         fill?: string;
         fills?: string[];

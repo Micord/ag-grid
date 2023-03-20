@@ -1,24 +1,31 @@
-type FloorFn = (date: Date) => void; // mutates the passed date
-type OffsetFn = (date: Date, step: number) => void; // mutates the passed date
-type CountFn = (start: Date, end: Date) => number;
-// Returns the number of boundaries between this date (exclusive) and the latest previous parent boundary.
-// This date is already floored to the current interval.
-// For example, for the d3.timeDay interval, this returns the number of days since the start of the month.
-type FieldFn = (date: Date) => number;
-
-const t0 = new Date();
-const t1 = new Date();
+/**
+ * Converts the specified Date into a count of years,
+ * days, hours etc. passed since some base date.
+ */
+type EncodeFn = (date: Date) => number;
+/**
+ * Converts the count of years, days, hours etc.
+ * since a base date into another Date.
+ */
+type DecodeFn = (encoded: number) => Date;
+/**
+ * A function to be executed before the range calculation.
+ * Returns a callback to be executed after the range calculation.
+ */
+type RangeFn = (start: Date, end: Date) => () => void;
 
 /**
  * The interval methods don't mutate Date parameters.
  */
 export class TimeInterval {
-    protected readonly _floor: FloorFn;
-    protected readonly _offset: OffsetFn;
+    protected readonly _encode: EncodeFn;
+    protected readonly _decode: DecodeFn;
+    protected readonly _rangeCallback?: RangeFn;
 
-    constructor(floor: FloorFn, offset: OffsetFn) {
-        this._floor = floor;
-        this._offset = offset;
+    constructor(encode: EncodeFn, decode: DecodeFn, rangeCallback?: RangeFn) {
+        this._encode = encode;
+        this._decode = decode;
+        this._rangeCallback = rangeCallback;
     }
 
     /**
@@ -27,9 +34,9 @@ export class TimeInterval {
      * @param date
      */
     floor(date: Date | number): Date {
-        date = new Date(+date);
-        this._floor(date);
-        return date;
+        const d = new Date(date);
+        const e = this._encode(d);
+        return this._decode(e);
     }
 
     /**
@@ -37,144 +44,83 @@ export class TimeInterval {
      * @param date
      */
     ceil(date: Date | number): Date {
-        date = new Date(+date - 1);
-        this._floor(date);
-        this._offset(date, 1);
-        this._floor(date);
-        return date;
-    }
-
-    /**
-     * Returns a new date representing the closest interval boundary date to date.
-     * @param date
-     */
-    round(date: Date | number): Date {
-        const d0 = this.floor(date);
-        const d1 = this.ceil(date);
-        const ms = +date;
-        return ms - d0.getTime() < d1.getTime() - ms ? d0 : d1;
-    }
-
-    /**
-     * Returns a new date equal to date plus step intervals.
-     * @param date
-     * @param step
-     */
-    offset(date: Date | number, step: number = 1): Date {
-        date = new Date(+date);
-        this._offset(date, Math.floor(step));
-        return date;
+        const d = new Date(Number(date) - 1);
+        const e = this._encode(d);
+        return this._decode(e + 1);
     }
 
     /**
      * Returns an array of dates representing every interval boundary after or equal to start (inclusive) and before stop (exclusive).
-     * @param start
-     * @param stop
-     * @param step
+     * @param start Range start.
+     * @param stop Range end.
+     * @param extend If specified, the requested range will be extended to the closest "nice" values.
      */
-    range(start: Date, stop: Date, step: number = 1): Date[] {
-        const range: Date[] = [];
+    range(start: Date, stop: Date, extend?: boolean): Date[] {
+        const rangeCallback = this._rangeCallback?.(start, stop);
 
-        start = this.ceil(start);
-        step = Math.floor(step);
-        if (start > stop || step <= 0) {
-            return range;
+        const e0 = this._encode(extend ? this.floor(start) : this.ceil(start));
+        const e1 = this._encode(extend ? this.ceil(stop) : this.floor(stop));
+        if (e1 < e0) {
+            return [];
         }
 
-        let previous: Date;
-        do {
-            previous = new Date(+start);
-            range.push(previous);
-            this._offset(start, step);
-            this._floor(start);
-        } while (previous < start && start < stop);
+        const range: Date[] = [];
+        for (let e = e0; e <= e1; e++) {
+            const d = this._decode(e);
+            range.push(d);
+        }
+
+        rangeCallback?.();
 
         return range;
     }
+}
 
-    // Returns an interval that is a subset of this interval.
-    // For example, to create an interval that return 1st, 11th, 21st and 31st of each month:
-    // day.filter(date => (date.getDate() - 1) % 10 === 0)
-    filter(test: (date: Date) => boolean): TimeInterval {
-        const floor = (date: Date): Date => {
-            if (date >= date) {
-                this._floor(date);
-
-                while (!test(date)) {
-                    date.setTime(date.getTime() - 1);
-                    this._floor(date);
-                }
-            }
-            return date;
-        };
-        const offset = (date: Date, step: number): Date => {
-            if (date >= date) {
-                if (step < 0) {
-                    while (++step <= 0) {
-                        do {
-                            this._offset(date, -1);
-                        } while (!test(date));
-                    }
-                } else {
-                    while (--step >= 0) {
-                        do {
-                            this._offset(date, 1);
-                        } while (!test(date));
-                    }
-                }
-            }
-            return date;
-        };
-        return new TimeInterval(floor, offset);
-    }
+interface CountableTimeIntervalOptions {
+    snapTo?: Date | number | 'start' | 'end';
 }
 
 export class CountableTimeInterval extends TimeInterval {
-    private readonly _count: CountFn;
-    private readonly _field?: FieldFn;
-
-    constructor(floor: FloorFn, offset: OffsetFn, count: CountFn, field?: FieldFn) {
-        super(floor, offset);
-
-        this._count = count;
-        this._field = field;
-    }
-
-    /**
-     * Returns the number of interval boundaries after start (exclusive) and before or equal to end (inclusive).
-     * @param start
-     * @param end
-     */
-    count(start: Date | number, end: Date | number): number {
-        t0.setTime(+start);
-        t1.setTime(+end);
-        this._floor(t0);
-        this._floor(t1);
-        return Math.floor(this._count(t0, t1));
+    private getOffset(snapTo: Date, step: number) {
+        const s = typeof snapTo === 'number' || snapTo instanceof Date ? this._encode(new Date(snapTo)) : 0;
+        return Math.floor(s) % step;
     }
 
     /**
      * Returns a filtered view of this interval representing every step'th date.
-     * The meaning of step is dependent on this interval’s parent interval as defined by the `field` function.
+     * It can be a number of minutes, hours, days etc.
+     * Must be a positive integer.
      * @param step
      */
-    every(step: number): TimeInterval | undefined {
-        let result: TimeInterval | undefined;
+    every(step: number, options?: CountableTimeIntervalOptions): TimeInterval {
+        let offset = 0;
+        let rangeCallback: RangeFn | undefined;
 
-        step = Math.floor(step);
-        if (isFinite(step) && step > 0) {
-            if (step > 1) {
-                const field = this._field;
-                if (field) {
-                    result = this.filter((d) => field(d) % step === 0);
-                } else {
-                    result = this.filter((d) => this.count(0, d) % step === 0);
-                }
-            } else {
-                result = this;
-            }
+        const { snapTo = 'start' } = options ?? {};
+        if (typeof snapTo === 'string') {
+            const initialOffset = offset;
+            rangeCallback = (start, stop) => {
+                const s = snapTo === 'start' ? start : stop;
+                offset = this.getOffset(s, step);
+                return () => (offset = initialOffset);
+            };
+        } else if (typeof snapTo === 'number') {
+            offset = this.getOffset(new Date(snapTo), step);
+        } else if (snapTo instanceof Date) {
+            offset = this.getOffset(snapTo, step);
         }
 
-        return result;
+        const encode = (date: Date) => {
+            const e = this._encode(date);
+            return Math.floor((e - offset) / step);
+        };
+
+        const decode = (encoded: number) => {
+            return this._decode(encoded * step + offset);
+        };
+
+        const interval = new TimeInterval(encode, decode, rangeCallback);
+
+        return interval;
     }
 }

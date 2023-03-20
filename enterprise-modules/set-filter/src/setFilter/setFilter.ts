@@ -31,6 +31,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 import { SetFilterDisplayValue, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import { SetFilterModelFormatter } from './setFilterModelFormatter';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
@@ -61,6 +62,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private createKey: (value: V | null, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
+    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super('setFilter');
@@ -441,13 +443,13 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandAll(e.item, e.isExpanded);
             } else if (item.children) {
                 // group
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 isGroup = true;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onGroupItemSelected(e.item, e.isSelected);
                 expandedListener = (e: SetFilterListItemExpandedChangedEvent<SetFilterModelTreeItem>) => this.onExpandedChanged(e.item, e.isExpanded);
             } else {
                 // leaf
-                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth) ?? item.treeKey;
+                value = this.setFilterParams.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey;
                 selectedListener = (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) => this.onItemSelected(e.item.key!, e.isSelected);
             }
         } else {
@@ -539,11 +541,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         super.afterGuiAttached(params);
 
-        if (this.setFilterParams.excelMode) {
-            this.resetUiToActiveModel();
-            this.showOrHideResults();
-        }
-
         // collapse all tree list items (if tree list)
         this.resetExpansion();
 
@@ -575,17 +572,25 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
     }
 
-    public applyModel(): boolean {
+    public afterGuiDetached(): void {
+        // discard any unapplied UI state (reset to model)
+        if (this.setFilterParams?.excelMode) {
+            this.resetUiToActiveModel();
+            this.showOrHideResults();
+        }
+    }
+
+    public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
+        if (this.setFilterParams.excelMode && source !== 'rowDataUpdated' && this.valueModel.isEverythingVisibleSelected()) {
             // In Excel, if the filter is applied with all visible values selected, then any active filter on the
             // column is removed. This ensures the filter is removed in this situation.
             this.valueModel.selectAllMatchingMiniFilter();
         }
 
-        const result = super.applyModel();
+        const result = super.applyModel(source);
 
         // keep appliedModelKeys in sync with the applied model
         const appliedModel = this.getModel();
@@ -1076,6 +1081,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             recursiveCollapse(selectAllItem);
             this.valueModel!.updateDisplayedValues('expansion');
         }
+    }
+
+    public getModelAsString(model: SetFilterModel): string {
+        return this.filterModelFormatter.getModelAsString(model, this);
     }
 }
 

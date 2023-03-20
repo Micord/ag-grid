@@ -92,6 +92,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.resetRowHeights.bind(this));
 
         const refreshMapListener = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.MAP,
@@ -1113,6 +1114,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
             atLeastOne = true;
         });
+
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
 
         if (atLeastOne) {
             this.onRowHeightChanged();

@@ -50,6 +50,18 @@ export interface ToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<T
     source: string | undefined;
 }
 
+/** 
+ * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,
+ * and the original ToolPanelVisibleChangedEvent will be dropped
+ */
+export interface InternalToolPanelVisibleChangedEvent<TData = any> extends AgGridEvent<TData> {
+    source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
+    /** Key of tool panel. */
+    key: string;
+    /** True if now visible; false if now hidden. */
+    visible: boolean
+}
+
 export interface ToolPanelSizeChangedEvent<TData = any> extends AgGridEvent<TData> {
     type: 'toolPanelSizeChanged';
     /** True if this is the first change to the Tool Panel size. */
@@ -85,6 +97,7 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `api` - from API method
  * - `apiSelectAll` - from API methods `selectAll`/`deselectAll`
  * - `apiSelectAllFiltered` - from API methods `selectAllFiltered`/`deselectAllFiltered`
+ * - `apiSelectAllCurrentPage` - from API methods `selectAllOnCurrentPage`/`deselectAllOnCurrentPage`
  * - `checkboxSelected` - row selection checkbox clicked
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
@@ -93,11 +106,13 @@ export interface PinnedRowDataChangedEvent<TData = any> extends AgGridEvent<TDat
  * - `spacePressed` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
+ * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
  */
 export type SelectionEventSourceType =
     'api' |
     'apiSelectAll' |
     'apiSelectAllFiltered' |
+    'apiSelectAllCurrentPage' |
     'checkboxSelected' |
     'rowClicked' |
     'rowDataChanged' |
@@ -105,7 +120,8 @@ export type SelectionEventSourceType =
     'selectableChanged' |
     'spacePressed' |
     'uiSelectAll' |
-    'uiSelectAllFiltered';
+    'uiSelectAllFiltered' |
+    'uiSelectAllCurrentPage';
 
 export interface SelectionChangedEvent<TData = any> extends AgGridEvent<TData> {
     source: SelectionEventSourceType;
@@ -204,6 +220,8 @@ export interface RowDragEvent<TData = any> extends AgGridEvent<TData> {
     nodes: IRowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
+    /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
     vDirection: string;
     /** The row index the mouse is dragging over or -1 if over no row. */
@@ -240,6 +258,30 @@ export interface FillStartEvent<TData = any> extends AgGridEvent<TData> {
 export interface FillEndEvent<TData = any> extends AgGridEvent<TData> {
     initialRange: CellRange;
     finalRange: CellRange;
+}
+
+export interface UndoStartedEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+}
+
+export interface UndoEndedEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+    /** `true` if any undo operations were performed. */
+    operationPerformed: boolean;
+}
+
+export interface RedoStartedEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+}
+
+export interface RedoEndedEvent<TData = any> extends AgGridEvent<TData> {
+    /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
+    source: 'api' | 'ui';
+    /** `true` if any redo operations were performed. */
+    operationPerformed: boolean;
 }
 
 export interface ViewportChangedEvent<TData = any> extends AgGridEvent<TData> {
@@ -328,7 +370,7 @@ export interface FlashCellsEvent<TData = any> extends AgGridEvent<TData> {
 export interface PaginationPixelOffsetChangedEvent<TData = any> extends AgGridEvent<TData> {
 }
 
-export interface CellFocusedParams {
+export interface CommonCellFocusParams {
     /** Row index of the focused cell */
     rowIndex: number | null;
     /** Column of the focused cell */
@@ -337,16 +379,23 @@ export interface CellFocusedParams {
     rowPinned: RowPinnedType;
     /** Whether the cell a full width cell or a regular cell */
     isFullWidthCell?: boolean;
-    /** Whether browser focus is also set (false when editing) */
-    forceBrowserFocus?: boolean;
-    /** When `forceBrowserFocus` is `true`, should scroll be prevented */
-    preventScrollOnBrowserFocus?: boolean;
-    // floating is for backwards compatibility, this is the same as rowPinned.
-    // this is because the focus service doesn't keep references to rowNodes
-    // as focused cell is identified by rowIndex - thus when the user re-orders
-    // or filters, the focused cell stays with the index, but the node can change.
-    floating?: string | null;
 }
+
+export interface CellFocusClearedParams extends CommonCellFocusParams {}
+
+export interface CellFocusedParams extends CommonCellFocusParams {
+   /** Whether browser focus is also set (false when editing) */
+   forceBrowserFocus?: boolean;
+   /** When `forceBrowserFocus` is `true`, should scroll be prevented */
+   preventScrollOnBrowserFocus?: boolean;
+   // floating is for backwards compatibility, this is the same as rowPinned.
+   // this is because the focus service doesn't keep references to rowNodes
+   // as focused cell is identified by rowIndex - thus when the user re-orders
+   // or filters, the focused cell stays with the index, but the node can change.
+   floating?: string | null;
+}
+
+export interface CellFocusClearedEvent<TData = any> extends AgGridEvent<TData>, CellFocusClearedParams {}
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
@@ -386,7 +435,8 @@ export type ColumnEventType =
     "rowDataUpdated" |
     "api" |
     "flex" |
-    "pivotChart";
+    "pivotChart" |
+    "columnRowGroupChanged";
 
 export interface ColumnEvent<TData = any> extends AgGridEvent<TData> {
     /** The impacted column, only set if action was on one column */
@@ -440,6 +490,8 @@ interface BaseRowEvent<TData> extends AgGridEvent<TData> {
     rowPinned: RowPinnedType;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
+    /** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
+    eventPath?: EventTarget[];
 }
 
 export interface RowEvent<TData = any> extends BaseRowEvent<TData> {
@@ -570,3 +622,5 @@ export interface RightPinnedWidthChangedEvent<TData = any> extends AgGridEvent<T
 export interface RowContainerHeightChanged<TData = any> extends AgGridEvent<TData> { } // not documented
 
 export interface DisplayedRowsChangedEvent<TData = any> extends AgGridEvent<TData> { } // not documented
+
+export interface CssVariablesChanged<TData = any> extends AgGridEvent<TData> {} // not documented

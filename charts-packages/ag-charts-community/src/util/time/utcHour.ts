@@ -1,17 +1,12 @@
 import { CountableTimeInterval } from './interval';
 import { durationHour } from './duration';
 
-function floor(date: Date) {
-    date.setUTCMinutes(0, 0, 0);
-}
-function offset(date: Date, hours: number) {
-    date.setTime(date.getTime() + hours * durationHour);
-}
-function count(start: Date, end: Date): number {
-    return (end.getTime() - start.getTime()) / durationHour;
-}
-function field(date: Date): number {
-    return date.getUTCHours();
+function encode(date: Date) {
+    return Math.floor(date.getTime() / durationHour);
 }
 
-export const utcHour = new CountableTimeInterval(floor, offset, count, field);
+function decode(encoded: number) {
+    return new Date(encoded * durationHour);
+}
+
+export const utcHour = new CountableTimeInterval(encode, decode);

@@ -50,6 +50,9 @@ const AG_GRID_LOCALE_EN = {
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
 
+    // Group Column Filter
+    groupFilterSelect: 'Select field:',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',
@@ -98,6 +101,7 @@ const AG_GRID_LOCALE_EN = {
     ctrlC: 'Ctrl+C',
     copyWithHeaders: 'Copy With Headers',
     copyWithGroupHeaders: 'Copy with Group Headers',
+    cut: 'Cut',
     paste: 'Paste',
     ctrlV: 'Ctrl+V',
     export: 'Export',

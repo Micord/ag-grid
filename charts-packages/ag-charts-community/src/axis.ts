@@ -11,7 +11,7 @@ import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
 import { doOnce } from './util/function';
-import { CountableTimeInterval, TimeInterval } from './util/time/interval';
+import { TimeInterval } from './util/time/interval';
 import { CrossLine } from './chart/crossline/crossLine';
 import {
     Validate,
@@ -27,14 +27,23 @@ import {
     ARRAY,
     predicateWithMessage,
     OPT_STRING,
+    OPT_ARRAY,
+    LESS_THAN,
+    NUMBER_OR_NAN,
+    AND,
+    GREATER_THAN,
 } from './util/validation';
-import { ChartAxisDirection } from './chart/chartAxis';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
 import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
+import { LogScale } from './scale/logScale';
+import { Default } from './util/default';
+import { Deprecated } from './util/deprecation';
+import { extent } from './util/array';
+import { ChartAxisDirection } from './chart/chartAxisDirection';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -45,10 +54,15 @@ const OPT_TICK_COUNT = predicateWithMessage(
     `expecting an optional tick count Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
 );
 
+const OPT_TICK_INTERVAL = predicateWithMessage(
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any, ctx) => (v !== 0 && NUMBER(0)(v, ctx)) || v instanceof TimeInterval),
+    `expecting an optional non-zero positive Number value or, for a time axis, a Time Interval such as 'agCharts.time.month'`
+);
+
 const GRID_STYLE_KEYS = ['stroke', 'lineDash'];
 const GRID_STYLE = predicateWithMessage(
     ARRAY(undefined, (o) => {
-        for (let key in o) {
+        for (const key in o) {
             if (!GRID_STYLE_KEYS.includes(key)) {
                 return false;
             }
@@ -68,10 +82,9 @@ interface AxisNodeDatum {
     readonly translationY: number;
 }
 
-type TimeTickCount = number | CountableTimeInterval;
-type NumberTickCount = number;
+type TickCount<S> = S extends TimeScale ? number | TimeInterval : number;
 
-type TickCountType<S> = S extends TimeScale ? TimeTickCount : NumberTickCount;
+export type TickInterval<S> = S extends TimeScale ? number | TimeInterval : number;
 
 export class AxisLine {
     @Validate(NUMBER(0))
@@ -111,7 +124,22 @@ class AxisTick<S extends Scale<D, number>, D = any> {
      *     axis.tick.count = month.every(6);
      */
     @Validate(OPT_TICK_COUNT)
-    count?: TickCountType<S> = undefined;
+    @Deprecated('Use tick.interval or tick.minSpacing and tick.maxSpacing instead')
+    count?: TickCount<S> = undefined;
+
+    @Validate(OPT_TICK_INTERVAL)
+    interval?: TickInterval<S> = undefined;
+
+    @Validate(OPT_ARRAY())
+    values?: any[] = undefined;
+
+    @Validate(AND(NUMBER_OR_NAN(1), LESS_THAN('maxSpacing')))
+    @Default(NaN)
+    minSpacing: number = NaN;
+
+    @Validate(AND(NUMBER_OR_NAN(1), GREATER_THAN('minSpacing')))
+    @Default(NaN)
+    maxSpacing: number = NaN;
 }
 
 export class AxisLabel {
@@ -220,7 +248,9 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> {
+export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+    static readonly defaultTickMinSpacing = 80;
+
     readonly id = createId(this);
 
     @Validate(BOOLEAN)
@@ -369,16 +399,22 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(ticks: any[], format?: string) {
-        const { scale } = this;
+        const { scale, fractionDigits } = this;
+        const logScale = scale instanceof LogScale;
+
+        const defaultLabelFormatter =
+            !logScale && fractionDigits > 0
+                ? (x: any) => (typeof x === 'number' ? x.toFixed(fractionDigits) : String(x))
+                : (x: any) => String(x);
+
         if (format && scale && scale.tickFormat) {
             try {
                 this.labelFormatter = scale.tickFormat({
                     ticks,
-                    count: ticks.length,
                     specifier: format,
                 });
             } catch (e) {
-                this.labelFormatter = undefined;
+                this.labelFormatter = defaultLabelFormatter;
                 doOnce(
                     () =>
                         console.warn(
@@ -388,7 +424,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 );
             }
         } else {
-            this.labelFormatter = undefined;
+            this.labelFormatter = defaultLabelFormatter;
         }
     }
 
@@ -408,7 +444,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             this._title = value;
 
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.setTickCount(this.scale, this.tick.count);
+            this.setTickCount(this.tick.count);
+            this.setTickInterval(this.tick.interval);
             this.updateTitle({ ticks: this.scale.ticks!() });
         }
     }
@@ -416,11 +453,39 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._title;
     }
 
-    private setTickCount(scale: Scale<any, any>, count: any) {
-        if (scale instanceof TimeScale && count && count instanceof TimeInterval) {
-            scale.tickInterval = count as any;
+    private setDomain() {
+        const {
+            scale,
+            dataDomain,
+            tick: { values: tickValues },
+        } = this;
+        if (tickValues && scale instanceof ContinuousScale) {
+            const [tickMin, tickMax] = extent(tickValues) ?? [Infinity, -Infinity];
+            const min = Math.min(scale.fromDomain(dataDomain[0]), tickMin);
+            const max = Math.max(scale.fromDomain(dataDomain[1]), tickMax);
+            scale.domain = [scale.toDomain(min), scale.toDomain(max)];
         } else {
+            scale.domain = dataDomain;
+        }
+    }
+
+    private setTickInterval(interval?: TickInterval<S>) {
+        this.scale.interval = this.tick.interval ?? interval;
+    }
+
+    private setTickCount(count?: TickCount<S> | number) {
+        const { scale } = this;
+        if (!(count && scale instanceof ContinuousScale)) {
+            return;
+        }
+
+        if (typeof count === 'number') {
             scale.tickCount = count;
+            return;
+        }
+
+        if (scale instanceof TimeScale) {
+            this.setTickInterval(count);
         }
     }
 
@@ -518,10 +583,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
 
         const nice = this.nice;
-        scale.domain = this.dataDomain;
+        this.setDomain();
+
+        this.setTickInterval(this.tick.interval);
+
         if (scale instanceof ContinuousScale) {
             scale.nice = nice;
-            this.setTickCount(scale, this.tick.count);
+            this.setTickCount(this.tick.count);
             scale.update();
         }
 
@@ -533,14 +601,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const defaultTickCount = 10;
+        const { maxTickCount, minTickCount } = this.estimateTickCount({
+            minSpacing: this.tick.minSpacing,
+            maxSpacing: this.tick.maxSpacing,
+        });
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
+
+        const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
+        const maxIterations = this.tick.count || !continuous ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
-                if (i >= defaultTickCount) {
+                if (i > maxIterations) {
                     // The iteration count `i` is used to reduce the default tick count until all labels fit without overlapping
                     // `i` cannot exceed `defaultTickCount` as it would lead to negative tick count values.
                     // Break out of the while loops when then iteration count reaches `defaultTickCount`
@@ -548,25 +623,30 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 }
 
                 const prevTicks = ticks;
+                const tickCount = Math.max(maxTickCount - i, minTickCount);
 
-                const filteredTicks =
-                    !avoidCollisions || (continuous && this.tick.count === undefined) || i === 0
-                        ? undefined
-                        : ticks.filter((_, i) => i % 2 === 0);
+                const filterTicks =
+                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
+
+                if (this.tick.values) {
+                    ticks = this.tick.values;
+                } else if (maxTickCount === 0) {
+                    ticks = [];
+                } else if (i === 0 || !filterTicks) {
+                    this.setTickCount(this.tick.count ?? tickCount);
+                    ticks = scale.ticks!();
+                }
+
+                if (filterTicks) {
+                    const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
+                    ticks = ticks.filter((_, i) => i % keepEvery === 0);
+                }
 
                 let secondaryAxisTicks;
                 if (secondaryAxis) {
                     // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
                     secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
-                }
-
-                if (filteredTicks) {
-                    ticks = filteredTicks;
-                } else if (secondaryAxisTicks) {
                     ticks = secondaryAxisTicks;
-                } else {
-                    scale.tickCount = this.tick.count ?? defaultTickCount - i;
-                    ticks = scale.ticks!();
                 }
 
                 this.updateSelections({
@@ -579,7 +659,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     primaryTickCount = ticks.length;
                 }
 
-                unchanged = avoidCollisions ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
+                unchanged = checkForOverlap ? ticks.every((t, i) => Number(t) === Number(prevTicks[i])) : false;
                 i++;
             }
 
@@ -601,7 +681,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const labelPadding = minSpacing ?? (rotated ? 0 : 10);
 
             // no need for further iterations if `avoidCollisions` is false
-            labelOverlap = avoidCollisions ? axisLabelsOverlap(labelData, labelPadding) : false;
+            labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelPadding) : false;
         }
 
         this.updateGridLines({
@@ -665,6 +745,54 @@ export class Axis<S extends Scale<D, number>, D = any> {
             .attr('y2', 0);
 
         return primaryTickCount;
+    }
+
+    private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
+        minTickCount: number;
+        maxTickCount: number;
+    } {
+        const { requestedRange } = this;
+
+        const min = Math.min(...requestedRange);
+        const max = Math.max(...requestedRange);
+
+        const availableRange = max - min;
+
+        const defaultMinSpacing = Math.max(
+            Axis.defaultTickMinSpacing,
+            availableRange / ContinuousScale.defaultTickCount
+        );
+
+        if (isNaN(minSpacing) && isNaN(maxSpacing)) {
+            minSpacing = defaultMinSpacing;
+            maxSpacing = availableRange;
+
+            if (minSpacing > maxSpacing) {
+                // Take automatic minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        } else if (isNaN(minSpacing)) {
+            minSpacing = defaultMinSpacing;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied maxSpacing if there is a conflict.
+                minSpacing = maxSpacing;
+            }
+        } else if (isNaN(maxSpacing)) {
+            maxSpacing = availableRange;
+
+            if (minSpacing > maxSpacing) {
+                // Take user-suplied minSpacing if there is a conflict.
+                maxSpacing = minSpacing;
+            }
+        }
+
+        minSpacing = Math.max(minSpacing, defaultMinSpacing);
+
+        const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
+        const minTickCount = Math.ceil(availableRange / maxSpacing);
+
+        return { minTickCount, maxTickCount };
     }
 
     protected calculateDomain() {
@@ -788,8 +916,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     arc.centerX = 0;
                     arc.centerY = scale.range[0] - radius;
                     arc.endAngle = angularGridLength;
-                    arc.radiusX = radius;
-                    arc.radiusY = radius;
+                    arc.radius = radius;
                 });
             } else {
                 gridLines = this.gridlineGroupSelection.selectByTag<Line>(Tags.GridLine).each((line) => {
@@ -1034,20 +1161,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
     formatTickDatum(datum: any, index: number): string {
         const { label, labelFormatter, fractionDigits } = this;
 
-        return label.formatter
-            ? label.formatter({
-                  value: fractionDigits >= 0 ? datum : String(datum),
-                  index,
-                  fractionDigits,
-                  formatter: labelFormatter,
-              })
-            : labelFormatter
-            ? labelFormatter(datum)
-            : typeof datum === 'number' && fractionDigits >= 0
-            ? // the `datum` is a floating point number
-              datum.toFixed(fractionDigits)
-            : // the`datum` is an integer, a string or an object
-              String(datum);
+        if (label.formatter) {
+            return label.formatter({
+                value: fractionDigits > 0 ? datum : String(datum),
+                index,
+                fractionDigits,
+                formatter: labelFormatter,
+            });
+        } else if (labelFormatter) {
+            return labelFormatter(datum);
+        }
+        // The axis is using a logScale or the`datum` is an integer, a string or an object
+        return String(datum);
     }
 
     // For formatting arbitrary values between the ticks.

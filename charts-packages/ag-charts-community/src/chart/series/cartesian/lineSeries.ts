@@ -6,15 +6,15 @@ import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMo
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isContinuous } from '../../../util/value';
+import { checkDatum } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 import {
     NUMBER,
@@ -187,8 +187,10 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
         }
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), xAxis) : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), yAxis) : yData;
+        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, xData, yData, 1);
+
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData), xAxis) : xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData), yAxis) : yData;
     }
 
     async createNodeData() {

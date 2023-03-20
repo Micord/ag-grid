@@ -1,5 +1,5 @@
 import { Path, ScenePathChangeDetection } from './path';
-import { normalizeAngle360 } from '../../util/angle';
+import { normalizeAngle360, normalizeAngle360Inclusive } from '../../util/angle';
 import { isEqual } from '../../util/number';
 import { BBox } from '../bbox';
 
@@ -32,10 +32,6 @@ export class Sector extends Path {
         return new BBox(this.centerX - radius, this.centerY - radius, radius * 2, radius * 2);
     }
 
-    private isFullPie(): boolean {
-        return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
-    }
-
     updatePath(): void {
         const path = this.path;
 
@@ -44,9 +40,9 @@ export class Sector extends Path {
         const endAngle = Math.max(this.startAngle, this.endAngle) + angleOffset;
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
-        const fullPie = this.isFullPie();
-        let centerX = this.centerX;
-        let centerY = this.centerY;
+        const fullPie = isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
+        const centerX = this.centerX;
+        const centerY = this.centerY;
 
         path.clear();
 
@@ -55,18 +51,38 @@ export class Sector extends Path {
             path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
         }
 
-        path.cubicArc(centerX, centerY, outerRadius, outerRadius, 0, startAngle, endAngle, 0);
-        if (fullPie) {
-            path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+        path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+        if (innerRadius > 0) {
+            path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
         } else {
-            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
-            // Revert this commit when fixed ^^.
-            const x = centerX + innerRadius * Math.cos(endAngle);
-            path.lineTo(Math.abs(x) < 1e-8 ? 0 : x, centerY + innerRadius * Math.sin(endAngle));
+            path.lineTo(centerX, centerY);
         }
-        path.cubicArc(centerX, centerY, innerRadius, innerRadius, 0, endAngle, startAngle, 1);
         path.closePath();
 
         this.dirtyPath = false;
+    }
+
+    isPointInPath(x: number, y: number): boolean {
+        const { angleOffset } = this;
+        const startAngle = normalizeAngle360Inclusive(Math.min(this.startAngle, this.endAngle) + angleOffset);
+        const endAngle = normalizeAngle360Inclusive(Math.max(this.startAngle, this.endAngle) + angleOffset);
+        const innerRadius = Math.min(this.innerRadius, this.outerRadius);
+        const outerRadius = Math.max(this.innerRadius, this.outerRadius);
+
+        const point = this.transformPoint(x, y);
+
+        const deltaX = point.x - this.centerX;
+        const deltaY = point.y - this.centerY;
+        const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+        if (distance < innerRadius || distance > outerRadius) {
+            return false;
+        }
+
+        const angle = normalizeAngle360Inclusive(Math.atan2(deltaY, deltaX));
+        if (startAngle > endAngle) {
+            // Sector passes through 0-angle.
+            return startAngle < angle || endAngle > angle;
+        }
+        return startAngle < angle && endAngle > angle;
     }
 }

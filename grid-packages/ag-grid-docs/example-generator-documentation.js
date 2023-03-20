@@ -4,6 +4,8 @@ const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../community-modules/core/package.json').version;
 const agChartsVersion = "^" + require('../../charts-packages/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('../../charts-packages/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('../../charts-packages/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../community-modules/angular/package.json').version;
@@ -516,8 +518,17 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     let jsFile = readAsJsFile(tsFile);
                     // replace Typescript new Grid( with Javascript new agGrid.Grid(
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-                    // replace Typescript AgChart. with Javascript agCharts.AgChart.
-                    jsFile = jsFile.replace(/(?<!\.)AgChart\./g, 'agCharts.AgChart.');
+
+                    // Chart classes that need scoping
+                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community'));
+                    if (chartImports) {
+                        chartImports.imports.forEach(i => {
+                            const toReplace = `(?<!\\.)${i}([\\s\/.])`
+                            const reg = new RegExp(toReplace, "g");
+                            jsFile = jsFile.replace(reg, `agCharts.${i}$1`);
+                        })
+                    }
+
                     // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                     jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
@@ -593,7 +604,8 @@ function addPackageJson(type, framework, importType, basePath) {
     };
 
     if (framework === 'angular') {
-        addDependency('@angular/core', "^13");
+        addDependency('@angular/core', "^14");
+        addDependency('@angular/platform-browser', "^14");
     }
 
     if (framework === 'reactFunctionalTs') {
@@ -622,6 +634,12 @@ function addPackageJson(type, framework, importType, basePath) {
         }
         if (type === 'chart') {
             addDependency('ag-charts-community', agChartsVersion);
+            if (framework === 'angular') {
+                addDependency('ag-charts-angular', agChartsAngularVersion);
+            }
+            if (framework === 'reactFunctionalTs') {
+                addDependency('ag-charts-react', agChartsReactVersion);
+            }
         }
     }
 
@@ -629,21 +647,13 @@ function addPackageJson(type, framework, importType, basePath) {
 }
 
 function getGeneratorCode(prefix) {
-    const gridExamples = prefix === './src/example-generation/grid-' || false;
-
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
     const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
-
-    let vanillaToReactFunctional = null;
-    let vanillaToReactFunctionalTs = null;
-    if (gridExamples) {
-        vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
-        vanillaToReactFunctionalTs = require(`${prefix}vanilla-to-react-functional-ts.ts`).vanillaToReactFunctionalTs;
-    }
-
+    const { vanillaToReactFunctional } = require(`${prefix}vanilla-to-react-functional.ts`);
+    const { vanillaToReactFunctionalTs } = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
     return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
@@ -699,6 +709,6 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
 
     return new Promise(resolve => {
         module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve() , true), true)
+            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
     });
 };

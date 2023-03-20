@@ -100,3 +100,36 @@ The example below shows this in action where the following can be noted:
 - Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
 <grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+## Transactions with Tree Data
+
+Tree Data can have transactions applied in the same way as row groups. This is explained in the [SSRM Transactions](/server-side-model-updating-transactions/) section.
+
+The example below demonstrates transactions with Tree Data. Note the following:
+- **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
+- **Update Selected** changes the selected row's `Employment Type`.
+- **Delete Selected** removes the selected row, and all of its child rows.
+- **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`. 
+
+<grid-example title='Transactions with Tree Data' name='transactions-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+## Filtering Tree Data
+
+Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data Filtering](/tree-data/#tree-data-filtering). A group will be included if:
+
+<ol style="list-style-type: lower-latin;">
+    <li>it has any children that pass the filter, or</li>
+    <li>it has a parent that passes the filter, or</li>
+    <li>its own data passes the filter</li>
+</ol>
+
+The following example demonstrates Server-Side Tree Data Filtering using the [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure in the filter.
+
+- The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+- The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths. The supplied values are at the child level only.
+- The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
+- The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
+- The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
+- The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
+
+<grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>

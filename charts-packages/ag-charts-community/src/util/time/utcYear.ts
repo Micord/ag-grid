@@ -1,18 +1,18 @@
 import { CountableTimeInterval } from './interval';
 
-function floor(date: Date) {
-    date.setUTCMonth(0, 1);
-    date.setUTCHours(0, 0, 0, 0);
-}
-function offset(date: Date, years: number) {
-    date.setUTCFullYear(date.getUTCFullYear() + years);
-}
-function count(start: Date, end: Date): number {
-    return end.getUTCFullYear() - start.getUTCFullYear();
-}
-function field(date: Date): number {
+function encode(date: Date) {
     return date.getUTCFullYear();
 }
 
-export const utcYear = new CountableTimeInterval(floor, offset, count, field);
+function decode(encoded: number) {
+    // Note: assigning years through the constructor
+    // will break for years 0 - 99 AD (will turn 1900's).
+    const d = new Date();
+    d.setUTCFullYear(encoded);
+    d.setUTCMonth(0, 1);
+    d.setUTCHours(0, 0, 0, 0);
+    return d;
+}
+
+export const utcYear = new CountableTimeInterval(encode, decode);
 export default utcYear;

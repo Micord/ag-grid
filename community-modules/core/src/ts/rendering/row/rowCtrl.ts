@@ -2,12 +2,12 @@ import { ProcessRowParams } from "../../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { BeanStub } from "../../context/beanStub";
-import { CellPosition } from "../../entities/cellPosition";
+import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
-import { RowClassParams } from "../../entities/gridOptions";
+import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
-import { RowPosition } from "../../entities/rowPosition";
+import { RowPosition } from "../../entities/rowPositionUtils";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
@@ -47,7 +47,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: any): void;
+    setUserStyles(styles: RowStyle): void;
     setRole(role: string): void;
 }
 
@@ -368,6 +368,10 @@ export class RowCtrl extends BeanStub {
         return this.printLayout;
     }
 
+    public getFullWidthCellRenderer(): ICellRenderer<any> | null | undefined {
+        return this.fullWidthGui?.rowComp?.getFullWidthCellRenderer();
+    }
+
     // use by autoWidthCalculator, as it clones the elements
     public getCellElement(column: Column): HTMLElement | null {
         const cellCtrl = this.getCellCtrl(column);
@@ -622,7 +626,8 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusCleared.bind(this));
         this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
@@ -769,9 +774,9 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public onFullWidthRowFocused(event: CellFocusedEvent) {
+    public onFullWidthRowFocused(event?: CellFocusedEvent) {
         const node = this.rowNode;
-        const isFocused = this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
+        const isFocused = !event ? false : this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
         const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui?.element;
         if (!element) { return; } // can happen with react ui, comp not yet ready
@@ -822,9 +827,9 @@ export class RowCtrl extends BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
-            context: this.beans.gridOptionsService.get('context'),
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
+            context: this.beans.gridOptionsService.context,
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
             event: domEvent
         };
     }
@@ -972,9 +977,9 @@ export class RowCtrl extends BeanStub {
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.get('api')!,
-            columnApi: this.beans.gridOptionsService.get('columnApi')!,
-            context: this.beans.gridOptionsService.get('context'),
+            api: this.beans.gridOptionsService.api,
+            columnApi: this.beans.gridOptionsService.columnApi,
+            context: this.beans.gridOptionsService.context,
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
@@ -1242,8 +1247,11 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
-            // adding hovers from that point onwards.
-            if (!this.beans.gridOptionsService.is('suppressRowHoverHighlight')) {
+            // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
+            if (
+                !this.beans.dragService.isDragging() &&
+                !this.beans.gridOptionsService.is('suppressRowHoverHighlight')
+            ) {
                 eRow.classList.add('ag-row-hover');
             }
         });
@@ -1366,6 +1374,14 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-focus', this.rowFocused);
             gui.rowComp.addOrRemoveCssClass('ag-row-no-focus', !this.rowFocused);
         });
+    }
+
+    private onCellFocused(): void {
+        this.onCellFocusChanged();
+    }
+
+    private onCellFocusCleared(): void {
+        this.onCellFocusChanged();
     }
 
     private onCellFocusChanged(): void {

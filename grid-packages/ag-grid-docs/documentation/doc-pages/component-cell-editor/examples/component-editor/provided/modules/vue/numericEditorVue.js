@@ -1,7 +1,7 @@
 import {nextTick} from 'vue';
 
+// backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -28,7 +28,7 @@ export default {
             let startValue;
             let highlightAllOnFocus = true;
 
-            if (params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE) {
+            if (params.eventKey === KEY_BACKSPACE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
             } else if (params.charPress) {
@@ -54,7 +54,7 @@ export default {
         },
 
         onKeyDown(event) {
-            if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
+            if (this.isLeftOrRight(event) || this.isBackspace(event)) {
                 event.stopPropagation();
                 return;
             }
@@ -78,8 +78,8 @@ export default {
             return charCode === KEY_ENTER || charCode === KEY_TAB;
         },
 
-        deleteOrBackspace(event) {
-            return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
+        isBackspace(event) {
+            return event.key === KEY_BACKSPACE;
         },
 
         isLeftOrRight(event) {

@@ -40,7 +40,6 @@ import {
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
 } from "@ag-grid-community/core";
-import { stringToArray } from "./csv";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | undefined, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -57,6 +56,8 @@ type DataForCellRangesType = { data: string, cellsToFlash: CellsToFlashType }
 const SOURCE_PASTE = 'paste';
 const EXPORT_TYPE_DRAG_COPY = 'dragCopy';
 const EXPORT_TYPE_CLIPBOARD = 'clipboard';
+
+enum CellClearType { CellRange, SelectedRows, FocusedCell };
 
 @Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
@@ -180,7 +181,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private processClipboardData(data: string): void {
         if (data == null) { return; }
 
-        let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
+        let parsedData: string[][] | null = ClipboardService.stringToArray(data, this.getClipboardDelimiter());
 
         const userFunc = this.gridOptionsService.getCallback('processDataFromClipboard');
 
@@ -213,6 +214,83 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.doPasteOperation(pasteOperation);
     }
 
+    // This will parse a delimited string into an array of arrays.
+    static stringToArray(strData: string, delimiter = ','): string[][] {
+        const data: any[][] = [];
+        const isNewline = (char: string) => char === '\r' || char === '\n';
+
+        let insideQuotedField = false;
+
+        if (strData === '') { return [['']]; }
+
+        // iterate over each character, keep track of current row and column (of the returned array)
+        for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
+            const previousChar = strData[position - 1];
+            const currentChar = strData[position];
+            const nextChar = strData[position + 1];
+            const ensureDataExists = () => {
+                if (!data[row]) {
+                    // create row if it doesn't exist
+                    data[row] = [];
+                }
+
+                if (!data[row][column]) {
+                    // create column if it doesn't exist
+                    data[row][column] = '';
+                }
+            };
+
+            ensureDataExists();
+
+            if (currentChar === '"') {
+                if (insideQuotedField) {
+                    if (nextChar === '"') {
+                        // unescape double quote
+                        data[row][column] += '"';
+                        position++;
+                    } else {
+                        // exit quoted field
+                        insideQuotedField = false;
+                    }
+
+                    continue;
+                } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
+                    // enter quoted field
+                    insideQuotedField = true;
+                    continue;
+                }
+            }
+
+            if (!insideQuotedField) {
+                if (currentChar === delimiter) {
+                    // move to next column
+                    column++;
+                    ensureDataExists();
+
+                    continue;
+                } else if (isNewline(currentChar)) {
+                    // move to next row
+                    column = 0;
+                    row++;
+                    ensureDataExists();
+
+                    if (currentChar === '\r' && nextChar === '\n') {
+                        // skip over second newline character if it exists
+                        position++;
+                    }
+
+                    continue;
+                }
+            }
+
+            // add current character to current column
+            data[row][column] += currentChar;
+        }
+
+        return data;
+    }
+
+
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     private doPasteOperation(pasteOperationFunc: (
         cellsToFlash: any,
@@ -220,8 +298,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         focusedCell: CellPosition | null,
         changedPath: ChangedPath | undefined) => void
     ): void {
-        const api = this.gridOptionsService.get('api');
-        const columnApi = this.gridOptionsService.get('columnApi');
+        const api = this.gridOptionsService.api;
+        const columnApi = this.gridOptionsService.columnApi;
         const source = 'clipboard';
 
         this.eventService.dispatchEvent({
@@ -310,7 +388,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     changedPath.addParentNode(rowNode.parent, [column]);
                 }
 
-                const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+                const { rowIndex, rowPinned } = currentRow;
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
 
@@ -415,7 +494,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             changedPath.addParentNode(rowNode.parent, [column]);
                         }
 
-                        const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+                        const { rowIndex, rowPinned } = currentRow;
+                        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                         cellsToFlash[cellId] = true;
                     });
                 }
@@ -517,8 +597,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
-
-        const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
+        
+        const { rowIndex, rowPinned } = rowNode;
+        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex!, column, rowPinned });
         cellsToFlash[cellId] = true;
 
         if (changedPath) {
@@ -527,6 +608,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public copyToClipboard(params: IClipboardCopyParams = {}): void {
+        this.copyOrCutToClipboard(params);
+    }
+
+    public cutToClipboard(params: IClipboardCopyParams = {}): void {
+        this.copyOrCutToClipboard(params, true);
+    }
+
+    private copyOrCutToClipboard(params: IClipboardCopyParams, cut?: boolean): void {
         let { includeHeaders, includeGroupHeaders } = params;
         this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
 
@@ -540,17 +629,59 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
-
         const shouldCopyRows = !this.gridOptionsService.is('suppressCopyRowsToClipboard');
 
+
+        let cellClearType: CellClearType | null = null;
         // Copy priority is Range > Row > Focus
         if (this.rangeService && !this.rangeService.isEmpty() && !this.shouldSkipSingleCellRange()) {
             this.copySelectedRangeToClipboard(copyParams);
+            cellClearType = CellClearType.CellRange;
         } else if (shouldCopyRows && !this.selectionService.isEmpty()) {
             this.copySelectedRowsToClipboard(copyParams);
+            cellClearType = CellClearType.SelectedRows;
         } else if (this.focusService.isAnyCellFocused()) {
             this.copyFocusedCellToClipboard(copyParams);
+            cellClearType = CellClearType.FocusedCell;
         }
+
+        if (cut && cellClearType !== null) {
+            this.clearCellsAfterCopy(cellClearType);
+        }
+    }
+
+    private clearCellsAfterCopy(type: CellClearType) {
+        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
+        if (type === CellClearType.CellRange) {
+            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
+        } else if (type === CellClearType.SelectedRows) {
+            this.clearSelectedRows();
+        } else {
+            const focusedCell = this.focusService.getFocusedCell();
+            if (focusedCell == null) { return; }
+
+            const rowNode = this.rowPositionUtils.getRowNode(focusedCell);
+            if (rowNode) {
+                this.clearCellValue(rowNode, focusedCell.column);
+            }
+        }
+        this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_END });
+    }
+
+    private clearSelectedRows(): void {
+        const selected = this.selectionService.getSelectedNodes();
+        const columns = this.columnModel.getAllDisplayedColumns();
+
+        for (const row of selected) {
+            for (const col of columns) {
+                this.clearCellValue(row, col);
+            }
+        }
+    }
+
+    private clearCellValue(rowNode: RowNode, column: Column): void {
+        if (!column.isCellEditable(rowNode)) { return; }
+        rowNode.setDataValue(column, null, 'clipboardService');
     }
 
     private shouldSkipSingleCellRange(): boolean {
@@ -674,7 +805,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         while (node) {
             rowPositions.push(node);
             range.columns.forEach(column => {
-                const cellId = this.cellPositionUtils.createIdFromValues(node!.rowIndex, column, node!.rowPinned);
+                const { rowIndex, rowPinned } = node!;
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
             if (this.rowPositionUtils.sameRow(node, lastRow)) { break; }

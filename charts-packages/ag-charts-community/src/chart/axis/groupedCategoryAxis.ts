@@ -7,9 +7,9 @@ import { BBox } from '../../scene/bbox';
 import { BandScale } from '../../scale/bandScale';
 import { ticksToTree, TreeLayout, treeLayout } from '../../layout/tree';
 import { AxisLabel, AxisLine } from '../../axis';
-import { ChartAxis, ChartAxisDirection } from '../chartAxis';
+import { ChartAxis } from '../chartAxis';
+import { ChartAxisDirection } from '../chartAxisDirection';
 import { extent } from '../../util/array';
-import { isContinuous } from '../../util/value';
 import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 
@@ -146,7 +146,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const domain = new Array<any>().concat(...domains);
 
-        const values = extent(domain, isContinuous) || domain;
+        const values = extent(domain) || domain;
 
         this.dataDomain = this.normaliseDataDomain(values);
     }
@@ -320,7 +320,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             // Calculate positions of label separators for all nodes except the root.
             // Each separator is placed to the top of the current label.
             if (datum.parent && isLabelTree) {
-                let y = !datum.children.length
+                const y = !datum.children.length
                     ? datum.screenX - bandwidth / 2
                     : datum.screenX - (datum.leafCount * bandwidth) / 2;
 

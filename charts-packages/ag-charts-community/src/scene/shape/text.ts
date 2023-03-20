@@ -1,5 +1,4 @@
 import { Shape } from './shape';
-import { chainObjects } from '../../util/object';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
@@ -13,7 +12,7 @@ function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: a
 export class Text extends Shape {
     static className = 'Text';
 
-    protected static defaultStyles = chainObjects(Shape.defaultStyles, {
+    protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
         fontStyle: undefined,
         fontWeight: undefined,
@@ -133,14 +132,14 @@ export class Text extends Shape {
     }
 
     render(renderCtx: RenderContext): void {
-        let { ctx, forceRender, stats } = renderCtx;
+        const { ctx, forceRender, stats } = renderCtx;
 
         if (this.dirty === RedrawType.NONE && !forceRender) {
             if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
 
-        if (!this.lines.length || !this.scene) {
+        if (!this.lines.length || !this.layerManager) {
             if (stats) stats.nodesSkipped += this.nodeCount.count;
             return;
         }
@@ -154,7 +153,7 @@ export class Text extends Shape {
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
-        const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const pixelRatio = this.layerManager.canvas.pixelRatio || 1;
         const { globalAlpha } = ctx;
 
         if (fill) {

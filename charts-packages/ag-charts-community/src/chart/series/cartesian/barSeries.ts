@@ -7,15 +7,16 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesNodeDatum, SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legend';
+import { LegendDatum } from '../../legendDatum';
 import { CartesianSeries, CartesianSeriesNodeClickEvent } from './cartesianSeries';
-import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent, findMinMax } from '../../../util/array';
-import { equal } from '../../../util/equal';
+import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isContinuous, isNumber } from '../../../util/value';
+import { checkDatum, isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -44,6 +45,7 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -209,7 +211,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yKeys = this.grouped ? flatYKeys.map((k) => [k]) : [flatYKeys];
         }
 
-        if (!equal(this._yKeys, yKeys)) {
+        if (!areArrayItemsStrictlyEqual(this._yKeys, yKeys)) {
             this.flatYKeys = flatYKeys ? flatYKeys : undefined;
             this._yKeys = yKeys;
 
@@ -374,10 +376,47 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
+        const xyValid = this.validateXYData(
+            this.xKey,
+            this.yKeys.join(', '),
+            data,
+            xAxis,
+            yAxis,
+            this.xData,
+            this.yData,
+            3
+        );
+        if (!xyValid) {
+            this.xData = [];
+            this.yData = [];
+            this.yDomain = [];
+            return;
+        }
+
         // Contains min/max values for each stack in each group,
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.
-        const yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        const isLogAxis = yAxis instanceof LogAxis;
+        let yMinMax: {
+            min?: number | undefined;
+            max?: number | undefined;
+        }[][];
+
+        if (!isLogAxis) {
+            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
+        } else {
+            yMinMax = this.yData.map((group) =>
+                group.map((stack) => {
+                    const stackExtent = extent(stack) ?? [];
+
+                    return {
+                        min: stackExtent[0],
+                        max: stackExtent[1],
+                    };
+                })
+            );
+        }
+
         const { yData, normalizedTo } = this;
 
         // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
@@ -391,6 +430,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         );
 
         let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
+
         if (yMin === Infinity && yMax === -Infinity) {
             // There's no data in the domain.
             this.yDomain = [];
@@ -398,8 +438,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yMin < 0 ? -normalizedTo : 0;
-            yMax = yMax > 0 ? normalizedTo : 0;
+            yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
+            yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
@@ -418,7 +458,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         for (const group of groups) {
             for (const stack of group) {
-                let { min = Infinity, max = -Infinity } = stack;
+                const { min = Infinity, max = -Infinity } = stack;
                 if (min < tallestStackMin) {
                     tallestStackMin = min;
                 }
@@ -442,7 +482,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             }
             // The last node will be clipped if the scale is not a band scale
             // Extend the domain by the smallest data interval so that the last band is not clipped
-            const xDomain = extent(this.xData, isContinuous, Number) || [NaN, NaN];
+            const xDomain = extent(this.xData) || [NaN, NaN];
             if (flipXY) {
                 xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
             } else {
@@ -476,8 +516,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
 
         // calculate step
-        let domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
-        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
+        const domainLength = xAxis.dataDomain[1] - xAxis.dataDomain[0];
+        const intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum number of bands to ensure the step does not fall below 1 pixel.

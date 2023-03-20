@@ -9,7 +9,7 @@ const CANVAS_WIDTH = 1150;
 
 describe('Range', () => {
     describe('rendering', () => {
-        let canvasCtx = setupMockCanvas();
+        const canvasCtx = setupMockCanvas();
 
         const GAP = 25;
         const COORDINATES: Partial<Range> = { x1: 0, y1: 0, x2: 200, y2: 100 };
@@ -89,7 +89,7 @@ describe('Range', () => {
 
                     // Render.
                     ctx.save();
-                    range.render({ ctx, forceRender: true, resized: false });
+                    range.render({ ctx, forceRender: true, resized: false, debugNodes: {} });
                     ctx.restore();
 
                     // Prepare for next case.

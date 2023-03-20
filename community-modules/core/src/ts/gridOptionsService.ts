@@ -38,7 +38,7 @@ type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any>) => any>, NoArgFuncs | AnyArgFuncs>;
-type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps>;
+type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps | CallbackProps | 'api' | 'columnApi' | 'context'>;
 
 
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
@@ -79,12 +79,22 @@ export class GridOptionsService {
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
 
+    // Store locally to avoid retrieving many times as these are requested for every callback
+    public api: GridApi;
+    public columnApi: ColumnApi;
+    // This is quicker then having code call gos.get('context')
+    public get context() {
+        return this.gridOptions['context'];
+    }
+
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
+        this.api = gridApi;
+        this.columnApi = columnApi;
     }
 
     @PostConstruct
@@ -157,7 +167,11 @@ export class GridOptionsService {
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                const mergedParams = { ...callbackParams, api: this.gridOptions.api!, columnApi: this.gridOptions.columnApi!, context: this.gridOptions.context } as P;
+                const mergedParams = callbackParams as P;
+                mergedParams.api = this.api;
+                mergedParams.columnApi = this.columnApi;
+                mergedParams.context = this.context;
+
                 return callback(mergedParams);
             };
             return wrapped;

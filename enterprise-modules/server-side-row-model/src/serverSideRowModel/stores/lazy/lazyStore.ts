@@ -127,7 +127,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let insertedNodes: RowNode[] | undefined = undefined;
         if (transaction.add?.length) {
-            insertedNodes = this.cache.insertRowNodes(transaction.add, transaction.addIndex);
+            let addIndex = transaction.addIndex;
+            if (addIndex != null && addIndex < 0) {
+                addIndex = undefined;
+            }
+            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
@@ -203,6 +207,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return this.cache.getRowCount();
     }
 
+    /** 
+     * Sets the current row count of the store, and whether the last row index is known
+     */
+    setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void {
+        this.cache.setRowCount(rowCount, isLastRowIndexKnown);
+    }
+
     /**
      * Given a display index, returns whether that row is within this store or a child store of this store
      * 
@@ -232,6 +243,21 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
+    }
+
+    /**
+     * Recursively applies a provided function to every node
+     * 
+     * For the purpose of exclusively sever side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
+     */
+    forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence = new NumberSequence()): void {
+        callback(this, sequence.next());
+        this.cache.getAllNodes().forEach(rowNode => {
+            const childCache = rowNode.childStore;
+            if (childCache) {
+                childCache.forEachStoreDeep(callback, sequence);
+            }
+        });
     }
 
     /**
@@ -544,7 +570,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             suppressInfiniteScroll: false,
             route: this.parentRowNode.getGroupKeys(),
             rowCount: this.getRowCount(),
+            lastRowIndexKnown: this.isLastRowIndexKnown(),
             info: this.info,
+            maxBlocksInCache: this.storeParams.maxBlocksInCache,
+            cacheBlockSize: this.storeParams.cacheBlockSize,
         });
         this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
     }
@@ -584,5 +613,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             type: Events.EVENT_STORE_UPDATED
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    public getBlockStates() {
+        return this.cache.getBlockStates();
     }
 }

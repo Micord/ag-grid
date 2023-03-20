@@ -1005,7 +1005,7 @@
       }
     },
     "getQuickFilterText": {
-      "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+      "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "type": {
         "arguments": { "params": "GetQuickFilterTextParams<TData>" },
         "returnType": "string",
@@ -1064,6 +1064,10 @@
     },
     "headerCheckboxSelectionFilteredOnly": {
       "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "headerCheckboxSelectionCurrentPageOnly": {
+      "description": "/** If `true`, the header checkbox selection will only select nodes on the current page. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartDataType": {
@@ -2509,7 +2513,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -2548,7 +2552,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -2596,11 +2600,15 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -3153,7 +3161,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -4042,7 +4050,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -4051,7 +4059,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -4060,7 +4068,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -4069,7 +4077,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -4166,6 +4174,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -5393,6 +5473,39 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "InternalToolPanelVisibleChangedEvent": {
+    "source": {
+      "type": {
+        "returnType": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
+        "optional": false
+      }
+    },
+    "key": {
+      "description": "/** Key of tool panel. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "visible": {
+      "description": "/** True if now visible; false if now hidden. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "ToolPanelSizeChangedEvent": {
     "type": {
       "type": { "returnType": "'toolPanelSizeChanged'", "optional": false }
@@ -5987,6 +6100,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6035,6 +6152,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6081,6 +6202,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -6129,6 +6254,10 @@
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
     },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
@@ -6175,6 +6304,10 @@
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent", "optional": false }
+    },
+    "eventPath": {
+      "description": "/** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "vDirection": {
       "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
@@ -6269,6 +6402,106 @@
       "type": { "returnType": "CellRange", "optional": false }
     },
     "finalRange": { "type": { "returnType": "CellRange", "optional": false } },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoStartedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "UndoEndedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any undo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoStartedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RedoEndedEvent": {
+    "source": {
+      "description": "/** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */",
+      "type": { "returnType": "'api' | 'ui'", "optional": false }
+    },
+    "operationPerformed": {
+      "description": "/** `true` if any redo operations were performed. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -6613,7 +6846,7 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "CellFocusedParams": {
+  "CommonCellFocusParams": {
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6629,7 +6862,27 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusClearedParams": {
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
     },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedParams": {
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
       "type": { "returnType": "boolean", "optional": true }
@@ -6638,9 +6891,25 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
-  "CellFocusedEvent": {
+  "CellFocusClearedEvent": {
     "meta": { "typeParams": ["TData = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -6673,6 +6942,25 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CellFocusedEvent": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
     },
     "forceBrowserFocus": {
       "description": "/** Whether browser focus is also set (false when editing) */",
@@ -6682,7 +6970,23 @@
       "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
+    "rowIndex": {
+      "description": "/** Row index of the focused cell */",
+      "type": { "returnType": "number | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Column of the focused cell */",
+      "type": { "returnType": "Column | string | null", "optional": false }
+    },
+    "rowPinned": {
+      "description": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
+      "type": { "returnType": "RowPinnedType", "optional": false }
+    },
+    "isFullWidthCell": {
+      "description": "/** Whether the cell a full width cell or a regular cell */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "FullWidthRowFocusedEvent": {
     "fromBelow": { "type": { "returnType": "boolean", "optional": false } },
@@ -6703,6 +7007,15 @@
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
     },
+    "forceBrowserFocus": {
+      "description": "/** Whether browser focus is also set (false when editing) */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "preventScrollOnBrowserFocus": {
+      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "floating": { "type": { "returnType": "string | null", "optional": true } },
     "rowIndex": {
       "description": "/** Row index of the focused cell */",
       "type": { "returnType": "number | null", "optional": false }
@@ -6718,16 +7031,7 @@
     "isFullWidthCell": {
       "description": "/** Whether the cell a full width cell or a regular cell */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "forceBrowserFocus": {
-      "description": "/** Whether browser focus is also set (false when editing) */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "preventScrollOnBrowserFocus": {
-      "description": "/** When `forceBrowserFocus` is `true`, should scroll be prevented */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "floating": { "type": { "returnType": "string | null", "optional": true } }
+    }
   },
   "ExpandCollapseAllEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
@@ -7039,6 +7343,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "meta": { "typeParams": ["TData"] },
     "api": {
       "description": "/** The grid api. */",
@@ -7079,6 +7387,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7117,6 +7429,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7161,6 +7477,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7199,6 +7519,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7242,6 +7566,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7280,6 +7608,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7320,6 +7652,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7358,6 +7694,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7398,6 +7738,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7436,6 +7780,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7476,6 +7824,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7514,6 +7866,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7560,6 +7916,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7604,6 +7964,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7650,6 +8014,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7694,6 +8062,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7740,6 +8112,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7784,6 +8160,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7830,6 +8210,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7874,6 +8258,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -7920,6 +8308,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -7965,6 +8357,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8009,6 +8405,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -8067,6 +8467,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8117,6 +8521,10 @@
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
     },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
+    },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -8166,6 +8574,10 @@
     "event": {
       "description": "/** If event was due to browser event (eg click), this is the browser event */",
       "type": { "returnType": "Event | null", "optional": true }
+    },
+    "eventPath": {
+      "description": "/** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */",
+      "type": { "returnType": "EventTarget[]", "optional": true }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -8425,6 +8837,25 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "CssVariablesChanged": {
+    "meta": { "typeParams": ["TData = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "IFilterLocaleText": {
     "applyFilter": { "type": { "returnType": "string", "optional": false } },
     "clearFilter": { "type": { "returnType": "string", "optional": false } },
@@ -8625,7 +9056,7 @@
       "type": { "returnType": "IDateComparatorFunc", "optional": true }
     },
     "browserDatePicker": {
-      "description": "/** This is only used if a date component is not provided.\n     * By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers\n     * (This is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).\n     * If this property is set to `true`, the browser date picker will be used regardless of the browser type.\n     * If set to `false`, a plain text box will be used for all browsers.\n     */",
+      "description": "/** Defines whether the grid uses the browser date picker or a plain text box.\n     *  - `true`: Force the browser date picker to be used.\n     *  - `false`: Force a plain text box to be used.\n     * \n     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker\n     * for all supported browsers and a plain text box for other browsers.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "minValidYear": {
@@ -8832,8 +9263,12 @@
   },
   "IProvidedFilter": {
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -8886,6 +9321,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ScalarFilterParams": { "meta": { "typeParams": ["TData = any"] } },
@@ -8961,8 +9400,12 @@
   "JoinOperator": {},
   "ISimpleFilter": {
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -9015,6 +9458,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "onFloatingFilterChanged": {
       "description": "/** Notification that a new floating-filter value was input by the user.\n     *\n     * @param type operation type selected.\n     * @param value model-typed value entered.\n     */",
@@ -11630,7 +12077,7 @@
   },
   "ChartToolPanelsDef": {
     "settingsPanel": {
-      "description": "/** Customisations for the settings panel */",
+      "description": "/** Customisations for the settings panel and chart menu items in the Context Menu. */",
       "type": { "returnType": "ChartSettingsPanel", "optional": true }
     },
     "formatPanel": {
@@ -12246,6 +12693,13 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "copyToClipboard": {
+      "type": {
+        "arguments": { "params?": "IClipboardCopyParams" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "cutToClipboard": {
       "type": {
         "arguments": { "params?": "IClipboardCopyParams" },
         "returnType": "void",
@@ -13321,6 +13775,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ProvidedFilterModel": {
@@ -13395,6 +13853,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "IDoesFilterPassParams": {
@@ -13916,8 +14378,12 @@
       }
     },
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "getModelFromUi": {
       "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n     * applied, this model will reflect those changes.\n     */",
@@ -13970,6 +14436,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "IMultiFilterDef": {
@@ -14278,7 +14748,11 @@
       }
     },
     "clearCellRangeCellValues": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "cellRanges?": "CellRange[]", "source?": "string" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "ISelectionHandle": {
@@ -14901,7 +15375,7 @@
       }
     },
     "setData": {
-      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14909,7 +15383,7 @@
       }
     },
     "updateData": {
-      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed. */",
+      "description": "/** Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.\n     */",
       "type": {
         "arguments": { "data": "TData" },
         "returnType": "void",
@@ -14917,7 +15391,7 @@
       }
     },
     "setDataValue": {
-      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     *\n     * @param colKey The column where the value should be updated.\n     * @param newValue The new value.\n     * @param eventSource The source of the event, optional.\n     * @returns `true` if the value was changed, otherwise `false`.\n     */",
+      "description": "/** Replaces the value on the `rowNode` for the specified column. When complete,\n     * the grid will refresh the rendered cell on the required row only.\n     * **Note**: This method on fires `onCellEditRequest` when the Grid is on **Read Only** mode.\n     *\n     * @param colKey The column where the value should be updated\n     * @param newValue The new value\n     * @param eventSource The source of the event\n     * @returns `True` if the value was changed, otherwise `False`.\n     */",
       "type": {
         "arguments": {
           "colKey": "string | Column",
@@ -15124,7 +15598,7 @@
       "type": { "returnType": "number | undefined", "optional": false }
     },
     "endRow": {
-      "description": "/** Last row requested or undefined for all rows. */",
+      "description": "/** Index after the last row required row or undefined for all rows. */",
       "type": { "returnType": "number | undefined", "optional": false }
     },
     "rowGroupCols": {
@@ -15264,6 +15738,19 @@
     },
     "resetRootStore": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "getBlockStates": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "setRowCount": {
+      "type": {
+        "arguments": {
+          "rowCount": "number",
+          "isLastRowIndexKnown?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "getRow": {
       "description": "/** Returns the rowNode at the given index. */",
@@ -15441,6 +15928,16 @@
         "arguments": {
           "displayIndexSeq": "NumberSequence",
           "nextRowTop": "{ value: number; }"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "forEachStoreDeep": {
+      "type": {
+        "arguments": {
+          "callback": "(rowNode: IServerSideStore, index: number) => void",
+          "sequence?": "NumberSequence"
         },
         "returnType": "void",
         "optional": false
@@ -15724,8 +16221,12 @@
     },
     "meta": { "typeParams": ["V = string"] },
     "applyModel": {
-      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     */",
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n     * when `applyModel()` was called).\n     * @param source The source of the method call. Default 'api'.\n     */",
+      "type": {
+        "arguments": { "source?": "'api' | 'ui' | 'rowDataUpdated'" },
+        "returnType": "boolean",
+        "optional": false
+      }
     },
     "isFilterActive": {
       "description": "/** Returns `true` if the filter is currently active, otherwise `false`. \n     * If active then 1) the grid will show the filter icon in the column header \n     * and 2) the filter will be included in the filtering of the data.\n    */",
@@ -15762,6 +16263,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "SetFilterValuesFuncParams": {
@@ -15900,9 +16405,13 @@
       }
     },
     "treeListFormatter": {
-      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * `level` refers to the level of the tree (starting at 0).\n     */",
+      "description": "/** Requires `treeList = true`. If specified, this formats the tree values before they are displayed in the Filter List.\n     * @param pathKey - The key for the current node in the tree.\n     * @param level - The level of the current node in the tree (starting at 0).\n     * @param parentPathKeys - The keys of the parent nodes up until the current node (exclusive).\n     * This will be an empty array if the node is at the root level.\n     */",
       "type": {
-        "arguments": { "pathKey": "string | null", "level": "number" },
+        "arguments": {
+          "pathKey": "string | null",
+          "level": "number",
+          "parentPathKeys": "(string | null)[]"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -16002,7 +16511,10 @@
     },
     "openToolPanel": {
       "type": {
-        "arguments": { "key": "string" },
+        "arguments": {
+          "key": "string",
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -16015,7 +16527,13 @@
       }
     },
     "close": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": {
+          "source?": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "openedItem": {
       "type": {
@@ -17486,6 +18004,9 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterDetachedCallback": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "TabbedItemWrapper": {
@@ -17505,9 +18026,6 @@
     "list": { "type": { "returnType": "TaskItem[]", "optional": false } },
     "sorted": { "type": { "returnType": "boolean", "optional": false } }
   },
-  "SimpleHttpRequestParams": {
-    "url": { "type": { "returnType": "string", "optional": false } }
-  },
   "ModuleNames": {},
   "GridOptionKey": {},
   "AnyGridOptions": {},
@@ -17524,7 +18042,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "CellStyle" },
         "returnType": "void",
         "optional": false
       }
@@ -17962,49 +18480,46 @@
     }
   },
   "FooterValueGetterFunc": {},
-  "GroupCellRendererParams": {
-    "pinned": {
-      "description": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.\n     */",
-      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
-    },
-    "fullWidth": {
-      "description": "/** 'true' if comp is showing full width. */",
-      "type": { "returnType": "boolean", "optional": false }
-    },
+  "GroupCheckboxSelectionCallbackParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "GroupCheckboxSelectionCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "IGroupCellRendererParams": {
     "suppressPadding": {
       "description": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "suppressDoubleClickExpand": {
       "description": "/** Set to `true` to suppress expand on double click. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterExpand": {
       "description": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "footerValueGetter": {
       "description": "/** The value getter for the footer text. Can be a function or expression. */",
       "type": {
         "returnType": "string | FooterValueGetterFunc",
-        "optional": false
+        "optional": true
       }
     },
     "suppressCount": {
       "description": "/** If `true`, count is not displayed beside the name. */",
-      "type": { "returnType": "boolean", "optional": false }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "checkbox": {
-      "description": "/** If `true`, a selection checkbox is included.  */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "rowDrag": { "type": { "returnType": "boolean", "optional": true } },
-    "innerRenderer": {
-      "description": "/** The renderer to use for inside the cell (after grouping functions are added) */",
+      "description": "/** \n     * Set to `true`, or a function that returns `true`, if a checkbox should be included.\n     */",
       "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
+        "returnType": "boolean | GroupCheckboxSelectionCallback<TData, TValue>",
         "optional": true
       }
+    },
+    "innerRenderer": {
+      "description": "/** The renderer to use for inside the cell (after grouping functions are added) */",
+      "type": { "returnType": "any", "optional": true }
     },
     "innerRendererFramework": {
       "description": "/** @deprecated as of v27, use innerRenderer for Framework components\n     * Same as `innerRenderer` but for a framework component. */",
@@ -18018,92 +18533,21 @@
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "value": {
-      "description": "/** Value to be rendered. */",
-      "type": { "returnType": "TValue", "optional": false }
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "IGroupCellRendererFullRowParams": {
+    "pinned": {
+      "description": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.\n     */",
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
     },
-    "valueFormatted": {
-      "description": "/** Formatted value to be rendered. */",
-      "type": { "returnType": "string | null | undefined", "optional": false }
+    "fullWidth": {
+      "description": "/** 'true' if comp is showing full width. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
-    "data": {
-      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
-      "type": { "returnType": "TData | undefined", "optional": false }
-    },
-    "node": {
-      "description": "/** The row node. */",
-      "type": { "returnType": "IRowNode<TData>", "optional": false }
-    },
-    "rowIndex": {
-      "description": "/** The current index of the row (this changes after filter and sort). */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The cell's column definition. */",
-      "type": { "returnType": "ColDef", "optional": true }
-    },
-    "column": {
-      "description": "/** The cell's column. */",
-      "type": { "returnType": "Column", "optional": true }
-    },
-    "eGridCell": {
-      "description": "/** The grid's cell, a DOM div element. */",
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "eParentOfValue": {
-      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "getValue": {
-      "description": "/** Convenience function to get most recent up to date value. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
-    },
-    "setValue": {
-      "description": "/** Convenience function to set the value. */",
-      "type": {
-        "arguments": { "value": "any" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "formatValue": {
-      "description": "/** Convenience function to format a value using the column's formatter. */",
-      "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
-        "optional": true
-      }
-    },
-    "refreshCell": {
-      "description": "/** Convenience function to refresh the cell. */",
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "registerRowDragger": {
-      "description": "/** registerRowDragger:\n     * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n     * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n     * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n     * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n     */",
-      "type": {
-        "arguments": {
-          "rowDraggerElement": "HTMLElement",
-          "dragStartPixels?": "number",
-          "value?": "string",
-          "suppressVisibilityChange?": "boolean"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "any", "optional": false }
-    }
+    "rowDrag": { "type": { "returnType": "boolean", "optional": true } }
+  },
+  "GroupCellRendererParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
   },
   "ICellRendererParams": {
     "value": {
@@ -18739,7 +19183,7 @@
     },
     "setUserStyles": {
       "type": {
-        "arguments": { "styles": "any" },
+        "arguments": { "styles": "RowStyle" },
         "returnType": "void",
         "optional": false
       }
@@ -19372,6 +19816,9 @@
         "returnType": "{ x: number; y: number; }",
         "optional": true
       }
+    },
+    "postProcessCallback": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "PopupEventParams": {
@@ -19441,6 +19888,7 @@
       "type": { "returnType": "AgPromise<Function>", "optional": false }
     }
   },
+  "TabGuardClassNames": {},
   "ITabGuard": {
     "setTabIndex": {
       "type": {
@@ -19621,7 +20069,10 @@
     "children": {
       "type": { "returnType": "SetFilterModelTreeItem[]", "optional": true }
     },
-    "key": { "type": { "returnType": "string | null", "optional": true } }
+    "key": { "type": { "returnType": "string | null", "optional": true } },
+    "parentTreeKeys": {
+      "type": { "returnType": "(string | null)[]", "optional": false }
+    }
   },
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
@@ -19973,6 +20424,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "ICellRendererAngularComp": {
@@ -20161,6 +20616,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
   "AgFloatingFilterComponent": {
@@ -20441,7 +20900,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -20480,7 +20939,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -20528,11 +20987,15 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -21085,7 +21548,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -21974,7 +22437,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -21983,7 +22446,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -21992,7 +22455,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -22001,7 +22464,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -22098,6 +22561,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -23163,7 +23698,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -23202,7 +23737,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -23250,11 +23785,15 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -23807,7 +24346,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -24696,7 +25235,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -24705,7 +25244,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -24714,7 +25253,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24723,7 +25262,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -24820,6 +25359,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -25891,7 +26502,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "autoSizePadding": {
-      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `4`\n     */",
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n     * Default: `20`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "skipHeaderOnAutoSize": {
@@ -25930,7 +26541,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "readOnlyEdit": {
-      "description": "/** Set to `true` so stop the grid updating data after and edit. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. */",
+      "description": "/** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "stopEditingWhenCellsLoseFocus": {
@@ -25978,11 +26589,15 @@
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "quickFilterText": {
-      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "description": "/** Rows are filtered using this text as a Quick Filter. */",
       "type": { "returnType": "string", "optional": true }
     },
     "cacheQuickFilter": {
-      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
+      "description": "/** Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excludeHiddenColumnsFromQuickFilter": {
+      "description": "/** \n     * Set to `true` to exclude hidden columns from being checked by the Quick Filter.\n     * This can give a significant performance improvement when there are a large number of hidden columns,\n     * and you are only interested in filtering on what's visible. Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
@@ -26535,7 +27150,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilterOnServer": {
-      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n      * Default: `false`\n      */",
+      "description": "/** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
@@ -27424,7 +28039,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -27433,7 +28048,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
-      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of paste operation.\n    */",
+      "description": "/** Value has changed after editing (this event will not fire if editing was cancelled, eg ESC was pressed) or\n     *  if cell value has changed as a result of cut, paste, cell clear (pressing Delete key),\n     * fill handle, copy range down, undo and redo.\n    */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent<TData>" },
         "returnType": "void",
@@ -27442,7 +28057,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onCellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27451,7 +28066,7 @@
       "meta": { "isEvent": true, "name": "onCellEditRequest" }
     },
     "cellEditRequest": {
-      "description": "/** Value has changed after editing. Only fires when doing Read Only Edits, ie `readOnlyEdit=true`. */",
+      "description": "/** Value has changed after editing. Only fires when `readOnlyEdit=true`. */",
       "type": {
         "arguments": { "event": "CellEditRequestEvent<TData>" },
         "returnType": "void",
@@ -27548,6 +28163,78 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+    },
+    "onUndoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "undoStarted": {
+      "description": "/** Undo operation has started. */",
+      "type": {
+        "arguments": { "event": "UndoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoStarted" }
+    },
+    "onUndoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "undoEnded": {
+      "description": "/** Undo operation has ended. */",
+      "type": {
+        "arguments": { "event": "UndoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onUndoEnded" }
+    },
+    "onRedoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "redoStarted": {
+      "description": "/** Redo operation has started. */",
+      "type": {
+        "arguments": { "event": "RedoStartedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoStarted" }
+    },
+    "onRedoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "redoEnded": {
+      "description": "/** Redo operation has ended. */",
+      "type": {
+        "arguments": { "event": "RedoEndedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -28558,6 +29245,10 @@
         "returnType": "void",
         "optional": true
       }
+    },
+    "afterGuiDetached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.\n     * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.\n     * This is useful for any logic to reset the UI state back to the model before the component is reopened.\n     */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "getReactContainerStyle": {
       "type": { "arguments": {}, "returnType": "{}", "optional": true }

@@ -4,7 +4,7 @@ import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { CellPosition } from "./entities/cellPosition";
+import { CellPosition } from "./entities/cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Column } from "./entities/column";
 import {
@@ -465,20 +465,25 @@ export class GridApi<TData = any> {
     /**
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
-    public setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
+    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
         this.gridOptionsService.set('columnDefs', colDefs, true, { source });
     }
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
+    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
     }
 
     /** Call to set new Default Column Definition. */
-    public setDefaultColDef(colDef: ColDef, source: ColumnEventType = "api") {
+    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gridOptionsService.set('defaultColDef', colDef, true, { source });
+    }
+
+    /** Call to set new Column Types. */
+    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
+        this.gridOptionsService.set('columnTypes', columnTypes, true, { source });
     }
 
     public expireValueCache(): void {
@@ -548,7 +553,7 @@ export class GridApi<TData = any> {
         return this.filterManager.isColumnFilterPresent() || this.filterManager.isAggregateFilterPresent();
     }
 
-    /** Returns `true` if the quick filter is set, otherwise `false`. */
+    /** Returns `true` if the Quick Filter is set, otherwise `false`. */
     public isQuickFilterPresent(): boolean {
         return this.filterManager.isQuickFilterPresent();
     }
@@ -562,9 +567,14 @@ export class GridApi<TData = any> {
         return this.rowModel;
     }
 
-    /** Expand or collapse a specific row node. */
-    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean): void {
+    /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
+    public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
         if (rowNode) {
+            // expand all parents recursively, except root node.
+            if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
+                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
+            }
+
             rowNode.setExpanded(expanded);
         }
     }
@@ -662,9 +672,24 @@ export class GridApi<TData = any> {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    /** Pass a quick filter text into the grid for filtering. */
+    /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
+    public getQuickFilter(): string | undefined {
+        return this.gridOptionsService.get('quickFilterText');
+    }
+
+    /** Pass a Quick Filter text into the grid for filtering. */
     public setQuickFilter(newFilter: string): void {
         this.gridOptionsService.set('quickFilterText', newFilter);
+    }
+
+    /** 
+     * Updates the `excludeHiddenColumnsFromQuickFilter` grid option.
+     * Set to `true` to exclude hidden columns from being checked by the Quick Filter (or `false` to include them).
+     * This can give a significant performance improvement when there are a large number of hidden columns,
+     * and you are only interested in filtering on what's visible.
+     */
+    public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
+        this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
     }
 
     /**
@@ -672,7 +697,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.selectAllRowNodes(source);
+        this.selectionService.selectAllRowNodes({ source });
     }
 
     /**
@@ -680,7 +705,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
-        this.selectionService.deselectAllRowNodes(source);
+        this.selectionService.deselectAllRowNodes({ source });
     }
 
     /**
@@ -688,7 +713,7 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.selectAllRowNodes(source, true);
+        this.selectionService.selectAllRowNodes({ source, justFiltered: true });
     }
 
     /**
@@ -696,7 +721,23 @@ export class GridApi<TData = any> {
      * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-        this.selectionService.deselectAllRowNodes(source, true);
+        this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+    }
+
+    /**
+     * Select all rows on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
+    }
+
+    /**
+     * Clear all filtered on the current page.
+     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     */
+    public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
+        this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
     }
 
     /**
@@ -1228,14 +1269,14 @@ export class GridApi<TData = any> {
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key);
+            this.sideBarComp.openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close();
+            this.sideBarComp.close('api');
         }
     }
 
@@ -1326,11 +1367,21 @@ export class GridApi<TData = any> {
      * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.serverSideRowModel) {
+            if (this.columnModel.isRowGroupEmpty()) {
+                this.serverSideRowModel.setRowCount(rowCount, maxRowFound);
+                return;
+            }
+            console.error('AG Grid: setRowCount cannot be used while using row grouping.');
+            return;
+        }
+        
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
-        } else {
-            this.logMissingRowModel('setRowCount', 'infinite');
+            return;
         }
+
+        this.logMissingRowModel('setRowCount', 'infinite', 'serverSide');
     }
 
     /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */
@@ -1421,10 +1472,10 @@ export class GridApi<TData = any> {
         return this.destroyCalled;
     }
 
-    /** Reset the quick filter cache text on every rowNode. */
+    /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
         if (this.warnIfDestroyed('resetQuickFilter')) { return; }
-        this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
+        this.filterManager.resetQuickFilterCache();
     }
 
     /** Returns the list of selected cell ranges. */
@@ -1455,11 +1506,11 @@ export class GridApi<TData = any> {
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
-        this.undoRedoService.undo();
+        this.undoRedoService.undo('api');
     }
     /** Re-applies the most recently undone cell edit. */
     public redoCellEditing(): void {
-        this.undoRedoService.redo();
+        this.undoRedoService.redo('api');
     }
 
     /** Returns current number of available cell edit undo operations. */
@@ -1485,14 +1536,14 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Returns a string containing the requested data URL which contains a representation of the chart image. */
+    /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
-    /** Downloads the chart image in the browser. */
+    /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart')) {
             return this.chartService.downloadChart(params);
@@ -1545,6 +1596,13 @@ export class GridApi<TData = any> {
     public copyToClipboard(params?: IClipboardCopyParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard')) {
             this.clipboardService.copyToClipboard(params);
+        }
+    }
+
+    /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
+    public cutToClipboard(params?: IClipboardCopyParams) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard')) {
+            this.clipboardService.cutToClipboard(params);
         }
     }
 
@@ -1845,10 +1903,8 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working.
-     * @deprecated v29
      */
     public getCacheBlockState(): any {
-        logDeprecation<GridApi>('28.0', 'getCacheBlockState');
         return this.rowNodeBlockLoader.getBlockState();
     }
 

@@ -1,9 +1,9 @@
 {
   "name": "ag-grid-angular",
-  "version": "29.0.0-micord.1",
+  "version": "29.1.0-micord.1",
   "license": "MIT",
   "peerDependencies": {
-    "ag-grid-community": "29.0.0-micord.1",
+    "ag-grid-community": "29.1.0-micord.1",
     "@angular/common": "7.2.15",
     "@angular/core": "7.2.15"
   },

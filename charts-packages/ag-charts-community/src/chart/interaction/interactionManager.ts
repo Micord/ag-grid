@@ -1,5 +1,5 @@
 import { isNumber } from '../../util/value';
-import { BaseManager, Listener } from './baseManager';
+import { BaseManager } from './baseManager';
 
 type InteractionTypes = 'click' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
 
@@ -53,6 +53,8 @@ const CSS = `
 }
 `;
 
+type SupportedEvent = MouseEvent | TouchEvent | Event;
+
 /**
  * Manages user interactions with a specific HTMLElement (or interactions that bubble from it's
  * children)
@@ -63,7 +65,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     private readonly rootElement: HTMLElement;
     private readonly element: HTMLElement;
 
-    private eventHandler = (event: MouseEvent | TouchEvent | Event) => this.processEvent(event);
+    private eventHandler = (event: SupportedEvent) => this.processEvent(event);
 
     private mouseDown = false;
     private touchDown = false;
@@ -105,7 +107,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
     }
 
-    private processEvent(event: MouseEvent | TouchEvent | Event) {
+    private processEvent(event: SupportedEvent) {
         const types: InteractionTypes[] = this.decideInteractionEventTypes(event);
 
         if (types.length > 0) {
@@ -114,7 +116,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
     }
 
-    private async dispatchEvent(event: MouseEvent | TouchEvent | Event, types: InteractionTypes[]) {
+    private async dispatchEvent(event: SupportedEvent, types: InteractionTypes[]) {
         const coords = this.calculateCoordinates(event);
 
         if (coords == null) {
@@ -122,23 +124,12 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
 
         for (const type of types) {
-            const interactionType = type as InteractionTypes;
-            const listeners = this.registeredListeners[interactionType] ?? [];
-            const interactionEvent = this.buildEvent({ event, ...coords, type: interactionType });
-
-            listeners.forEach((listener: Listener<any>) => {
-                try {
-                    if (!interactionEvent.consumed) {
-                        listener.handler(interactionEvent);
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            const interactionEvent = this.buildEvent({ event, ...coords, type });
+            this.listeners.cancellableDispatch(type, () => interactionEvent.consumed, interactionEvent);
         }
     }
 
-    private decideInteractionEventTypes(event: MouseEvent | TouchEvent | Event): InteractionTypes[] {
+    private decideInteractionEventTypes(event: SupportedEvent): InteractionTypes[] {
         switch (event.type) {
             case 'click':
                 return ['click'];
@@ -199,7 +190,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         return [];
     }
 
-    private isEventOverElement(event: MouseEvent | TouchEvent | Event) {
+    private isEventOverElement(event: SupportedEvent) {
         return event.target === this.element || (event.target as any)?.parentElement === this.element;
     }
 
@@ -212,14 +203,12 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         offsetY: -Infinity,
     };
 
-    private calculateCoordinates(event: MouseEvent | TouchEvent | Event): Coords | undefined {
+    private calculateCoordinates(event: SupportedEvent): Coords | undefined {
         if (event instanceof MouseEvent) {
-            const mouseEvent = event as MouseEvent;
-            const { clientX, clientY, pageX, pageY, offsetX, offsetY } = mouseEvent;
+            const { clientX, clientY, pageX, pageY, offsetX, offsetY } = event;
             return this.fixOffsets(event, { clientX, clientY, pageX, pageY, offsetX, offsetY });
         } else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
-            const touchEvent = event as TouchEvent;
-            const lastTouch = touchEvent.touches[0] ?? touchEvent.changedTouches[0];
+            const lastTouch = event.touches[0] ?? event.changedTouches[0];
             const { clientX, clientY, pageX, pageY } = lastTouch;
             return { ...InteractionManager.NULL_COORDS, clientX, clientY, pageX, pageY };
         } else if (event instanceof PageTransitionEvent) {
@@ -231,7 +220,6 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
 
         // Unsupported event - abort.
-        return;
     }
 
     private fixOffsets(event: MouseEvent, coords: Coords) {
@@ -269,7 +257,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         offsetY?: number;
         pageX?: number;
         pageY?: number;
-    }) {
+    }): InteractionEvent<(typeof opts)['type']> & { consumed: boolean } {
         let { type, event, clientX, clientY, offsetX, offsetY, pageX, pageY } = opts;
 
         if (!isNumber(offsetX) || !isNumber(offsetY)) {
@@ -285,10 +273,10 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
 
         const builtEvent = {
             type,
-            offsetX,
-            offsetY,
-            pageX,
-            pageY,
+            offsetX: offsetX!,
+            offsetY: offsetY!,
+            pageX: pageX!,
+            pageY: pageY!,
             sourceEvent: event,
             consumed: false,
             consume: () => (builtEvent.consumed = true),

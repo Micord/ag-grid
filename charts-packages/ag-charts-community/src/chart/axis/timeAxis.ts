@@ -1,10 +1,9 @@
 import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from '../../util/validation';
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
-import { isContinuous } from '../../util/value';
 import { ChartAxis } from '../chartAxis';
 
-export class TimeAxis extends ChartAxis<TimeScale> {
+export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
     static type = 'time' as const;
 
@@ -40,7 +39,7 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         }
 
         if (d.length > 2) {
-            d = (extent(d, isContinuous, Number) || [0, 1000]).map((x) => new Date(x));
+            d = (extent(d) || [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];
