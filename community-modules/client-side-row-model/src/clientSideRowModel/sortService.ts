@@ -51,7 +51,9 @@ export class SortService extends BeanStub {
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
-
+            let childrenAfterAggFilter = rowNode.childrenAfterAggFilter
+                                         ? rowNode.childrenAfterAggFilter
+                                         : rowNode.childrenAfterFilter;
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
@@ -61,9 +63,7 @@ export class SortService extends BeanStub {
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (!sortActive || skipSortingGroups || skipSortingPivotLeafs) {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
-                const childrenToBeSorted = rowNode.childrenAfterAggFilter
-                                           ? rowNode.childrenAfterAggFilter!.slice(0)
-                                           : rowNode.childrenAfterFilter!.slice(0);
+                const childrenToBeSorted = childrenAfterAggFilter!.slice(0);
                 if (groupMaintainOrder && rowNode.childrenAfterSort) {
                     const indexedOrders = rowNode.childrenAfterSort.reduce<{ [key:string]: number }>(
                         (acc, row, idx) => {
@@ -77,7 +77,7 @@ export class SortService extends BeanStub {
             } else if (useDeltaSort) {
                 rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
-                rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+                rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(childrenAfterAggFilter!, sortOptions);
             }
 
             if (rowNode.sibling) {
@@ -138,7 +138,9 @@ export class SortService extends BeanStub {
         changedPath: ChangedPath,
         sortOptions: SortOption[],
     ) {
-        const unsortedRows = rowNode.childrenAfterAggFilter!;
+        const unsortedRows = rowNode.childrenAfterAggFilter
+                             ? rowNode.childrenAfterAggFilter!
+                             : rowNode.childrenAfterFilter!;
         const oldSortedRows = rowNode.childrenAfterSort;
         if (!oldSortedRows) {
             return this.rowNodeSorter.doFullSort(unsortedRows, sortOptions);
