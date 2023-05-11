@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
-import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from 'ag-grid-community';
+import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
@@ -62,7 +62,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     const [role, setRole] = useState<string>();
     const [rowBusinessKey, setRowBusinessKey] = useState<string>();
     const [tabIndex, setTabIndex] = useState<number>();
-    const [userStyles, setUserStyles] = useState<any>();
+    const [userStyles, setUserStyles] = useState<RowStyle>();
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
@@ -103,7 +103,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
     useLayoutEffectOnce(() => {
-        // because React is asychronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
+        // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
         if (!rowCtrl.isAlive()) {  return; }
@@ -122,7 +122,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
             setTabIndex: value => setTabIndex(value),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: RowStyle) => setUserStyles(styles),
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
@@ -137,9 +137,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
         };
     });
 
-    useEffect(() => showJsComp(
-        fullWidthCompDetails, context, eGui.current!, fullWidthCompRef
-    ), [fullWidthCompDetails]);
+    useLayoutEffect(() => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef), [fullWidthCompDetails]);
 
     const rowStyles = useMemo(() => {
         const res = { top, transform };

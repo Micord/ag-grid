@@ -54,6 +54,12 @@ This will produce the following chart:</p>
 
 <chart-example title='Grouped Column Series' name='grouped-column' type='generated'></chart-example>
 
+### Grouped Stacks
+
+Stacks can be displayed in separate groups. The IDs of such groups should be specified in `stackGroup` property for each series (if left unset for some series, such series will be stacked together).
+
+<chart-example title='Grouped Stack Series' name='grouped-stack' type='generated'></chart-example>
+
 ### Normalized Columns
 
 Going back to our [stacked column](#stacked-columns) example, if we wanted to normalize the totals so that each column's segments add up to a certain value, for example 100, we could add the following to our `series` config:
@@ -104,7 +110,7 @@ To create a bar chart all you need to do is use `type: 'bar'` instead of `type: 
 
 ```js
 series: [{
-    type: 'column',
+    type: 'bar',
     xKey: 'quarter',
     yKey: 'iphone',
     ...
@@ -118,7 +124,3 @@ With this simple change we go from [stacked columns](#stacked-columns) to stacke
 ## API Reference
 
 <interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [histogram series](/charts-histogram-series/).

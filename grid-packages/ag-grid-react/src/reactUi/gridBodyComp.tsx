@@ -1,10 +1,10 @@
-import { GridBodyCtrl, IGridBodyComp, RowContainerName } from 'ag-grid-community';
+import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _ } from 'ag-grid-community';
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
-import { useEffectOnce } from './useEffectOnce';
+import { useLayoutEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface SectionProperties {
@@ -18,8 +18,6 @@ const GridBodyComp = () => {
     const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
-    const [ariaColCount, setAriaColCount] = useState<number>(0);
-    const [ariaRowCount, setAriaRowCount] = useState<number>(0);
     const [topHeight, setTopHeight] = useState<number>(0);
     const [bottomHeight, setBottomHeight] = useState<number>(0);
     const [stickyTopHeight, setStickyTopHeight] = useState<string>('0px');
@@ -27,9 +25,7 @@ const GridBodyComp = () => {
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
-    const [bodyViewportWidth, setBodyViewportWidth] = useState<string>('');
     
-    const [movingCss, setMovingCss] = useState<string | null>(null);
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
@@ -40,6 +36,8 @@ const GridBodyComp = () => {
     // is due to React been async, for the non-async version (ie when not using React) this is not a
     // problem as the UI will finish initialising before we set data.
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
+
+    const cssClassManager = useMemo(() => new CssClassManager(() => eRoot.current!), []);
 
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);
@@ -54,7 +52,7 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    useEffectOnce( () => {
+    useLayoutEffectOnce(() => {
         const beansToDestroy: any[] = [];
         const destroyFuncs: (() => void)[] = [];
 
@@ -78,8 +76,8 @@ const GridBodyComp = () => {
 
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: setAriaColCount,
-            setRowCount: setAriaRowCount,
+            setColumnCount: count => _.setAriaColCount(eRoot.current!, count),
+            setRowCount: count => _.setAriaRowCount(eRoot.current!, count),
             setTopHeight,
             setBottomHeight,
             setStickyTopHeight,
@@ -87,12 +85,12 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
-            setColumnMovingCss: setMovingCss,
+            setColumnMovingCss: (cssClass, flag) => cssClassManager.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: setCellSelectableCss,
-            setBodyViewportWidth: setBodyViewportWidth,
+            setBodyViewportWidth: (width) => eBodyViewport.current!.style.width = width,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());
@@ -118,8 +116,8 @@ const GridBodyComp = () => {
     });
 
     const rootClasses = useMemo(() =>
-        classesList('ag-root','ag-unselectable', movingCss, layoutClass), 
-        [movingCss, layoutClass]
+        classesList('ag-root', 'ag-unselectable', layoutClass),
+        [layoutClass]
     );
     const bodyViewportClasses = useMemo(() =>
         classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
@@ -166,10 +164,6 @@ const GridBodyComp = () => {
         overflowY: (topAndBottomOverflowY as any)
     }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
 
-    const bodyViewportStyle: React.CSSProperties = useMemo( ()=> ({
-        width: bodyViewportWidth
-    }), [bodyViewportWidth]);
-
     const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
     const createSection = ({
         section,
@@ -183,7 +177,7 @@ const GridBodyComp = () => {
     );
 
     return (
-        <div ref={ eRoot } className={ rootClasses } role="treegrid" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+        <div ref={eRoot} className={rootClasses} role="treegrid">
             <GridHeaderComp/>
             { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,
@@ -194,7 +188,7 @@ const GridBodyComp = () => {
             <div className={bodyClasses} ref={eBody} role="presentation">
                 <div className={bodyClipperClasses} role="presentation">
                     { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
-                                        style: bodyViewportStyle, children: [
+                        children: [
                         RowContainerName.LEFT,
                         RowContainerName.CENTER,
                         RowContainerName.RIGHT,

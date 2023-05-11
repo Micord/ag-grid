@@ -1,20 +1,16 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
-import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
+import React, { useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
-    const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
-    const [domOrder, setDomOrder] = useState<boolean>(false);
-    const [containerWidth, setContainerWidth] = useState<string>('');
 
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
@@ -22,6 +18,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
     const eContainer = useRef<HTMLDivElement>(null);
+
+    const rowCtrlsRef = useRef<RowCtrl[]>([]);
+    const domOrderRef = useRef<boolean>(false);
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
@@ -41,28 +40,41 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    useEffect(() => {
-        setRowCtrlsOrdered( prev => {
-            if (domOrder) {
+    function updateRowCtrlsOrdered() {
+
+        setRowCtrlsOrdered(prev => {
+            const rowCtrls = rowCtrlsRef.current;
+
+            if (domOrderRef.current) {
                 return rowCtrls;
             }
             // if dom order not important, we don't want to change the order
             // of the elements in the dom, as this would break transition styles
             const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
             const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-            const next = [...oldRows, ...newRows];
-            return next;
+            return [...oldRows, ...newRows];
         });
-    }, [domOrder, rowCtrls]);
 
-    useEffectOnce(() => {
+    }
+
+    useLayoutEffectOnce(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
-            setViewportHeight: setViewportHeight,
-            setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
-            setDomOrder: domOrder => setDomOrder(domOrder),
-            setContainerWidth: width => setContainerWidth(width)
+            setViewportHeight: (height: string) => eViewport.current!.style.height = height,
+            setRowCtrls: rowCtrls => {
+                if(rowCtrlsRef.current !== rowCtrls){
+                    rowCtrlsRef.current = rowCtrls;
+                    updateRowCtrlsOrdered();
+                }
+            },
+            setDomOrder: domOrder => {
+                if(domOrderRef.current != domOrder){
+                    domOrderRef.current = domOrder;
+                    updateRowCtrlsOrdered();
+                }
+            },
+            setContainerWidth: width => eContainer.current!.style.width = width
         };
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
@@ -76,20 +88,12 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     });
 
-    const viewportStyle = useMemo(() => ({
-        height: viewportHeight
-    }), [viewportHeight]);
-
-    const containerStyle = useMemo(() => ({
-        width: containerWidth
-    }), [containerWidth]);
-
     const buildContainer = () => (
         <div
             className={ containerClasses }
             ref={ eContainer }
-            role={ rowCtrls.length ? "rowgroup" : "presentation" }
-            style={ containerStyle }>
+            role={ rowCtrlsOrdered.length ? "rowgroup" : "presentation" }
+        >
             {
                 rowCtrlsOrdered.map(rowCtrl =>
                     <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>
@@ -103,14 +107,14 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             {
                 template1 &&
                 <div className={ wrapperClasses } ref={ eWrapper } role="presentation">
-                    <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
+                    <div className={viewportClasses} ref={eViewport} role="presentation">
                         { buildContainer() }
                     </div>
                 </div>
             }
             {
                 template2 &&
-                <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
+                <div className={viewportClasses} ref={eViewport} role="presentation">
                     { buildContainer() }
                 </div>
             }

@@ -10,17 +10,17 @@ This section describes how the Set Filter can be controlled programmatically usi
 Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 
 <snippet>
-|// get filter instance
-|const countryFilterComponent = gridOptions.api.getFilterInstance('country');
-|
-|// get filter model
-|const model = countryFilterComponent.getModel();
-|
-|// set filter model and update
-|countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
-|
-|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
-|gridOptions.api.onFilterChanged();
+| // get filter instance
+| const countryFilterComponent = gridOptions.api.getFilterInstance('country');
+| 
+| // get filter model
+| const model = countryFilterComponent.getModel();
+| 
+| // set filter model and update
+| countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
+| 
+| // refresh rows based on the filter (not automatic to allow for batching multiple filters)
+| gridOptions.api.onFilterChanged();
 </snippet>
 
 The filter model contains an array of string values where each item in the array corresponds to an element to be selected from the set.
@@ -77,3 +77,7 @@ The following example demonstrates the difference in behaviour between `caseSens
 - In both cases `getModel()` and `getFilterValues()` will return the values with casing that matches those displayed in the Filter List.
 
 <grid-example title='Set Filter API - Case Sensitivity' name='set-filter-api-case-sensitive' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about [Multi Filters](/filter-multi/).

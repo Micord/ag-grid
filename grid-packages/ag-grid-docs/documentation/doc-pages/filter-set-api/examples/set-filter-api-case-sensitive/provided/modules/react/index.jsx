@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {AgGridReact} from '@ag-grid-community/react';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import {SetFilterModule} from '@ag-grid-enterprise/set-filter';
@@ -109,7 +109,7 @@ class GridExample extends Component {
 
     getValues = (type) => {
         const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);
-        alert(JSON.stringify(instance.getValues(), null, 2));
+        alert(JSON.stringify(instance.getFilterValues(), null, 2));
     }
 
     reset = (type) => {
@@ -129,7 +129,7 @@ class GridExample extends Component {
                             <button onClick={() => this.setModel('insensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => this.getModel('insensitive')}>API: getModel()</button>
                             <button onClick={() => this.setFilterValues('insensitive')}>API: setFilterValues() - mismatching case</button>
-                            <button onClick={() => this.getValues('insensitive')}>API: getValues()</button>
+                            <button onClick={() => this.getValues('insensitive')}>API: getFilterValues()</button>
                             <button onClick={() => this.reset('insensitive')}>Reset</button>
                         </div>
                         <div style={{"paddingTop": "10px"}}>
@@ -137,7 +137,7 @@ class GridExample extends Component {
                             <button onClick={() => this.setModel('sensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => this.getModel('sensitive')}>API: getModel()</button>
                             <button onClick={() => this.setFilterValues('sensitive')}>API: setFilterValues() - mismatching case</button>
-                            <button onClick={() => this.getValues('sensitive')}>API: getValues()</button>
+                            <button onClick={() => this.getValues('sensitive')}>API: getFilterValues()</button>
                             <button onClick={() => this.reset('sensitive')}>Reset</button>
                         </div>
                     </div>
@@ -163,7 +163,5 @@ class GridExample extends Component {
     }
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

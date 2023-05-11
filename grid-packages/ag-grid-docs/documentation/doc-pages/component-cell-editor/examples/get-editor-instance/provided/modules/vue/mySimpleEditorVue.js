@@ -1,7 +1,7 @@
 import {nextTick} from 'vue';
 
+// backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 
 export default {
     template: `<input v-model="value" :ref="'input'" class="my-simple-editor" />`,
@@ -25,8 +25,8 @@ export default {
         getInitialValue() {
             let startValue = this.params.value;
 
-            const isBackspaceOrDelete = this.params.eventKey === KEY_BACKSPACE || this.params.eventKey === KEY_DELETE;
-            if (isBackspaceOrDelete) {
+            const isBackspace = this.params.eventKey === KEY_BACKSPACE;
+            if (isBackspace) {
                 startValue = '';
             } else if (this.params.charPress) {
                 startValue = this.params.charPress;

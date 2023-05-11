@@ -88,7 +88,7 @@ function FakeServer() {
       if (isDoingGrouping(rowGroupCols, groupKeys)) {
         var rowGroupCol = rowGroupCols[groupKeys.length];
   
-        return ' GROUP BY ' + rowGroupCol.id;
+        return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
       }
   
       return '';
@@ -112,7 +112,7 @@ function FakeServer() {
       }
       var blockSize = request.endRow - request.startRow;
   
-      return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+      return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
   
     function isDoingGrouping(rowGroupCols, groupKeys) {

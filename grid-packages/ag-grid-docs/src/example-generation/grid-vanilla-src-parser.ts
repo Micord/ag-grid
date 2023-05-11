@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as ts from 'typescript';
-import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
-import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
+import { Events } from '../../../../grid-community-modules/core/src/ts/eventKeys';
+import { PropertyKeys } from '../../../../grid-community-modules/core/src/ts/propertyKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -216,7 +216,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
@@ -261,7 +261,7 @@ function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, 
         }
     });
 
-    // extract the simpleHttpRequest call
+    // extract the Http Request call
     tsOnReadyCollectors.push({
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {

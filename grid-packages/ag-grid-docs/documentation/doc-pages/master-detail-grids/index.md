@@ -77,15 +77,15 @@ const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 </snippet>
 
-The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
+The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_{ROW-ID}`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
 
 <api-documentation source='grid-api/api.json' section='masterDetail' names='["forEachDetailGridInfo"]'></api-documentation>
 
 <snippet>
 // iterate over all DetailGridInfos, and call stopEditing() on each one
-gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
-    detailGridInfo.api.flashCells();
-});
+| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+|     detailGridInfo.api.flashCells();
+| });
 </snippet>
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:

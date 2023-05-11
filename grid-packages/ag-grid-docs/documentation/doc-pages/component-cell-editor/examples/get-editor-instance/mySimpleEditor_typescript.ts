@@ -1,8 +1,7 @@
 import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 
+// backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
-const KEY_F2 = 'F2';
-const KEY_DELETE = 'Delete';
 
 export class MySimpleEditor implements ICellEditorComp {
     gui!: HTMLInputElement;
@@ -17,8 +16,8 @@ export class MySimpleEditor implements ICellEditorComp {
 
         let startValue = params.value;
 
-        const isBackspaceOrDelete = params.eventKey === KEY_BACKSPACE || params.eventKey === KEY_DELETE;
-        if (isBackspaceOrDelete) {
+        const isBackspace = params.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
             startValue = '';
         } else if (params.charPress) {
             startValue = params.charPress;

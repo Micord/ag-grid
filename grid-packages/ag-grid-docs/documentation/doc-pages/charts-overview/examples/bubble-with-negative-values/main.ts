@@ -1,30 +1,30 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Most Populous Cities (2019)',
+    text: "Most Populous Cities",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
-    text: 'Source: Simple Maps',
+  footnote: {
+    text: "Source: Simple Maps",
   },
   series: [
     {
-      type: 'scatter',
-      title: 'Most populous cities',
-      xKey: 'lon',
-      xName: 'Longitude',
-      yKey: 'lat',
-      yName: 'Latitude',
-      sizeKey: 'population',
-      sizeName: 'Population',
-      labelKey: 'city',
-      labelName: 'City',
+      type: "scatter",
+      title: "Most populous cities",
+      xKey: "lon",
+      xName: "Longitude",
+      yKey: "lat",
+      yName: "Latitude",
+      sizeKey: "population",
+      sizeName: "Population",
+      labelKey: "city",
+      labelName: "City",
       marker: {
         size: 5,
         maxSize: 100,
@@ -35,20 +35,20 @@ const options: AgChartOptions = {
   ],
   axes: [
     {
-      position: 'bottom',
-      type: 'number',
+      position: "bottom",
+      type: "number",
       title: {
-        text: 'Longitude',
+        text: "Longitude",
       },
       min: -180,
       max: 180,
       nice: false,
     },
     {
-      position: 'left',
-      type: 'number',
+      position: "left",
+      type: "number",
       title: {
-        text: 'Latitude',
+        text: "Latitude",
       },
       min: -90,
       max: 90,
@@ -60,4 +60,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

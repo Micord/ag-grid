@@ -1,5 +1,4 @@
-import { AgChartOptions } from 'ag-charts-community'
-import * as agCharts from 'ag-charts-community'
+import { AgChartOptions, AgChart } from 'ag-charts-community'
 
 const data = [
   {
@@ -34,6 +33,9 @@ const options: AgChartOptions = {
   subtitle: {
     text: 'per quarter',
   },
+  footnote: {
+    text: 'Based on a sample size of 200 respondents',
+  },
   theme: {
     baseTheme: 'ag-pastel',
     overrides: {
@@ -64,6 +66,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q1',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -78,6 +81,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q2',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -91,6 +95,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q3',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -104,6 +109,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q4',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -116,4 +122,4 @@ const options: AgChartOptions = {
   ],
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

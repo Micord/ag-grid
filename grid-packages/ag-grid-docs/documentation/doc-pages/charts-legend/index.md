@@ -10,7 +10,7 @@ A legend is shown by default but can be hidden using the `enabled` config:
 
 ```js
 legend: {
-    enabled: false
+  enabled: false
 }
 ```
 
@@ -18,7 +18,7 @@ When enabled, it can be positioned to any side of a chart using the `position` c
 
 ```js
 legend: {
-    position: 'right' // 'bottom', 'left', 'top'
+  position: "right" // 'bottom', 'left', 'top'
 }
 ```
 
@@ -52,7 +52,6 @@ If the legend is `horizontal`, the legend items are arranged using the minimum p
 
 By default, when the legend is positioned to the `'bottom'` or `'top'` of a chart, it is rendered in a `horizontal` orientation. The number of rows in a `horizontal` legend increases as the width of a chart shrinks, as fewer legend items can be placed in a given row.
 
-
 ### Example: Horizontal Legend Layout
 
 <chart-example title='Horizontal Legend Layout' name='legend-layout-horizontal' type='generated'></chart-example>
@@ -69,9 +68,9 @@ In addition to `maxWidth` and `maxHeight`, the legend's layout is also affected 
 
 ```js
 legend: {
-    item: {
-        paddingX: 16
-    }
+  item: {
+    paddingX: 16
+  }
 }
 ```
 
@@ -79,9 +78,9 @@ legend: {
 
 ```js
 legend: {
-    item: {
-        paddingY: 8
-    }
+  item: {
+    paddingY: 8
+  }
 }
 ```
 
@@ -89,11 +88,11 @@ And the `legend.item.marker.padding` config is responsible for the amount of pad
 
 ```js
 legend: {
-    item: {
-        marker: {
-            padding: 8
-        }
+  item: {
+    marker: {
+      padding: 8
     }
+  }
 }
 ```
 
@@ -111,11 +110,11 @@ The pagination component can be customised using `legend.pagination`. For exampl
 
 ```js
 legend: {
-    pagination: {
-        marker: {
-            size: 18
-        }
+  pagination: {
+    marker: {
+      size: 18
     }
+  }
 }
 ```
 
@@ -199,58 +198,30 @@ legend: {
 }
 ```
 
-## Legend Events
+## Series Visibility Toggling
 
-The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
+By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items. Additionally, when a legend item is double clicked, it will make only that series visible.
 
-The event object passed to the listener includes:
-- the `seriesId` of the series associated with the legend item
-- the `itemId`, usually the `yKey` value for cartesian series
-- `enabled`, whether the legend item is currently enabled or not
-
-For example, to show an alert message with the `legendItemClick` event contents when a legend item is clicked, the following listener can be configured:
+To disable series toggling on legend item click or double click, the `legend.item.toggleSeriesVisible` property can be set to `false`:
 
 ```js
 legend: {
-    listeners: {
-        legendItemClick: ({
-            seriesId,
-            itemId,
-            enabled,
-        }: AgChartLegendClickEvent) => {
-            window.alert(
-                `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-            );
-        }
-    }
+  item: {
+    toggleSeriesVisible: false
+  }
 }
 ```
 
-### Series Visibility Toggling
+If a callback function is configured via [`legend.listeners.legendItemClick`](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick), it will still be invoked when the legend click event is fired.
 
-By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items.
+The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
 
-To disable series toggling on legend item click, the `legend.item.toggleSeriesVisible` property can be set to `false`:
+### Example: Series Visibility Toggling
 
-```js
-legend: {
-    item: {
-        toggleSeriesVisible: false
-    }
-}
-```
+This example demonstrates toggling the visiblity of series via clicks and double clicks, and logs a message to the browser console when the legend is clicked.
 
-If a callback function is configured via [`legend.listeners.legendItemClick`](#legenditemclick), it will still be invoked when the legend click event is fired.
-
-
-### Example: Legend Click
-
-<chart-example title='Legend Click' name='legend-click-series-toggle' type='generated'></chart-example>
+<chart-example title='Series Visibility Toggling' name='legend-click-series-toggle' type='generated'></chart-example>
 
 ## API Reference
 
 <interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about the [series](../series-highlighting/).

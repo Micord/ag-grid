@@ -2,9 +2,8 @@
 title: "Row Selection"
 ---
 
-Select a row by clicking on it. Selecting a row will remove any previous selection unless you
-hold down <kbd>Ctrl</kbd> while clicking. Selecting a row and holding down <kbd>Shift</kbd>
-while clicking a second row will select the range.
+Select a row by clicking on it. Selecting a row will remove any previous selection unless you hold down <kbd>Ctrl</kbd> 
+while clicking. Selecting a row and holding down <kbd>Shift</kbd> while clicking a second row will select the range.
 
 Configure row selection with the following properties:
 
@@ -164,13 +163,15 @@ If `headerCheckboxSelection` is a function, the function will be called every ti
 
 ## Select Everything or Just Filtered
 
-The header checkbox has two modes of operation, `'normal'` and `'filtered only'`.
+The header checkbox has three modes of operation, `'normal'`, `'filtered only'` and `'current page'`.
 
-- **colDef.headerCheckboxSelectionFilteredOnly=false**: The checkbox will select all rows when checked, and un-select all rows when unchecked. The checkbox will update its state based on all rows.
+- `colDef.headerCheckboxSelectionFilteredOnly=false`: The checkbox will select all rows when checked, and un-select all rows when unchecked. The checkbox will update its state based on all rows.
 
-- **colDef.headerCheckboxSelectionFilteredOnly=true**: The checkbox will select only filtered rows when checked and un-select only filtered rows when unchecked. The checkbox will update its state based only on filtered rows.
+- `colDef.headerCheckboxSelectionFilteredOnly=true`: The checkbox will select only filtered rows when checked and un-select only filtered rows when unchecked. The checkbox will update its state based only on filtered rows.
 
-The examples below demonstrate both of these options.
+- `colDef.headerCheckboxSelectionCurrentPageOnly=true`: The checkbox will select only the rows on the current page when checked, and un-select only the rows on the current page when unchecked.
+
+The examples below demonstrate all of these options.
 
 ### Example: Just Filtered
 
@@ -190,6 +191,24 @@ The next example is similar to the one above with the following changes:
 - The column that the selection checkbox appears in is always the first column. This can be observed by dragging the columns to reorder them.
 
 <grid-example title='Select Everything' name='header-checkbox-entire-set' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
+
+### Example: Select Only the Current Page
+
+The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` property, note the following:
+
+- The checkbox selects collapsed groups and all of their children.
+- The checkbox will select expanded group nodes, but only the children which are also on the current page.
+
+<grid-example title='Selecting Current Page' name='header-checkbox-current-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+### Example: Current Page with Group Selects Children
+
+The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` property while using `groupSelectsChildren`, note the following:
+
+- The checkbox selects collapsed groups and all of their children.
+- The checkbox will select expanded group nodes only if all of the children are selected.
+
+<grid-example title='Selecting Current Page with Group Selects Children' name='header-checkbox-current-page-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Specify Selectable Rows
 
@@ -245,17 +264,17 @@ To select rows programmatically, use the `node.setSelected(params)` method.
 <api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
 
 <snippet>
-|// set selected, keep any other selections
-|node.setSelected(true);
-|
-|// set selected, exclusively, remove any other selections
-|node.setSelected(true, true);
-|
-|// un-select
-|node.setSelected(false);
-|
-|// check status of node selection
-|const selected = node.isSelected();
+| // set selected, keep any other selections
+| node.setSelected(true);
+| 
+| // set selected, exclusively, remove any other selections
+| node.setSelected(true, true);
+| 
+| // un-select
+| node.setSelected(false);
+| 
+| // check status of node selection
+| const selected = node.isSelected();
 </snippet>
 
 The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
@@ -269,11 +288,11 @@ The grid API has the following methods for selection:
 If you want to select only filtered-out row nodes, you could do this using the following:
 
 <snippet>
-// loop through each node when it is filtered out
-gridOptions.api.forEachNodeAfterFilter(node => {
-    // select the node
-    node.setSelected(true);
-});
+| // loop through each node when it is filtered out
+| gridOptions.api.forEachNodeAfterFilter(node => {
+|     // select the node
+|     node.setSelected(true);
+| });
 </snippet>
 
 ### Example: Using forEachNode
@@ -291,28 +310,28 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 <api-documentation source='grid-options/properties.json' section='nav' names='["navigateToNextCell"]'></api-documentation>
 
 <snippet>
-|const gridOptions = {
-|    navigateToNextCell: params => {
-|        const suggestedNextCell = params.nextCellPosition;
-|
-|        // this is some code
-|        const KEY_UP = 'ArrowUp';
-|        const KEY_DOWN = 'ArrowDown';
-|
-|        const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
-|        if (noUpOrDownKeyPressed) {
-|            return suggestedNextCell;
-|        }
-|
-|        params.api.forEachNode(node => {
-|            if (node.rowIndex === suggestedNextCell.rowIndex) {
-|                node.setSelected(true);
-|            }
-|        });
-|
-|        return suggestedNextCell;
-|    },
-|}
+| const gridOptions = {
+|     navigateToNextCell: params => {
+|         const suggestedNextCell = params.nextCellPosition;
+| 
+|         // this is some code
+|         const KEY_UP = 'ArrowUp';
+|         const KEY_DOWN = 'ArrowDown';
+| 
+|         const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
+|         if (noUpOrDownKeyPressed) {
+|             return suggestedNextCell;
+|         }
+| 
+|         params.api.forEachNode(node => {
+|             if (node.rowIndex === suggestedNextCell.rowIndex) {
+|                 node.setSelected(true);
+|             }
+|         });
+| 
+|         return suggestedNextCell;
+|     },
+| }
 </snippet>
 
 From the code above you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.

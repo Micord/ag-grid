@@ -1,5 +1,4 @@
-import { AgChartOptions } from "ag-charts-community"
-import * as agCharts from "ag-charts-community"
+import { AgChartOptions, AgChart } from "ag-charts-community"
 
 var data = [
   {
@@ -53,6 +52,9 @@ const options: AgChartOptions = {
   subtitle: {
     text: "per quarter",
   },
+  footnote: {
+    text: "Based on a sample size of 200 respondents",
+  },
   series: [
     { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
@@ -61,4 +63,4 @@ const options: AgChartOptions = {
   ],
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

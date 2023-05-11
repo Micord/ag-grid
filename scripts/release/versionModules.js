@@ -7,7 +7,7 @@ const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length < 5) {
     console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [package directories] [charts version]");
-    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 '[\"charts-packages\", \"examples-charts\"]' 1.0.0");
+    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 '[\"charts-community-modules\", \"charts-examples\"]' 1.0.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
@@ -45,6 +45,7 @@ function updatePackageBowserJsonFiles() {
     packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
             .filter(packageMatchesResolvedModuleToVersion)
+            .filter(directory => !directory.includes('.git'))
             .forEach(directory => {
                 // update all package.json files
                 const currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
@@ -143,7 +144,6 @@ function updateDevDependencies(fileContents) {
 }
 
 function updatePeerDependencies(fileContents) {
-    // return updateDependency(fileContents, 'peerDependencies', "28.2.0", "6.2.0");
     return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
 }
 
@@ -182,5 +182,3 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 
 main();
 
-// node scripts/release/versionModules.js 7.0.0 ~7.0.0 '["charts-packages", "examples-charts"]' all
-// node scripts/release/versionModules.js 29.0.0 ~29.0.0 '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' all ~7.0.0

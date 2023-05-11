@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -9,6 +8,9 @@ const options: AgChartOptions = {
   theme: {
     overrides: {
       column: {
+        legend: {
+          position: "bottom",
+        },
         series: {
           strokeWidth: 0,
           highlightStyle: {
@@ -23,8 +25,9 @@ const options: AgChartOptions = {
   title: {
     text: "Regular Internet Users",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Office for National Statistics",
   },
   series: [
@@ -51,4 +54,4 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

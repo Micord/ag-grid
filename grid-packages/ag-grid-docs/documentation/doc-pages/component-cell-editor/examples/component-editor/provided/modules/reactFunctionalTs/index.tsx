@@ -1,7 +1,8 @@
 'use strict';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
-import ReactDOM, { render } from 'react-dom';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -12,8 +13,8 @@ import { ColDef, ICellEditorParams, ICellRendererParams, ModuleRegistry } from '
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+// backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
-const KEY_DELETE = 'Delete';
 const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
@@ -164,7 +165,7 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.eventKey === KEY_BACKSPACE || props.eventKey === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -227,8 +228,8 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
         return isCharNumeric(charStr);
     };
 
-    const deleteOrBackspace = (event: any) => {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
+    const isBackspace = (event: any) => {
+        return event.key === KEY_BACKSPACE;
     };
 
     const finishedEditingPressed = (event: any) => {
@@ -237,7 +238,7 @@ const NumericEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     };
 
     const onKeyDown = (event: any) => {
-        if (isLeftOrRight(event) || deleteOrBackspace(event)) {
+        if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -352,7 +353,5 @@ const GridExample = () => {
     );
 };
 
-render(
-    <GridExample />,
-    document.querySelector('#root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

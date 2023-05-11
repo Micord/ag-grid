@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -26,10 +25,11 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Annual Growth in Pay (2018-2019)",
+    text: "Annual Growth in Pay",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Office for National Statistics",
   },
   series: [
@@ -65,4 +65,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

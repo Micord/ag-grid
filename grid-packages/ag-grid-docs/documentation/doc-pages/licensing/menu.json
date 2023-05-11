@@ -13,6 +13,14 @@
             "pane": "left"
           },
           {
+            "title": "React Compatibility",
+            "icon": "react",
+            "url": "/react-compatibility",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
             "title": "Rendering",
             "icon": "react",
             "url": "/reactui/",
@@ -75,7 +83,7 @@
           },
           {
             "title": "SolidJS",
-            "icon": "solidNew",
+            "icon": "solid",
             "url": "/solidjs",
             "frameworks": [
               "react"
@@ -788,29 +796,19 @@
             "showInCollapsed": false,
             "items": [
               {
-                "title": "Provided Column Filters",
-                "url": "/filter-provided/"
+                "title": "Text Filter",
+                "url": "/filter-text/",
+                "showInCollapsed": true
               },
               {
-                "title": "Simple Column Filters",
-                "url": "/filter-provided-simple/",
-                "items": [
-                  {
-                    "title": "Text Filter",
-                    "url": "/filter-text/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Number Filter",
-                    "url": "/filter-number/",
-                    "showInCollapsed": true
-                  },
-                  {
-                    "title": "Date Filter",
-                    "url": "/filter-date/",
-                    "showInCollapsed": true
-                  }
-                ]
+                "title": "Number Filter",
+                "url": "/filter-number/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Filter",
+                "url": "/filter-date/",
+                "showInCollapsed": true
               },
               {
                 "title": "Set Filter",
@@ -858,16 +856,20 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Filter Conditions",
+                "url": "/filter-conditions/"
+              },
+              {
+                "title": "Applying Filters",
+                "url": "/filter-applying/"
+              },
+              {
                 "title": "Filter API",
                 "url": "/filter-api/"
               },
               {
                 "title": "Floating Filters",
                 "url": "/floating-filters/"
-              },
-              {
-                "title": "Custom Filter",
-                "url": "/filter-custom/"
               }
             ]
           },
@@ -1078,7 +1080,22 @@
                 "title": "Filtering Groups",
                 "url": "/grouping-filtering/",
                 "enterprise": true,
-                "showInCollapsed": false
+                "showInCollapsed": false,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Group Column Filter",
+                    "url": "/grouping-column-filter/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Custom Group Filtering",
+                    "url": "/grouping-custom-filtering/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  }
+                ]
               },
               {
                 "title": "Group Footers",
@@ -1871,6 +1888,11 @@
             "url": "/charts-getting-started/"
           },
           {
+            "title": "Enterprise Placeholder",
+            "url": "/charts-enterprise-placeholder",
+            "enterprise": "charts"
+          },
+          {
             "title": "API",
             "forceTopLevelSubItems": true,
             "items": [
@@ -1885,9 +1907,48 @@
                 "url": "/charts-api-themes/"
               },
               {
+                "title": "Create/Update",
+                "showInCollapsed": true,
+                "url": "/charts-api-create-update/"
+              },
+              {
+                "title": "Download",
+                "url": "/charts-api-download/"
+              },
+              {
+                "title": "Events",
+                "url": "/charts-events/"
+              },
+              {
                 "title": "Explorer",
                 "showInCollapsed": true,
                 "url": "/charts-api-explorer/"
+              }
+            ]
+          },
+          {
+            "title": "Layout & Styling",
+            "items": [
+              {
+                "title": "Layout",
+                "url": "/charts-layout/"
+              },
+              {
+                "title": "Themes",
+                "url": "/charts-themes/"
+              },
+              {
+                "title": "Overlays",
+                "url": "/charts-overlays/"
+              },
+              {
+                "title": "Background",
+                "url": "/charts-background/"
+              },
+              {
+                "title": "Background Image",
+                "url": "/charts-background-image/",
+                "enterprise": "charts"
               }
             ]
           },
@@ -1933,44 +1994,75 @@
             "title": "Features",
             "items": [
               {
-                "title": "Layout",
-                "url": "/charts-layout/"
+                "title": "Axes",
+                "url": "/charts-axes/",
+                "matrixExcludeChildren": true,
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Axis Types",
+                    "url": "/charts-axes-types/"
+                  },
+                  {
+                    "title": "Axis Ticks",
+                    "url": "/charts-axes-ticks/"
+                  },
+                  {
+                    "title": "Axis Labels",
+                    "url": "/charts-axes-labels/"
+                  },
+                  {
+                    "title": "Grid Lines",
+                    "url": "/charts-axes-grid-lines/"
+                  },
+                  {
+                    "title": "Secondary Axes",
+                    "url": "/charts-axes-secondary/"
+                  }
+                ]
               },
               {
                 "title": "Legend",
                 "url": "/charts-legend/"
               },
               {
-                "title": "Series Highlighting",
-                "url": "/charts-series-highlighting/"
-              },
-              {
-                "title": "Themes",
-                "url": "/charts-themes/"
-              },
-              {
-                "title": "Navigator",
-                "url": "/charts-navigator/"
-              },
-              {
-                "title": "Markers",
+                "title": "Series Markers",
                 "url": "/charts-markers/"
               },
               {
-                "title": "Formatters",
-                "url": "/charts-formatters/"
+                "title": "Series Highlighting",
+                "url": "/charts-series-highlighting/"
               },
               {
                 "title": "Tooltips",
                 "url": "/charts-tooltips/"
               },
               {
-                "title": "Axes",
-                "url": "/charts-axes/"
+                "title": "Formatters",
+                "url": "/charts-formatters/"
               },
               {
-                "title": "Events",
-                "url": "/charts-events/"
+                "title": "Cross Lines",
+                "url": "/charts-axes-cross-lines/"
+              },
+              {
+                "title": "Navigator",
+                "url": "/charts-navigator/"
+              },
+              {
+                "title": "Crosshairs",
+                "url": "/charts-axes-crosshairs/",
+                "enterprise": "charts"
+              },
+              {
+                "title": "Context Menu",
+                "url": "/charts-context-menu/",
+                "enterprise": "charts"
+              },
+              {
+                "title": "Zoom",
+                "url": "/charts-zoom/",
+                "enterprise": "charts"
               }
             ]
           }

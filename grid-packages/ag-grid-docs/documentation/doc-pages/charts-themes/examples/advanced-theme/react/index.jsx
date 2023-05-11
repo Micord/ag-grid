@@ -2,7 +2,7 @@
 
 import { AgChartsReact } from "ag-charts-react"
 import React, { Component } from "react"
-import { render } from "react-dom"
+import { createRoot } from "react-dom/client"
 
 class Chart1 extends Component {
   constructor(props) {
@@ -10,7 +10,6 @@ class Chart1 extends Component {
 
     this.state = {
       options: {
-        type: "cartesian",
         theme: myTheme,
         autoSize: true,
         title: {
@@ -117,6 +116,7 @@ var myTheme = {
         },
         column: {
           label: {
+            enabled: true,
             color: "white",
           },
         },
@@ -205,7 +205,8 @@ var data = [
   },
 ]
 
-render(
+const root = createRoot(document.getElementById('root'));
+root.render(
   <div id="charts">
     <div id="chart1">
       <Chart1 />
@@ -213,6 +214,4 @@ render(
     <div id="chart2">
       <Chart2 />
     </div>
-  </div>,
-  document.querySelector("#root")
-)
+  </div>);

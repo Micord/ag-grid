@@ -23,18 +23,15 @@ var athleteFilterParams: ITextFilterParams = {
       .replace(/[ýÿ]/g, 'y')
   },
   debounceMs: 200,
-  suppressAndOrCondition: true,
+  maxNumConditions: 1,
 };
 
 var countryFilterParams: ITextFilterParams = {
   filterOptions: ['contains'],
   textMatcher: ({ value, filterText }) => {
-    var filterTextLowerCase = filterText ? filterText.toLowerCase() : '';
-    var valueLowerCase = value.toString().toLowerCase()
     var aliases: Record<string, string> = {
       usa: 'united states',
       holland: 'netherlands',
-      vodka: 'russia',
       niall: 'ireland',
       sean: 'south africa',
       alberto: 'mexico',
@@ -42,10 +39,10 @@ var countryFilterParams: ITextFilterParams = {
       xi: 'china',
     }
 
-    var literalMatch = contains(valueLowerCase, filterTextLowerCase)
+    var literalMatch = contains(value, filterText || '')
 
     return (
-      !!literalMatch || !!contains(valueLowerCase, aliases[filterTextLowerCase])
+      !!literalMatch || !!contains(value, aliases[filterText || ''])
     )
   },
   trimInput: true,

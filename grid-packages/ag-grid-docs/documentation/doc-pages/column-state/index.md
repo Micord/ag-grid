@@ -1,9 +1,6 @@
 ---
 title: "Column State"
 ---
-
-
-
 [[only-javascript-or-angular-or-vue]]
 |Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
 
@@ -32,10 +29,11 @@ There are two API methods provided for getting and setting Column State. `column
 column state and `columnApi.applyColumnState(params)` sets the column state.
 
 <snippet>
-// save the column's state
-const savedState = gridOptions.columnApi.getColumnState();
-// restore the column state
-gridOptions.columnApi.applyColumnState({ state: savedState });
+| // save the column's state
+| const savedState = gridOptions.columnApi.getColumnState();
+|
+| // restore the column state
+| gridOptions.columnApi.applyColumnState({ state: savedState });
 </snippet>
 
 The example below demonstrates saving and restoring column state. Try the following:
@@ -75,55 +73,55 @@ Combining these rules together leaves for flexible fine grained state control. T
 examples:
 
 <snippet>
-// Sort Athlete column ascending
-gridOptions.columnApi.applyColumnState({
-    state: [
-        {
-            colId: 'athlete',
-            sort: 'asc'
-        }
-    ]
-});
-// Sort Athlete column ascending and clear sort on all other columns
-gridOptions.columnApi.applyColumnState({
-    state: [
-        {
-            colId: 'athlete',
-            sort: 'asc'
-        }
-    ],
-    defaultState: {
-        // important to say 'null' as undefined means 'do nothing'
-        sort: null
-    }
-});
-// Clear sorting on all columns, leave all other attributes untouched
-gridOptions.columnApi.applyColumnState({
-    defaultState: {
-        // important to say 'null' as undefined means 'do nothing'
-        sort: null
-    }
-});
-// Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
-gridOptions.columnApi.applyColumnState({
-    defaultState: {
-        // important to say 'null' as undefined means 'do nothing'
-        sort: null,
-        rowGroup: null,
-        pivot: null,
-        pinned: null
-    }
-});
-// Order columns, but do nothing else
-gridOptions.columnApi.applyColumnState({
-    state: [
-        { colId: 'athlete' },
-        { colId: 'country' },
-        { colId: 'age' },
-        { colId: 'sport' }
-    ],
-    applyOrder: true
-});
+| // Sort Athlete column ascending
+| gridOptions.columnApi.applyColumnState({
+|     state: [
+|         {
+|             colId: 'athlete',
+|             sort: 'asc'
+|         }
+|     ]
+| });
+| // Sort Athlete column ascending and clear sort on all other columns
+| gridOptions.columnApi.applyColumnState({
+|     state: [
+|         {
+|             colId: 'athlete',
+|             sort: 'asc'
+|         }
+|     ],
+|     defaultState: {
+|         // important to say 'null' as undefined means 'do nothing'
+|         sort: null
+|     }
+| });
+| // Clear sorting on all columns, leave all other attributes untouched
+| gridOptions.columnApi.applyColumnState({
+|     defaultState: {
+|         // important to say 'null' as undefined means 'do nothing'
+|         sort: null
+|     }
+| });
+| // Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
+| gridOptions.columnApi.applyColumnState({
+|     defaultState: {
+|         // important to say 'null' as undefined means 'do nothing'
+|         sort: null,
+|         rowGroup: null,
+|         pivot: null,
+|         pinned: null
+|     }
+| });
+| // Order columns, but do nothing else
+| gridOptions.columnApi.applyColumnState({
+|     state: [
+|         { colId: 'athlete' },
+|         { colId: 'country' },
+|         { colId: 'age' },
+|         { colId: 'sport' }
+|     ],
+|     applyOrder: true
+| });
 </snippet>
 
 The example below shows some fine grained access to Column State.
@@ -136,7 +134,7 @@ Using the techniques above, it is possible to save and restore a subset of the p
 The example below demonstrates this by selectively saving and restoring a) sort state and
 b) column visibility and order state.
 
-Note than when saving and restoring Sort state, other state attributes (width, row group, column order etc)
+Note that when saving and restoring Sort state, other state attributes (width, row group, column order etc)
 are not impacted.
 
 Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
@@ -157,7 +155,7 @@ For example setting `sort=null` will clear sort on a column whereas setting
 
 The only exception is with regards to Column Width. For width, both `undefined`
 and `null` will skip the attribute. This is because width is mandatory - there
-is no such things as a Column with no width.
+is no such thing as a Column with no width.
 
 ### Width and Flex
 

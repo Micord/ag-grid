@@ -135,19 +135,19 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
     let linkType = 'symbolic';
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
-    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
-    lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../grid-community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
+    lnk('../../grid-community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'angular'
     });
-    lnk('../../community-modules/angular-legacy/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/angular-legacy/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'angular-legacy'
     });
-    lnk('../../community-modules/react/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/react/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'react'
@@ -180,34 +180,34 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
             });
         });
 
-    lnk('../../community-modules/styles/', '_dev/@ag-grid-community', {
+    lnk('../../grid-community-modules/styles/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'styles'
     });
 
 
-    lnk('../../charts-packages/ag-charts-react/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-react/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-react'
     });
-    lnk('../../charts-packages/ag-charts-angular/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-angular/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-angular'
     });
-    lnk('../../charts-packages/ag-charts-angular-legacy/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-angular-legacy/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-angular-legacy'
     });
-    lnk('../../charts-packages/ag-charts-vue/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-vue/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue'
     });
-    lnk('../../charts-packages/ag-charts-vue3/', '_dev/', {
+    lnk('../../charts-community-modules/ag-charts-vue3/', '_dev/', {
         force: true,
         type: linkType,
         rename: 'ag-charts-vue3'
@@ -306,6 +306,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
+    const moduleIsUmdLine = `ModuleRegistry.setIsBundled();`
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
     const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
@@ -320,7 +321,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
         }
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
@@ -331,7 +332,7 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
 };
 
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
@@ -482,7 +483,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
 };
 
 const updateCoreModuleHashes = () => {
-    const coreModuleRootNames = ['community-modules', 'enterprise-modules', 'charts-packages'];
+    const coreModuleRootNames = ['grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
     const exclusions = ['react', 'angular', 'angular-legacy', 'vue', 'vue3', 'polymer'];
 
     coreModuleRootNames.forEach(moduleRootName => {
@@ -520,15 +521,15 @@ const buildCoreModules = async (exitOnError, chartsOnly) => {
     // future commits will make this more generic/flexible
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../community-modules/csv-export'
+        cwd: '../../grid-community-modules/csv-export'
     });
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../enterprise-modules/set-filter'
+        cwd: '../../grid-enterprise-modules/set-filter'
     });
     cp.spawnSync('./node_modules/.bin/tsc', ['-p', 'tsconfig.typings.json'], {
         stdio: 'inherit',
-        cwd: '../../enterprise-modules/excel-export'
+        cwd: '../../grid-enterprise-modules/excel-export'
     });
     console.log("Core Modules Built");
 
@@ -576,6 +577,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
         './documentation/static/example-runner/grid-typescript-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
+        './documentation/static/example-runner/grid-react-ts-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'];
 
@@ -642,7 +644,7 @@ const watchFrameworkModules = async () => {
     ];
 
     const moduleFrameworks = ['angular', 'angular-legacy', 'vue', 'vue3', 'react'];
-    const moduleRootDirectory = `../../community-modules/`;
+    const moduleRootDirectory = `../../grid-community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
 
@@ -671,15 +673,16 @@ const watchAutoDocFiles = async () => {
         '.AUTO.json',
     ];
 
-    // Matches the paths used in community-modules/all-modules/generate-code-reference-files.js
+    // Matches the paths used in grid-community-modules/all-modules/generate-code-reference-files.js
     const INTERFACE_GLOBS = [
-        '../../community-modules/core/src/ts/**/*.ts',
-        '../../enterprise-modules/set-filter/src/**/*.ts',
-        '../../enterprise-modules/filter-tool-panel/src/**/*.ts',
-        '../../enterprise-modules/multi-filter/src/**/*.ts',
-        '../../community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
-        '../../community-modules/react/src/shared/**/*.ts',
-        '../../charts-packages/ag-charts-community/src/**/*.ts',
+        '../../grid-community-modules/core/src/ts/**/*.ts',
+        '../../grid-enterprise-modules/set-filter/src/**/*.ts',
+        '../../grid-enterprise-modules/filter-tool-panel/src/**/*.ts',
+        '../../grid-enterprise-modules/multi-filter/src/**/*.ts',
+        '../../grid-community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts',
+        '../../grid-community-modules/react/src/shared/**/*.ts',
+        '../../charts-community-modules/ag-charts-community/src/**/*.ts',
+        '../../charts-enterprise-modules/core/src/**/*.ts',
     ];
 
     const ignoredFolders = [...defaultIgnoreFolders];
@@ -715,7 +718,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 };
 
 const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages'];
+    const moduleRootNames = ['grid-packages', 'grid-community-modules', 'grid-enterprise-modules', 'charts-community-modules'];
     const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'ag-grid-documentation'];
     const modulesState = {};
 
@@ -735,7 +738,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -802,13 +805,21 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, done)
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
-            // regenerate examples and then watch them
-            console.log("Watch and Generate Examples");
-            await watchAndGenerateExamples(chartsOnly);
-            console.log("Examples Generated");
+            if (skipExampleGeneration) {
+                console.log("Skipping Example Generation");
+            } else {
+                console.time("Generating examples");
 
-            console.log("Watch Typescript examples...");
-            await watchValidateExampleTypes();
+                // regenerate examples and then watch them
+                console.log("Watch and Generate Examples");
+                await watchAndGenerateExamples(chartsOnly);
+                console.log("Examples Generated");
+
+                console.log("Watch Typescript examples...");
+                await watchValidateExampleTypes();
+
+                console.timeEnd("Generating examples");
+            }
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way

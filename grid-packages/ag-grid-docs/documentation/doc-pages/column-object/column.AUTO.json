@@ -70,6 +70,7 @@
   "isFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
+  "isTooltipEnabled": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isTooltipFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
@@ -97,6 +98,7 @@
     "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isCellEditable": {
+    "description": "/** Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.\n     */",
     "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isSuppressFillHandle": {
@@ -203,6 +205,10 @@
       "returnType": "void"
     }
   },
+  "isHovered": {
+    "description": "/** Returns `true` when this `Column` is hovered, otherwise `false` */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "setPinned": {
     "type": {
       "arguments": { "pinned": "ColumnPinnedType" },
@@ -247,6 +253,9 @@
     }
   },
   "isVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isSpanHeaderHeight": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "getColDef": {
     "description": "/** Returns the column definition for this column.\n     * The column definition will be the result of merging the application provided column definition with any provided defaults\n     * (e.g. `defaultColDef` grid option, or column types.\n     *\n     * Equivalent: `getDefinition` */",
     "type": { "arguments": {}, "returnType": "ColDef" }

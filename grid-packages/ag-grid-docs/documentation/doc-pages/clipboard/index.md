@@ -7,7 +7,7 @@ You can copy and paste items to and from the grid using the system clipboard.
 
 ## How to copy
 
-Copying from the grid is <b>enabled by default</b> for enterprise users. To copy your selection to the system clipboard, you can use the keybind <kbd>Ctrl</kbd>+<kbd>C</kbd>, or right click on a cell and select 'Copy' from the context menu. Unless [Range Selection](/range-selection) or [Row Selection](/row-selection) is enabled, you will only be copying from the currently focused cell.
+Copying from the grid is **enabled by default** for enterprise users. To copy your selection to the system clipboard, you can use the keybind <kbd>Ctrl</kbd>+<kbd>C</kbd>, or right click on a cell and select 'Copy' from the context menu. Unless [Range Selection](/range-selection) or [Row Selection](/row-selection) is enabled, you will only be copying from the currently focused cell.
 
 When copying multiple cells, the contents will be copied in an Excel compatible format, with fields
 separated by a `\t` (tab) character.
@@ -57,7 +57,7 @@ The below example demonstrates copying the focused cell only when using row sele
 The copy operation copies the selected content in the following order of precedence:
 
 1. Cell Ranges (if [Range Selection](/range-selection) is enabled)
-2. Row Selection (if [Row Selection](/row-selection) is enabled and `suppressCopyRowsToClipboard` is <b>not</b> enabled)
+2. Row Selection (if [Row Selection](/row-selection) is enabled and `suppressCopyRowsToClipboard` is **not** enabled)
 3. Focused Cell
 
 When both range selection and row selection are enabled, the default behaviour of copying ranges over copying rows can make it impossible for users to copy rows (as the selected cell range is copied by default). Enabling the grid option `gridOptions.suppressCopySingleCellRanges=true` makes it possible to copy the selected rows when only a single cell is selected via range selection. 
@@ -89,6 +89,29 @@ You can use the Grid API methods: `copySelectedRowsToClipboard(...)` and `copySe
 to copy rows or ranges respectively, these API calls take optional parameters to enable copying column and group headers.
 
 <api-documentation source='grid-api/api.json' section='clipboard' names='["copySelectedRangeToClipboard", "copySelectedRowsToClipboard"]'  ></api-documentation>
+
+## How to Cut
+
+Cut from the grid is **enabled by default** for enterprise users. To cut your selection to the system clipboard, you can use the keybind <kbd>Ctrl</kbd>+<kbd>X</kbd>, or right click on a cell and select 'Cut' from the context menu. Unless [Range Selection](/range-selection) or [Row Selection](/row-selection) is enabled, you will only be copying from the currently focused cell.
+
+The cut operations will work exactly the same as the copy operations, with the addition that data will be removed from the grid afterwards, so the cut operations will use the same properties described above to customise the `copy` process.
+
+## Disabling Cut
+
+Since `Cut` is a destructive process, the `suppressCutToClipboard` property was added to the Grid Options.
+
+<snippet>
+const gridOptions = {
+    suppressCutToClipboard: true
+}
+</snippet>
+
+This is demonstrated in the example below. Note the following:
+
+- Selecting a cell and pressing <kbd>Ctrl</kbd>+<kbd>X</kbd> will not `copy` or `cut` the data.
+- The context menu will not show an option to `Cut`.
+
+<grid-example title='Clipboard Suppress Cut' name='suppress-cut' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
 ## How to Paste
 
@@ -152,7 +175,7 @@ The following example shows custom code to process the data from the clipboard:
 
 ### Pasting new rows at the bottom of the Grid
 
-By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted. 
+By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted.
 
 In order to insert all the copied rows in the grid, a custom `processDataFromClipboard` function is needed to add the necessary number of new rows using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
 
@@ -164,6 +187,16 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 * Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
 
 <grid-example title='Paste New Rows' name='pasting-extra-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
+
+### Read Only Edit
+
+When the grid is in [Read Only Edit](/value-setters/#read-only-edit) mode the `Clipboard` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.
+
+<api-documentation source='grid-events/events.json' section='editing' names='["cellEditRequest"]'></api-documentation>
+
+The example below will show how to update cell value combining the `Clipboard` with `readOnlyEdit=true`.
+
+<grid-example title='Clipboard - ReadOnlyEdit' name='read-only-edit' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
 
 ## Changing the Delimiter for Copy & Paste
 

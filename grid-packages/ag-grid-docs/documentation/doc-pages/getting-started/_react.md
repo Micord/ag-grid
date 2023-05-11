@@ -25,7 +25,7 @@
 |
 | ```jsx
 | import React, { useState } from 'react';
-| import { render } from 'react-dom';
+| import { createRoot } from 'react-dom/client';
 | import { AgGridReact } from 'ag-grid-react';
 |
 | import 'ag-grid-community/styles/ag-grid.css';
@@ -54,7 +54,8 @@
 |    );
 | };
 |
-| render(<App />, document.getElementById('root'));
+|const root = createRoot(document.getElementById('root'));
+|root.render(<GridExample />);
 | ```
 |
 |</div>
@@ -78,7 +79,7 @@
 |</section>
 |
 | [[note]]
-| | Please refer to our [Compatibility Chart](#ag-grid--react-compatibility-chart) for Supported Versions of React & AG Grid.
+| | Please refer to our [Compatibility Chart](/react-compatibility) for Supported Versions of React & AG Grid.
 |
 | ## Getting Started with Community Video
 |
@@ -141,7 +142,7 @@
 |
 |```jsx
 |import React, { useState, useRef, useEffect, useMemo, useCallback} from 'react';
-|import { render } from 'react-dom';
+|import { createRoot } from 'react-dom/client';
 |import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 |
 |import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
@@ -169,7 +170,7 @@
 |    console.log('cellClicked', event);
 |  }, []);
 |
-|  // Example load data from sever
+|  // Example load data from server
 |  useEffect(() => {
 |    fetch('https://www.ag-grid.com/example-assets/row-data.json')
 |    .then(result => result.json())
@@ -250,7 +251,7 @@
 |
 |...
 |
-|// Example load data from sever
+|// Example load data from server
 |useEffect(() => {
 |    fetch('https://www.ag-grid.com/example-assets/row-data.json')
 |    .then(result => result.json())
@@ -398,14 +399,3 @@
 |    {field: 'price'}
 |]);
 |```
-|
-| <br/>
-| <br/>
-|
-| ## AG Grid & React Compatibility Chart
-|
-| | React Version | AG Grid Versions |
-| | ------------- | ---------------- |
-| | 15.x          | 18 - 21.2.0      |
-| | 16.3+ / 17+   | 22+              |
-| | 18+           | 27.2.0+          |

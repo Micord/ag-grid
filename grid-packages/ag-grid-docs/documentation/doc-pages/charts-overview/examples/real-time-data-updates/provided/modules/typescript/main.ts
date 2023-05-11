@@ -1,5 +1,4 @@
-import * as agCharts from "ag-charts-community"
-import { AgCartesianChartOptions } from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart, time } from "ag-charts-community"
 
 var systemLoad = 0
 var userLoad = 0
@@ -58,7 +57,13 @@ const options: AgCartesianChartOptions = {
     fontSize: 18,
   },
   series: [
-    { type: "area", xKey: "time", yKey: "system", stacked: true, yName: "System" },
+    {
+      type: "area",
+      xKey: "time",
+      yKey: "system",
+      stacked: true,
+      yName: "System",
+    },
     { type: "area", xKey: "time", yKey: "user", stacked: true, yName: "User" },
   ],
   axes: [
@@ -66,6 +71,9 @@ const options: AgCartesianChartOptions = {
       type: "time",
       position: "bottom",
       nice: false,
+      tick: {
+        interval: time.second.every(5, { snapTo: 0 }),
+      },
     },
     {
       type: "number",
@@ -83,11 +91,11 @@ const options: AgCartesianChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)
 
 function updateData() {
   var now = Date.now()
   options.data = getData()
-  agCharts.AgChart.update(chart, options)
+  AgChart.update(chart, options)
 }
 setInterval(updateData, refreshRateInMilliseconds)

@@ -1,4 +1,4 @@
-import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager } from 'ag-grid-community';
+import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from 'ag-grid-community';
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
@@ -141,10 +141,9 @@ const CellComp = (props: {
     const [editDetails, setEditDetails ] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
 
-    const [userStyles, setUserStyles] = useState<any>();
+    const [userStyles, setUserStyles] = useState<CellStyle>();
 
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [title, setTitle] = useState<string | undefined>();
@@ -212,7 +211,7 @@ const CellComp = (props: {
     // way for React is just allow the new props to propagate down to the React Cell Renderer)
     // however we do this for backwards compatibility, as having refresh used to be supported.
     const lastRenderDetails = useRef<RenderDetails>();
-    useEffect(() => {
+    useLayoutEffect(() => {
         const oldDetails = lastRenderDetails.current;
         const newDetails = renderDetails;
         lastRenderDetails.current = renderDetails;
@@ -246,7 +245,7 @@ const CellComp = (props: {
 
     }, [renderDetails]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
         if (!doingJsEditor) { return; }
 
@@ -281,13 +280,8 @@ const CellComp = (props: {
     }, [editDetails]);
 
     // tool widgets effect
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!cellCtrl || !context) { return; }
-
-        const cellId = `cell-${cellCtrl.getInstanceId()}`;
-        const describedByIds: string[] = [];
-
-        describedByIds.push(cellId);
 
         if (!eCellWrapper.current || !showCellWrapper) { return; }
 
@@ -307,7 +301,6 @@ const CellComp = (props: {
 
         if (includeSelection) {
             const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
-            describedByIds.push(checkboxSelectionComp.getCheckboxId());
             addComp(checkboxSelectionComp);
         }
 
@@ -318,8 +311,6 @@ const CellComp = (props: {
         if (includeRowDrag) {
             addComp(cellCtrl.createRowDragComp());
         }
-
-        setAriaDescribedBy(describedByIds.join(' '));
 
         return () => destroyFuncs.forEach(f => f());
 
@@ -332,7 +323,7 @@ const CellComp = (props: {
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setUserStyles: styles => setUserStyles(styles),
+            setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui.current!,
             setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => setRole(role),
@@ -432,11 +423,10 @@ const CellComp = (props: {
             role={ role }
             col-id={ colId }
             title={ title }
-            aria-describedby={ ariaDescribedBy }
         >
             { showCellWrapper
                 ? (
-                    <div className="ag-cell-wrapper" role="presentation" aria-hidden="true" ref={ setCellWrapperRef }>
+                    <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
                         { showContents() }
                     </div>
                 )

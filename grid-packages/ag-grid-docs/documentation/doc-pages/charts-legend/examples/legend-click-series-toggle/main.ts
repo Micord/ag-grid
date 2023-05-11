@@ -1,5 +1,8 @@
-import * as agCharts from "ag-charts-community"
-import { AgChartLegendClickEvent, AgChartOptions } from "ag-charts-community"
+import {
+  AgChart,
+  AgChartLegendClickEvent,
+  AgChartOptions,
+} from "ag-charts-community"
 import { getData } from "./data"
 
 const colors = [
@@ -87,8 +90,8 @@ const options: AgChartOptions = {
     {
       type: "scatter",
       xKey: "year",
-      yKey: "Small cale Hydro",
-      sizeKey: "Small cale Hydro percent",
+      yKey: "Small scale Hydro",
+      sizeKey: "Small scale Hydro percent",
       yName: "Small Scale Hydro",
     },
     {
@@ -135,6 +138,8 @@ const options: AgChartOptions = {
       label: {
         padding: 15,
       },
+      max: new Date(2025, 0, 1),
+      nice: false,
     },
     {
       position: "right",
@@ -148,9 +153,6 @@ const options: AgChartOptions = {
       line: {
         width: 0,
       },
-      tick: {
-        count: 5,
-      },
     },
   ],
   legend: {
@@ -161,13 +163,12 @@ const options: AgChartOptions = {
         itemId,
         enabled,
       }: AgChartLegendClickEvent) => {
-        window.alert(
+        console.log(
           `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
         )
       },
     },
     item: {
-      toggleSeriesVisible: false,
       marker: {
         strokeWidth: 2,
       },
@@ -175,4 +176,4 @@ const options: AgChartOptions = {
   },
 }
 
-agCharts.AgChart.create(options)
+AgChart.create(options)

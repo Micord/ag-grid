@@ -1,0 +1,52 @@
+{
+  "name": "@ag-grid-community/angular",
+  "version": "29.3.0-micord.3",
+  "scripts": {
+    "clean": "rimraf dist .hash",
+    "ng": "./node_modules/.bin/ng",
+    "start": "./node_modules/.bin/ng serve",
+    "build": "npm run update-angular-components && ./node_modules/.bin/ng build && npm run hash",
+    "build-prod": "npm run build",
+    "test:e2e": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
+    "lint": "./node_modules/.bin/ng lint",
+    "update-angular-components": "node updateGridAndColumnProperties.js",
+    "verify-properties": "node agGridPropertiesCheck.js",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+  },
+  "license": "MIT",
+  "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
+  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.js",
+  "typings": "./dist/ag-grid-angular/ag-grid-community-angular.d.ts",
+  "dependencies": {
+    "@angular/animations": "7.2.15",
+    "@angular/common": "7.2.15",
+    "@angular/compiler": "7.2.15",
+    "@angular/core": "7.2.15",
+    "@angular/forms": "7.2.15",
+    "@angular/platform-browser": "7.2.15",
+    "@angular/platform-browser-dynamic": "7.2.15",
+    "@angular/router": "7.2.15",
+    "rxjs": "6.4.0",
+    "tslib": "1.9.3",
+    "zone.js": "0.11.8"
+  },
+  "devDependencies": {
+    "@ag-grid-community/core": "29.3.0-micord.3",
+    "@angular-devkit/build-angular": "0.13.10",
+    "@angular-devkit/build-ng-packagr": "0.13.10",
+    "@angular/cli": "7.3.10",
+    "@angular/compiler-cli": "7.2.15",
+    "@types/jasmine": "~3.8.0",
+    "@types/node": "^12.11.1",
+    "jasmine-core": "~3.8.0",
+    "karma": "~6.3.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.0.3",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
+    "ng-packagr": "5.0.1",
+    "typescript": "3.2.4",
+    "replace-in-file": "4.1.0",
+    "rimraf": "3.0.2"
+  }
+}

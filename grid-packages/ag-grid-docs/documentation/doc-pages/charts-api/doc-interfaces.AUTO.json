@@ -1,13 +1,8 @@
 {
   "_config_": {},
   "Tags": {},
-  "AxisNodeDatum": {
-    "tick": { "type": { "returnType": "any", "optional": false } },
-    "translationY": { "type": { "returnType": "number", "optional": false } }
-  },
-  "TimeTickCount": {},
-  "NumberTickCount": {},
-  "TickCountType": { "meta": { "typeParams": ["S"] } },
+  "TickCount": { "meta": { "typeParams": ["S"] } },
+  "TickInterval": { "meta": { "typeParams": ["S"] } },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},
   "OffscreenCanvas": {},
@@ -22,6 +17,7 @@
   "PixelSize": {},
   "Ratio": {},
   "DataValue": {},
+  "AgChartInteractionRange": {},
   "AgChartThemePalette": {
     "fills": {
       "description": "/** The array of fills to be used. */",
@@ -209,6 +205,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -219,7 +219,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -233,9 +237,17 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgPolarThemeOptions": {
@@ -268,6 +280,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -278,7 +294,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -292,9 +312,17 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgHierarchyThemeOptions": {
@@ -327,6 +355,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -337,7 +369,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -351,9 +387,17 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgCrossLineThemeOptions": {
@@ -483,11 +527,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "min": {
-      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "description": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "max": {
-      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "description": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "base": {
@@ -570,7 +614,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -632,7 +676,7 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "top": {
       "description": "/** An object with axis theme overrides for the `top` positioned axes. Same configs apply here as one level above. For example, to rotate labels by 45 degrees in 'top' positioned axes one can use `top: { label: { rotation: 45 } } }`. */",
@@ -989,6 +1033,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgHierarchySeriesTheme": {
@@ -1012,6 +1060,40 @@
     "left": {
       "description": "/** The number of pixels of padding at the left of the chart area. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgSeriesAreaPaddingOptions": {
+    "top": {
+      "description": "/** The number of pixels of padding at the top of the series area. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "right": {
+      "description": "/** The number of pixels of padding at the right of the series area. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "bottom": {
+      "description": "/** The number of pixels of padding at the bottom of the series area. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "left": {
+      "description": "/** The number of pixels of padding at the left of the series area. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgChartOverlayOptions": {
+    "text": {
+      "description": "/** Text to render in the overlay. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "renderer": {
+      "description": "/** A function for generating HTML string for overlay content. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    }
+  },
+  "AgChartOverlaysOptions": {
+    "noData": {
+      "description": "/** An overlay to be displayed when there is no data. */",
+      "type": { "returnType": "AgChartOverlayOptions", "optional": true }
     }
   },
   "AgChartLabelOptions": {
@@ -1064,35 +1146,103 @@
   },
   "AgChartCaptionOptions": {
     "enabled": {
-      "description": "/** Whether or not the title should be shown. */",
+      "description": "/** Whether or not the text should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the title. */",
+      "description": "/** The text to display. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** The font style to use for the title. */",
+      "description": "/** The font style to use for the text. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the title. */",
+      "description": "/** The font weight to use for the text. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the title. */",
+      "description": "/** The font size in pixels to use for the text. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the title. */",
+      "description": "/** The font family to use for the text. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the title. */",
+      "description": "/** The colour to use for the text. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "spacing": {
-      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "description": "/** Spacing added to help position the text. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgChartSubtitleOptions": {
+    "enabled": {
+      "description": "/** Whether or not the text should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "text": {
+      "description": "/** The text to display. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the text. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the text. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the text. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the text. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the text. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the text. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgChartFooterOptions": {
+    "enabled": {
+      "description": "/** Whether or not the text should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "text": {
+      "description": "/** The text to display. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the text. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the text. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the text. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the text. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the text. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -1297,7 +1447,39 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgChartLegendEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "meta": { "typeParams": ["T extends string"] }
+  },
   "AgChartLegendClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "seriesId": {
+      "description": "/** Series id */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "itemId": {
+      "description": "/** Legend item id - usually yKey value for cartesian series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "enabled": {
+      "description": "/** Whether the legend item is currently enabled or not. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "AgChartLegendDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
     "seriesId": {
       "description": "/** Series id */",
       "type": { "returnType": "string", "optional": false }
@@ -1316,6 +1498,14 @@
       "description": "/** The listener to call when a legend item is clicked. */",
       "type": {
         "arguments": { "event": "AgChartLegendClickEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "legendItemDoubleClick": {
+      "description": "/** The listener to call when a legend item is double clicked. */",
+      "type": {
+        "arguments": { "event": "AgChartLegendDoubleClickEvent" },
         "returnType": "void",
         "optional": true
       }
@@ -1455,12 +1645,36 @@
       "type": { "returnType": "string", "optional": true }
     },
     "tracking": {
-      "description": "/** If true, for series with markers the tooltip will be shown to the closest marker. */",
+      "description": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "range": {
+      "description": "/** Range from a point that triggers the tooltip to show. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "delay": {
       "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
       "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgTooltipPositionType": {},
+  "AgTooltipPositionOptions": {},
+  "AgMovingTooltipPositionOptions": {
+    "type": {
+      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "type": { "returnType": "AgTooltipPositionType", "optional": false }
+    },
+    "xOffset": {
+      "description": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartBackground": {
@@ -1478,10 +1692,121 @@
     "event": { "type": { "returnType": "Event", "optional": false } },
     "meta": { "typeParams": ["T extends string"] }
   },
+  "AgNodeBaseClickEvent": {
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "T", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the chart or series data array. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "meta": { "typeParams": ["T extends string"] },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgNodeClickEvent": {
     "type": {
       "description": "/** Event type. */",
-      "type": { "returnType": "'seriesNodeClick'", "optional": false }
+      "type": { "returnType": "T", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the chart or series data array. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
+  "AgNodeDoubleClickEvent": {
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "T", "optional": false }
     },
     "series": {
       "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
@@ -1537,11 +1862,23 @@
     "type": { "type": { "returnType": "T", "optional": false } },
     "event": { "type": { "returnType": "Event", "optional": false } }
   },
+  "AgChartDoubleClickEvent": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgBaseChartListeners": {
     "seriesNodeClick": {
       "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
       "type": {
         "arguments": { "event": "AgNodeClickEvent" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "seriesNodeDoubleClick": {
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeDoubleClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
+      "type": {
+        "arguments": { "event": "AgNodeDoubleClickEvent" },
         "returnType": "any",
         "optional": true
       }
@@ -1553,6 +1890,21 @@
         "returnType": "any",
         "optional": true
       }
+    },
+    "doubleClick": {
+      "description": "/** The listener to call to signify a double click on the chart by the user. */",
+      "type": {
+        "arguments": { "event": "AgChartDoubleClickEvent" },
+        "returnType": "any",
+        "optional": true
+      }
+    }
+  },
+  "AgChartHighlightRange": {},
+  "AgChartHighlightOptions": {
+    "range": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "AgChartHighlightRange", "optional": true }
     }
   },
   "AgBaseChartOptions": {
@@ -1580,6 +1932,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -1590,7 +1946,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -1604,9 +1964,17 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgBaseAxisOptions": {
@@ -1639,11 +2007,53 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgAxisCategoryTickOptions": {
+    "width": {
+      "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "size": {
+      "description": "/** The length in pixels of the axis ticks. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour of the axis ticks. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisNumberTickOptions": {
     "count": {
-      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     */",
+      "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "interval": {
+      "description": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "width": {
@@ -1657,11 +2067,27 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisTimeTickOptions": {
     "count": {
       "description": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "interval": {
+      "description": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
     },
     "width": {
@@ -1675,6 +2101,18 @@
     "color": {
       "description": "/** The colour of the axis ticks. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "values": {
+      "description": "/** Array of values in axis units to display as ticks along the axis.\n     * The values in this array must be compatible with the axis type.\n     */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "minSpacing": {
+      "description": "/** Minimum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxSpacing": {
+      "description": "/** Maximum gap in pixels between tick lines.\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "AgAxisLabelFormatterParams": {
@@ -1735,7 +2173,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "format": {
-      "description": "/** Format string used when rendering labels for time axes. */",
+      "description": "/** Format string used when rendering labels. */",
       "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
@@ -1933,11 +2371,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "min": {
-      "description": "/** User override for the automatically determined min value (based on series data). */",
+      "description": "/** User override for the automatically determined min value (based on series data). This value can be any non-zero number less than the configured `max` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "max": {
-      "description": "/** User override for the automatically determined max value (based on series data). */",
+      "description": "/** User override for the automatically determined max value (based on series data). This value can be any non-zero number more than the configured `min` value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "base": {
@@ -1994,7 +2432,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -2032,7 +2470,7 @@
     },
     "tick": {
       "description": "/** Configuration for the axis ticks. */",
-      "type": { "returnType": "AgAxisNumberTickOptions", "optional": true }
+      "type": { "returnType": "AgAxisCategoryTickOptions", "optional": true }
     },
     "position": {
       "description": "/** The position on the chart where the axis should be rendered. */",
@@ -2213,7 +2651,15 @@
       "type": {
         "arguments": { "params": "AgSeriesNodeClickParams<DatumType>" },
         "returnType": "void",
-        "optional": false
+        "optional": true
+      }
+    },
+    "nodeDoubleClick": {
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is double clicked. */",
+      "type": {
+        "arguments": { "params": "AgSeriesNodeClickParams<DatumType>" },
+        "returnType": "void",
+        "optional": true
       }
     },
     "meta": { "typeParams": ["DatumType"] }
@@ -2246,6 +2692,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
     "meta": { "typeParams": ["DatumType"] }
   },
@@ -2592,6 +3042,20 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
+    }
+  },
+  "AgSeriesTooltipInteraction": {
+    "enabled": {
+      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
+      "type": { "returnType": "boolean", "optional": false }
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -2651,6 +3115,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgLineSeriesOptions": {
@@ -2740,6 +3212,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgScatterSeriesTooltip": {
@@ -2754,6 +3230,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -2834,7 +3318,7 @@
   },
   "AgScatterSeriesOptions": {
     "type": {
-      "description": "/** Configuration for the treemap series.  */",
+      "description": "/** Configuration for the scatter series.  */",
       "type": { "returnType": "'scatter'", "optional": true }
     },
     "marker": {
@@ -2916,6 +3400,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgAreaSeriesTooltip": {
@@ -2930,6 +3418,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgAreaSeriesOptions": {
@@ -3033,6 +3529,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgBarSeriesLabelPlacement": {},
@@ -3083,6 +3583,7 @@
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgBarSeriesFormat": {
@@ -3090,11 +3591,54 @@
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
+  "AgBarSeriesTooltipRendererParams": {
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "AgBarSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "arguments": { "params": "AgBarSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
@@ -3102,6 +3646,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgBarSeriesOptions": {
@@ -3110,7 +3662,14 @@
       "description": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "stacked": { "type": { "returnType": "boolean", "optional": true } },
+    "stacked": {
+      "description": "/** An option indicating if the bars/columns should be stacked. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stackGroup": {
+      "description": "/** An ID to be used to group stacked items. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "normalizedTo": {
       "description": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "type": { "returnType": "number", "optional": true }
@@ -3133,7 +3692,7 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fill": {
-      "description": "/** The colour to use for the fill of the area. */",
+      "description": "/** The colour to use for the fill of the bars. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
@@ -3208,6 +3767,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgHistogramSeriesLabelOptions": {
@@ -3297,6 +3860,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgHistogramBinDatum": {
@@ -3415,6 +3986,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgPieSeriesLabelOptions": {
@@ -3533,40 +4108,48 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgPieTitleOptions": {
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
     "enabled": {
-      "description": "/** Whether or not the title should be shown. */",
+      "description": "/** Whether or not the text should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the title. */",
+      "description": "/** The text to display. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** The font style to use for the title. */",
+      "description": "/** The font style to use for the text. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the title. */",
+      "description": "/** The font weight to use for the text. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the title. */",
+      "description": "/** The font size in pixels to use for the text. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the title. */",
+      "description": "/** The font family to use for the text. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the title. */",
+      "description": "/** The colour to use for the text. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "spacing": {
-      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -3833,6 +4416,10 @@
     "highlightStyle": {
       "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
       "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgPieSeriesTooltipRendererParams": {
@@ -4060,6 +4647,14 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgTreemapSeriesLabelsOptions": {
@@ -4226,6 +4821,10 @@
     "cursor": {
       "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
       "type": { "returnType": "string", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
   "AgTreemapSeriesFormatterParams": {
@@ -4313,14 +4912,14 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
-  "AgCartesianSeriesOptions": {},
+  "AgCartesianSeriesOptions": { "meta": { "typeParams": ["TAddon = never"] } },
   "AgPolarSeriesOptions": {},
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
+      "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
         "optional": true
       }
     },
@@ -4330,12 +4929,16 @@
     },
     "series": {
       "description": "/** Series configurations. */",
-      "type": { "returnType": "AgCartesianSeriesOptions[]", "optional": true }
+      "type": {
+        "returnType": "AgCartesianSeriesOptions<TAddonSeries>[]",
+        "optional": true
+      }
     },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -4360,6 +4963,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4370,7 +4977,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4384,15 +4995,23 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgPolarChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
-      "type": { "returnType": "'polar' | 'pie'", "optional": true }
+      "description": "/** If specified overrides the default series type. */",
+      "type": { "returnType": "'pie'", "optional": true }
     },
     "series": {
       "description": "/** Series configurations. */",
@@ -4422,6 +5041,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4432,7 +5055,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4446,15 +5073,23 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgHierarchyChartOptions": {
     "type": {
-      "description": "/** Type of chart to render. Inherited from the first declared series if unspecified. */",
-      "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
+      "description": "/** If specified overrides the default series type. */",
+      "type": { "returnType": "'treemap'", "optional": true }
     },
     "data": { "type": { "returnType": "any", "optional": true } },
     "series": {
@@ -4481,6 +5116,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesAreaPadding": {
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4491,7 +5130,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4505,12 +5148,22 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
-  "AgChartOptions": {},
+  "AgChartOptions": {
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] }
+  },
   "AgChartInstance": {
     "getOptions": {
       "description": "/** Get the `AgChartOptions` representing the current chart configuration. */",
@@ -4525,10 +5178,39 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "ChartType": {},
-  "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
-  "DownloadOptions": {},
+  "DownloadOptions": {
+    "fileName": {
+      "description": "/** Name of downloaded image file. Defaults to `image`.  */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "width": {
+      "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fileFormat": {
+      "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
+  "ImageDataUrlOptions": {
+    "width": {
+      "description": "/** Width of downloaded chart image in pixels. Defaults to current chart width. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of downloaded chart image in pixels. Defaults to current chart height. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fileFormat": {
+      "description": "/** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */",
+      "type": { "returnType": "string", "optional": true }
+    }
+  },
   "DeepPartialDepth": {},
   "DeepPartial": { "meta": { "typeParams": ["T"] } },
   "AgChart": {
@@ -4541,7 +5223,7 @@
       }
     },
     "update": {
-      "description": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "description": "/** Update an existing `AgChartInstance`. Options provided should be complete and not\n     * partial.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
@@ -4551,7 +5233,7 @@
       }
     },
     "updateDelta": {
-      "description": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     *\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
+      "description": "/** Update an existing `AgChartInstance` by applying a partial set of option changes.\n     * <br/>\n     * <br/>\n     * **NOTE**: As each call could trigger a chart redraw, each individual delta options update\n     * should leave the chart in a valid options state. Also, multiple calls to update options in\n     * quick succession could result in undesirable flickering, so callers should batch up and/or\n     * debounce changes to avoid unintended partial update renderings.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
@@ -4561,7 +5243,7 @@
       }
     },
     "download": {
-      "description": "/** Initiate a browser-based image download for the given `AgChartInstance`s rendering.\n     */",
+      "description": "/** Starts a browser-based image download for the given `AgChartInstance`.\n     */",
       "type": {
         "arguments": {
           "chart": "AgChartInstance",
@@ -4569,14 +5251,56 @@
         },
         "optional": false
       }
+    },
+    "getImageDataURL": {
+      "description": "/** Returns a base64-encoded image data URL for the given `AgChartInstance`.\n     */",
+      "type": {
+        "arguments": {
+          "chart": "AgChartInstance",
+          "options?": "ImageDataUrlOptions"
+        },
+        "returnType": "Promise<string>",
+        "optional": false
+      }
     }
   },
   "ObservableLike": {},
   "VisibilityMap": {},
-  "ChartUpdateType": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
+  "ChartUpdateOptions": {},
+  "PickedNode": {},
+  "BoundSeries": {
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "getDomain": {
+      "type": {
+        "arguments": { "direction": "ChartAxisDirection" },
+        "returnType": "any[]",
+        "optional": false
+      }
+    },
+    "isEnabled": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getKeys": {
+      "type": {
+        "arguments": { "direction": "ChartAxisDirection" },
+        "returnType": "string[]",
+        "optional": false
+      }
+    },
+    "visible": { "type": { "returnType": "boolean", "optional": false } },
+    "getBandScalePadding": {
+      "type": {
+        "arguments": {},
+        "returnType": "{ inner: number; outer: number }",
+        "optional": true
+      }
+    }
+  },
   "ChartAxisDirection": {},
+  "ChartType": {},
+  "ChartUpdateType": {},
   "NodeData": {},
   "CrossLineType": {},
   "CrossLineLabelPosition": {},
@@ -4586,6 +5310,83 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "UngroupedDataItem": { "meta": { "typeParams": ["D", "V"] } },
+  "UngroupedData": {
+    "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "UngroupedDataItem<D, any[]>[]",
+        "optional": false
+      }
+    },
+    "domain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
+        "optional": false
+      }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
+    },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
+    "time": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["D"] }
+  },
+  "GroupedData": {
+    "type": { "type": { "returnType": "'grouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "UngroupedDataItem<D[], any[][]>[]",
+        "optional": false
+      }
+    },
+    "domain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
+        "optional": false
+      }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
+    },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
+    "time": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["D"] }
+  },
+  "ProcessedData": { "meta": { "typeParams": ["D"] } },
+  "DatumPropertyType": {},
+  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
+  "Options": {
+    "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
+  },
+  "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -4599,13 +5400,30 @@
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
-  "Listener": { "meta": { "typeParams": ["E"] } },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
   "HighlightState": {
     "highlightedDatum": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": false }
+      "type": { "returnType": "HighlightNodeDatum", "optional": false }
+    }
+  },
+  "HighlightNodeDatum": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": true } },
+    "yKey": { "type": { "returnType": "string", "optional": true } },
+    "cumulativeValue": { "type": { "returnType": "number", "optional": true } },
+    "aggregatedValue": { "type": { "returnType": "number", "optional": true } },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
+    "point": {
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HighlightChangeEvent": {
@@ -4613,10 +5431,10 @@
       "type": { "returnType": "'highlight-change'", "optional": false }
     },
     "previousHighlight": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+      "type": { "returnType": "HighlightNodeDatum", "optional": true }
     },
     "currentHighlight": {
-      "type": { "returnType": "SeriesNodeDatum", "optional": true }
+      "type": { "returnType": "HighlightNodeDatum", "optional": true }
     }
   },
   "InteractionTypes": {},
@@ -4632,7 +5450,69 @@
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } }
   },
+  "SupportedEvent": {},
+  "TooltipState": {
+    "content": { "type": { "returnType": "string", "optional": false } },
+    "meta": { "type": { "returnType": "TooltipMeta", "optional": true } }
+  },
+  "ZoomState": {
+    "min": { "type": { "returnType": "number", "optional": false } },
+    "max": { "type": { "returnType": "number", "optional": false } }
+  },
+  "AxisZoomState": {
+    "x": { "type": { "returnType": "ZoomState", "optional": true } },
+    "y": { "type": { "returnType": "ZoomState", "optional": true } }
+  },
+  "ZoomChangeEvent": {
+    "type": { "type": { "returnType": "'zoom-change'", "optional": false } },
+    "x": { "type": { "returnType": "ZoomState", "optional": true } },
+    "y": { "type": { "returnType": "ZoomState", "optional": true } }
+  },
   "Layers": {},
+  "LayoutStage": {},
+  "AxisLabelLayout": {},
+  "AxisLayout": {
+    "rect": { "type": { "returnType": "BBox", "optional": false } },
+    "gridPadding": { "type": { "returnType": "number", "optional": false } },
+    "seriesAreaPadding": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "tickSize": { "type": { "returnType": "number", "optional": false } },
+    "label": { "type": { "returnType": "AxisLabelLayout", "optional": false } }
+  },
+  "LayoutCompleteEvent": {
+    "type": {
+      "type": { "returnType": "'layout-complete'", "optional": false }
+    },
+    "chart": {
+      "type": {
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
+    },
+    "series": {
+      "type": {
+        "returnType": "{ rect: BBox; paddedRect: BBox; hoverRect: BBox; visible: boolean }",
+        "optional": false
+      }
+    },
+    "axes": {
+      "type": {
+        "returnType": "(AxisLayout & {\n        id: string;\n    })[]",
+        "optional": true
+      }
+    }
+  },
+  "LayoutContext": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "LayoutResult": {
+    "shrinkRect": { "type": { "returnType": "BBox", "optional": false } }
+  },
+  "EventTypes": {},
+  "LayoutListener": {},
+  "LayoutProcessor": {},
+  "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "LegendDatum": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
@@ -4714,14 +5594,12 @@
     "index": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
-    "series": { "type": { "returnType": "Series<any>", "optional": false } },
-    "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
-    }
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } }
   },
   "LabelSelectionDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
@@ -4735,13 +5613,14 @@
     }
   },
   "CumulativeValue": {},
-  "ProcessedXDatum": {},
   "AreaSeriesTag": {},
   "AreaSeriesNodeDataContext": {},
   "BarNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -4754,14 +5633,19 @@
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } }
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
+    }
   },
   "BarSeriesNodeTag": {},
   "NodeDataSelection": {
@@ -4778,6 +5662,19 @@
         "N extends Node",
         "ContextType extends SeriesNodeDataContext"
       ]
+    }
+  },
+  "CartesianSeriesNodeDatum": {
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "series": { "type": { "returnType": "Series<any>", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "point": {
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SubGroup": {
@@ -4823,17 +5720,28 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "aggregatedValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": false }
+    },
     "label": {
       "type": {
         "returnType": "{\n        readonly text: string;\n        readonly x: number;\n        readonly y: number;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly fill: string;\n    }",
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HistogramAggregation": {},
@@ -4851,9 +5759,14 @@
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
+    }
   },
   "PointDatum": {
     "xDatum": { "type": { "returnType": "any", "optional": false } },
@@ -4863,11 +5776,16 @@
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TreeDatum": {},
@@ -4888,10 +5806,14 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TextNodeTag": {},
   "TextMeta": {},
+  "LabelMeta": {},
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
@@ -4902,7 +5824,7 @@
     "midSin": { "type": { "returnType": "number", "optional": false } },
     "calloutLabel": {
       "type": {
-        "returnType": "{\n        readonly text: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        hidden: boolean;\n    }",
+        "returnType": "{\n        readonly text: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        hidden: boolean;\n        collisionTextAlign?: CanvasTextAlign;\n        collisionOffsetY: number;\n        box?: BBox;\n    }",
         "optional": true
       }
     },
@@ -4920,21 +5842,21 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "PieNodeTag": {},
-  "SectorBoundaries": {
-    "startAngle": { "type": { "returnType": "number", "optional": false } },
-    "endAngle": { "type": { "returnType": "number", "optional": false } },
-    "innerRadius": { "type": { "returnType": "number", "optional": false } },
-    "outerRadius": { "type": { "returnType": "number", "optional": false } }
-  },
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SeriesNodePickMode": {},
@@ -5000,13 +5922,42 @@
     }
   },
   "ChartThemeDefaults": {},
+  "ChartThemeParams": {
+    "seriesDefaults": { "type": { "returnType": "any", "optional": false } },
+    "defaultFontFamily": {
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "DarkThemeParams": {
+    "seriesLabelDefaults": {
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "EventTarget": {
+    "classList": { "type": { "returnType": "DOMTokenList", "optional": false } }
+  },
   "TooltipMeta": {
     "pageX": { "type": { "returnType": "number", "optional": false } },
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "event": { "type": { "returnType": "Event", "optional": false } }
+    "position": {
+      "type": {
+        "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
+        "optional": true
+      }
+    },
+    "enableInteraction": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "event": {
+      "type": {
+        "returnType": "Event | InteractionEvent<any>",
+        "optional": false
+      }
+    }
   },
+  "TooltipPositionType": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -5017,7 +5968,6 @@
     }
   },
   "ScaleTickFormatParams": {
-    "count": { "type": { "returnType": "any", "optional": true } },
     "ticks": { "type": { "returnType": "any[]", "optional": true } },
     "specifier": { "type": { "returnType": "any", "optional": true } }
   },
@@ -5026,6 +5976,7 @@
     "range": { "type": { "returnType": "R[]", "optional": false } },
     "nice": { "type": { "returnType": "boolean", "optional": true } },
     "tickCount": { "type": { "returnType": "number", "optional": true } },
+    "interval": { "type": { "returnType": "I", "optional": true } },
     "convert": {
       "type": {
         "arguments": { "value": "D", "params?": "ScaleClampParams" },
@@ -5051,9 +6002,10 @@
       }
     },
     "bandwidth": { "type": { "returnType": "number", "optional": true } },
-    "meta": { "typeParams": ["D", "R"] }
+    "meta": { "typeParams": ["D", "R", "I = number"] }
   },
   "DefaultTimeFormats": {},
+  "Padding": {},
   "RedrawType": {},
   "SceneChangeDetectionOptions": {},
   "GradientColorStop": {
@@ -5062,6 +6014,45 @@
   },
   "PointerEvents": {},
   "RenderContext": {},
+  "Layer": {},
+  "ZIndexSubOrder": {},
+  "LayerManager": {
+    "debug": {
+      "type": { "returnType": "SceneDebugOptions", "optional": false }
+    },
+    "canvas": { "type": { "returnType": "Layer", "optional": false } },
+    "markDirty": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "addLayer": {
+      "type": {
+        "arguments": {
+          "opts": "{ zIndex?: number; zIndexSubOrder?: ZIndexSubOrder; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; }"
+        },
+        "returnType": "Layer | undefined",
+        "optional": false
+      }
+    },
+    "moveLayer": {
+      "type": {
+        "arguments": {
+          "canvas": "Layer",
+          "zIndex": "number",
+          "zIndexSubOrder?": "ZIndexSubOrder"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "removeLayer": {
+      "type": {
+        "arguments": { "canvas": "Layer" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "Command": {},
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
@@ -5070,19 +6061,6 @@
     "size": { "type": { "returnType": "number", "optional": false } },
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
-  },
-  "DebugOptions": {
-    "stats": {
-      "type": {
-        "returnType": "false | 'basic' | 'detailed'",
-        "optional": false
-      }
-    },
-    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
-    "renderBoundingBoxes": {
-      "type": { "returnType": "boolean", "optional": false }
-    },
-    "consoleLog": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SceneOptions": {
     "document": { "type": { "returnType": "Document", "optional": false } },
@@ -5113,12 +6091,35 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     }
   },
-  "ValueFn": { "meta": { "typeParams": ["P", "GDatum", "PDatum"] } },
-  "KeyFn": { "meta": { "typeParams": ["N", "G", "GDatum"] } },
+  "SceneDebugOptions": {
+    "stats": {
+      "type": {
+        "returnType": "false | 'basic' | 'detailed'",
+        "optional": false
+      }
+    },
+    "dirtyTree": { "type": { "returnType": "boolean", "optional": false } },
+    "renderBoundingBoxes": {
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "consoleLog": { "type": { "returnType": "boolean", "optional": false } },
+    "sceneNodeHighlight": {
+      "type": { "returnType": "(string | RegExp)[]", "optional": false }
+    }
+  },
+  "NodeConstructor": { "meta": { "typeParams": ["TNode extends Node"] } },
+  "NodeFactory": { "meta": { "typeParams": ["TNode extends Node", "TDatum"] } },
+  "NodeConstructorOrFactory": {
+    "meta": { "typeParams": ["TNode extends Node", "TDatum"] }
+  },
   "ArcType": {},
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
+  "CanvasContext": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
+  "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
+  "TransformFn": {},
+  "TransformConfig": {},
   "LiteralProperties": {},
   "SkippableProperties": {},
   "IsLiteralProperty": { "meta": { "typeParams": ["T", "K extends keyof T"] } },
@@ -5159,94 +6160,258 @@
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }
   },
-  "FormatType": {},
-  "FormatSpecifierOptions": {
+  "Listener": { "meta": { "typeParams": ["H extends Function"] } },
+  "ModuleContext": {
+    "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
+    },
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
+    },
+    "tooltipManager": {
+      "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "layoutService": {
+      "type": {
+        "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+        "optional": false
+      }
+    },
+    "updateService": {
+      "type": { "returnType": "UpdateService", "optional": false }
+    }
+  },
+  "ModuleContextWithParent": {
+    "parent": { "type": { "returnType": "P", "optional": false } },
+    "meta": { "typeParams": ["P"] },
+    "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
+    },
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
+    },
+    "tooltipManager": {
+      "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "layoutService": {
+      "type": {
+        "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+        "optional": false
+      }
+    },
+    "updateService": {
+      "type": { "returnType": "UpdateService", "optional": false }
+    }
+  },
+  "AxisContext": {
+    "axisId": { "type": { "returnType": "string", "optional": false } },
+    "position": {
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": false }
+    },
+    "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
+    "continuous": { "type": { "returnType": "boolean", "optional": false } },
+    "keys": {
+      "type": { "arguments": {}, "returnType": "string[]", "optional": false }
+    },
+    "scaleValueFormatter": {
+      "type": {
+        "arguments": { "specifier": "string" },
+        "returnType": "((x: any) => string) | undefined",
+        "optional": false
+      }
+    },
+    "scaleBandwidth": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "scaleConvert": {
+      "type": {
+        "arguments": { "val": "any" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "scaleInvert": {
+      "type": {
+        "arguments": { "position": "number" },
+        "returnType": "any",
+        "optional": false
+      }
+    }
+  },
+  "SeriesFactory": {},
+  "SeriesContext": {
+    "seriesFactory": {
+      "type": {
+        "returnType": "{\n        add(factory: SeriesFactory): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    },
+    "defaults": {
+      "type": {
+        "returnType": "{\n        add(defaultOptions: any): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    },
+    "themes": {
+      "type": {
+        "returnType": "{\n        chartTheme: {\n            add(fn: (params: ChartThemeParams) => any): void;\n            delete(): void;\n        };\n        darkTheme: {\n            add(fn: (params: DarkThemeParams) => any): void;\n            delete(): void;\n        };\n    }",
+        "optional": false
+      }
+    }
+  },
+  "ModuleInstance": {
+    "update": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "destroy": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "ModuleInstanceMeta": {
+    "instance": { "type": { "returnType": "M", "optional": false } },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
+  },
+  "BaseModule": {
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "RootModule": {
+    "type": { "type": { "returnType": "'root'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContext" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "AxisModule": {
+    "type": { "type": { "returnType": "'axis'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "SeriesModule": {
+    "type": { "type": { "returnType": "'series'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "SeriesContext" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "Module": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
+  },
+  "FormatterOptions": {
+    "prefix": { "type": { "returnType": "string", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "align": { "type": { "returnType": "string", "optional": true } },
     "sign": { "type": { "returnType": "string", "optional": true } },
     "symbol": { "type": { "returnType": "string", "optional": true } },
     "zero": { "type": { "returnType": "string", "optional": true } },
-    "width": { "type": { "returnType": "string", "optional": true } },
+    "width": { "type": { "returnType": "number", "optional": true } },
     "comma": { "type": { "returnType": "string", "optional": true } },
-    "precision": { "type": { "returnType": "string", "optional": true } },
-    "trim": { "type": { "returnType": "string", "optional": true } },
-    "type": { "type": { "returnType": "FormatType", "optional": true } },
-    "string": { "type": { "returnType": "string", "optional": true } }
-  },
-  "FormatLocaleOptions": {
-    "decimal": {
-      "description": "/** The decimal point (e.g., '.')\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "thousands": {
-      "description": "/** The group separator (e.g., ','). Note that the thousands property is a misnomer,\n     * as the grouping definition allows groups other than thousands.\n     */",
-      "type": { "returnType": "string", "optional": false }
-    },
-    "grouping": {
-      "description": "/** The array of group sizes (e.g., [3]), cycled as needed.\n     */",
-      "type": { "returnType": "number[]", "optional": false }
-    },
-    "currency": {
-      "description": "/** The currency prefix and suffix (e.g., ['$', '']).\n     */",
-      "type": { "returnType": "[string, string]", "optional": false }
-    },
-    "numerals": {
-      "description": "/** Array of ten strings to replace the numerals 0-9.\n     */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "percent": {
-      "description": "/** Symbol to replace the `percent` suffix; the percent suffix (defaults to '%').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "minus": {
-      "description": "/** The minus sign (defaults to '−').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "nan": {
-      "description": "/** The not-a-number value (defaults 'NaN').\n     */",
-      "type": { "returnType": "string", "optional": true }
-    }
-  },
-  "FormatLocale": {
-    "format": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     *\n     * @param specifier A Specifier string.\n     * @throws Error on invalid format specifier.\n     */",
-      "type": {
-        "arguments": { "specifier": "string | FormatSpecifier" },
-        "returnType": "(n: number | { valueOf(): number }) => string",
-        "optional": false
-      }
-    },
-    "formatPrefix": {
-      "description": "/** Returns a new format function for the given string specifier. The returned function\n     * takes a number as the only argument, and returns a string representing the formatted number.\n     * The returned function will convert values to the units of the appropriate SI prefix for the\n     * specified numeric reference value before formatting in fixed point notation.\n     *\n     * @param specifier A Specifier string.\n     * @param value The reference value to determine the appropriate SI prefix.\n     * @throws Error on invalid format specifier.\n     */",
-      "type": {
-        "arguments": {
-          "specifier": "string | FormatSpecifier",
-          "value": "number"
-        },
-        "returnType": "(n: number | { valueOf(): number }) => string",
-        "optional": false
-      }
-    }
+    "precision": { "type": { "returnType": "number", "optional": true } },
+    "trim": { "type": { "returnType": "boolean", "optional": true } },
+    "type": { "type": { "returnType": "string", "optional": true } },
+    "suffix": { "type": { "returnType": "string", "optional": true } }
   },
   "TypedEvent": {
     "type": { "type": { "returnType": "string", "optional": false } }
   },
-  "SourceEvent": {
-    "source": { "type": { "returnType": "S", "optional": false } },
-    "meta": { "typeParams": ["S"] },
-    "type": { "type": { "returnType": "string", "optional": false } }
-  },
-  "SourceEventListener": { "meta": { "typeParams": ["S"] } },
+  "TypedEventListener": {},
   "Callback": {},
+  "SectorBoundaries": {
+    "startAngle": { "type": { "returnType": "number", "optional": false } },
+    "endAngle": { "type": { "returnType": "number", "optional": false } },
+    "innerRadius": { "type": { "returnType": "number", "optional": false } },
+    "outerRadius": { "type": { "returnType": "number", "optional": false } }
+  },
+  "LineCoordinates": {
+    "start": {
+      "type": { "returnType": "{ x: number; y: number }", "optional": false }
+    },
+    "end": {
+      "type": { "returnType": "{ x: number; y: number }", "optional": false }
+    }
+  },
   "OnSizeChange": {},
   "Entry": {},
   "NumberFormat": {},
   "DateFormat": {},
   "ValueFormat": {},
-  "FloorFn": {},
-  "OffsetFn": {},
-  "CountFn": {},
-  "FieldFn": {},
+  "EncodeFn": {},
+  "DecodeFn": {},
+  "RangeFn": {},
+  "CountableTimeIntervalOptions": {
+    "snapTo": {
+      "type": {
+        "returnType": "Date | number | 'start' | 'end'",
+        "optional": true
+      }
+    }
+  },
   "FormattingFn": {},
   "PaddingString": {},
   "FormattingString": {},

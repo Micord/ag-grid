@@ -177,13 +177,13 @@ Please note that Tree Data filtering behaves slightly differently to [Filtering 
 
 ### Filtering Aggregated Parent Rows
 
-The default behaviour of a Group Filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
+The default behaviour of a group filter is to ignore aggregated group values that pass the filter, but this can be changed by enabling `groupAggFiltering`.
 
 The default behaviour of a Tree Data filter is to match aggregated group values as well, and setting the `groupAggFiltering` property to `true` or `false` will not change this. The one exception is that the Set Filter will not match a value in a parent row when `groupAggFiltering` is `false`. You can also change this behaviour by using [Custom Group Aggregation Filtering](/aggregation-filtering/#custom-group-aggregation-filtering) because passing a function to the `groupAggFiltering` property will work the same as without Tree Data filtering.
 
 ### Aggregated Values Based on Pre-Filtered Data
 
-The default behaviour of both Tree Data and Group Filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
+The default behaviour of both Tree Data and group filters is to calculate aggregated values from the filtered results only. This can be changed by setting `suppressAggFilteredOnly = true`.
 
 This behaviour can also be achieved in the Tree Data filter by setting `groupAggFiltering = true`.
 
@@ -201,9 +201,9 @@ When used with Tree Data, the [Set Filter](/filter-set/) will contain a list of 
 
 It is also possible to display the Set Filter List as a [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure. This can be seen in the [Tree List](#tree-list-example) example below.
 
-#### Tree List Example
+The Tree List also works with complex objects, which is demonstrated in the [Tree List Complex Objects Example](/filter-set-tree-list/#complex-objects).
 
-The following example demonstrates using the Set Filter Tree List with Tree Data:
+The example below demonstrates using the Set Filter Tree List with Tree Data. Note the following:
 
 1. The **Employee** group column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
 2. The Filter List displayed for the **Employee** column matches the format of the Tree Data structure.
@@ -228,17 +228,17 @@ To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selection and using checkbox selection instead.
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // don't have click select rows
-|    suppressRowClickSelection: true,
-|
-|    // have checkbox on the group column
-|    autoGroupColumnDef: {
-|        cellRendererParams: {
-|            checkbox: true,
-|        }
-|    }
-|}
+| const gridOptions = {
+|     // don't have click select rows
+|     suppressRowClickSelection: true,
+| 
+|     // have checkbox on the group column
+|     autoGroupColumnDef: {
+|         cellRendererParams: {
+|             checkbox: true,
+|         }
+|     }
+| }
 </snippet>
 
 ### Group Selection

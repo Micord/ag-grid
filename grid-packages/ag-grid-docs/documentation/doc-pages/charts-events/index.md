@@ -1,6 +1,5 @@
 ---
 title: "Events"
-enterprise: true
 ---
 
 This section explains how to listen and respond to various chart and series events.
@@ -33,17 +32,73 @@ state in combination with a `series[].marker.formatter`:
 
 <chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
 
-### Interfaces
+## Series Event - nodeDoubleClick
 
-All series event options have the same interface contract.
+Fired when this series' node is double clicked.
 
-<interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick"] ' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+Every `nodeDoubleClick` event contains:
 
-#### Histogram series
+- the `series` the node belongs to
+- the piece of chart data or `datum`
+- the specific keys in that `datum` that were used to fetch the values represented by the clicked node
 
-Unlike other series, the `nodeClick` event `datum` parameter for Histogram series contains a model for the computed histogram bin:
+### Example: nodeDoubleClick Event
 
-<interface-documentation interfaceName='AgHistogramBinDatum' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+This example shows how the `nodeDoubleClick` event listener can be used to listen to column double clicks.
+
+<chart-example title='Node Double Click Event' name='node-double-click-event' type='generated'></chart-example>
+
+## Legend Events - legendItemClick and legendItemDoubleClick
+
+The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
+
+The event object passed to the listener includes:
+
+- the `seriesId` of the series associated with the legend item
+- the `itemId`, usually the `yKey` value for cartesian series
+- `enabled`, whether the legend item is currently enabled or not
+
+For example, to show an alert message with the `legendItemClick` event contents when a legend item is clicked, the following listener can be configured:
+
+```js
+legend: {
+  listeners: {
+    legendItemClick: ({
+      seriesId,
+      itemId,
+      enabled,
+    }: AgChartLegendClickEvent) => {
+      window.alert(
+        `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+      )
+    }
+  }
+}
+```
+
+### Example: legendItemClick & legendItemDoubleClick Events
+
+This example demonstrates:
+
+- when a legend item is clicked, a message is logged to the console with the `legendItemClick` event contents.
+- when a legend item is double clicked, a message is logged to the console with the `legendItemDoubleClick` event contents.
+
+<chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
+
+## Chart Event - click and doubleClick
+
+The `click` and `doubleClick` events are fired when any part of the chart is clicked or double clicked, respectively. When a user double clicks the `click` event will be fired on the first click, then both the `click` and `doubleClick` will be fired on the second click.
+
+These events may be prevented by other clickable parts of the chart, such as series nodes and legend items.
+
+### Example: Single & Double Click Events
+
+This example demonstrates:
+
+- when a blank area on a chart is clicked, a message is logged to the console
+- when a blank area on a chart is double clicked, a different message is logged to the console
+
+<chart-example title='Chart Single & Double Click Events' name='chart-click-event' type='generated'></chart-example>
 
 ## Chart Event - seriesNodeClick
 
@@ -60,14 +115,34 @@ This example demonstrates:
 
 <chart-example title='Node Click Event' name='series-node-click-event' type='generated'></chart-example>
 
-## Legend Event - legendItemClick
+## Interaction Ranges
 
-The `legendItemClick` event can be used to listen to legend item clicks.
+By default, the `nodeClick` event is only triggered when the user clicks exactly on a node. You can use the `nodeClickRange` option to instead define a range at which the event is triggered. This can be set to one of three values: `'nearest'`, `'exact'` or a number as a distance in pixels.
 
-### Example: legendItemClick Event
+### Example: Interaction range variations
 
-This example demonstrates:
+This example shows the three different types of interaction range that are possible.
 
-- when a legend item is clicked, an alert message is shown with the `legendItemClick` event contents.
+- `'exact'` (default) will trigger the event if the user clicks exactly on a node
+- `'nearest'` will trigger the event for whichever node is nearest on the whole chart
+- given a number it will trigger the event when the click is made within that many pixels of a node
 
-<chart-example title='Legend Item Click Event' name='legend-item-click-event' type='generated'></chart-example>
+<chart-example title='Interaction Ranges' name='interaction-ranges' type='generated'></chart-example>
+
+## API Reference
+
+### Series Events
+
+All series event options have similar interface contracts. See the series-specific documentation for variations.
+
+<interface-documentation interfaceName='AgSeriesListeners' names='["nodeClick", "nodeDoubleClick"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+
+<interface-documentation interfaceName='AgBaseSeriesOptions' names='["nodeClickRange"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Legend Events
+
+<interface-documentation interfaceName='AgChartLegendListeners' names='["legendItemClick", "legendItemDoubleClick"]' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Chart Events
+
+<interface-documentation interfaceName='AgBaseChartListeners' names='["click", "doubleClick", "seriesNodeClick"] ' config='{ "lookupRoot": "charts-api" }'></interface-documentation>

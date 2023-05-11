@@ -18,6 +18,7 @@ series: [{
     angleKey: 'value'
 }]
 ```
+
 This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie sector.
 
 <chart-example title='Basic Pie Chart' name='basic-pie' type='generated'></chart-example>
@@ -25,6 +26,7 @@ This results in the chart shown below. Note that [tooltips](/charts-tooltips/) s
 ## Labels
 
 We support two types of label related to individual sectors:
+
 - Call-out labels: displayed adjacent to each sector with a joining line (configured via `calloutLabelKey`, `calloutLabel` and `calloutLabelLine` options).
 - Sector labels: displayed inside each sector (configured via `sectorLabelKey` and `sectorLabel` options).
 
@@ -34,6 +36,7 @@ Additionally legend labels and tooltips are derived from the call-out label opti
 series: [{
     type: 'pie',
     angleKey: 'value',
+
 +   calloutLabelKey: 'label',
 +   sectorLabelKey: 'value',
 +   sectorLabel: {
@@ -44,11 +47,10 @@ series: [{
 ```
 
 This example demonstrates:
+
 - Use of `calloutLabelKey`, enabling:
   - Display of a per-sector callout label.
-  - Labels for use in the legend.
   - Tooltips on segment hover including the callout label and sector value.
-  - Some callout labels are not displayed, where the sector is smaller than `calloutLabel.minAngle` (defaults to `20`).
 - Use of `sectorLabelKey` and `sectorLabel`, enabling:
   - Display of a per-sector inside label.
   - Some sector labels are not displayed, where the sector is too small to fit the label text.
@@ -171,7 +173,3 @@ The example below uses one pie series to plot the market share of each operating
 ## API Reference
 
 <interface-documentation interfaceName='AgPieSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [treemap](../treemap-series/).

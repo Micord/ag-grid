@@ -1,5 +1,4 @@
-import * as agCharts from 'ag-charts-community';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
 const options: AgChartOptions = {
@@ -7,10 +6,13 @@ const options: AgChartOptions = {
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Vehicle weight distribution (USA 1987)',
+    text: 'Vehicle weight distribution',
     fontSize: 18,
   },
   subtitle: {
+    text: 'USA 1987'
+  },
+  footnote: {
     text: 'Source: UCI',
   },
   series: [
@@ -58,6 +60,9 @@ const options: AgChartOptions = {
       title: {
         text: 'Curb weight (pounds)',
       },
+      tick: {
+        interval: 500,
+      },
     },
     {
       position: 'left',
@@ -74,4 +79,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

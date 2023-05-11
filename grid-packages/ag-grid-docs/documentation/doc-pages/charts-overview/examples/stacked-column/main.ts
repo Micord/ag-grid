@@ -1,6 +1,22 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import {
+  AgCartesianSeriesTooltipRendererParams,
+  AgChart,
+  AgChartOptions,
+  AgTooltipRendererResult,
+} from "ag-charts-community"
+import { getData } from "./data"
+
+const numFormatter = new Intl.NumberFormat("en-US")
+const tooltip = {
+  renderer: ({
+    title,
+    xValue,
+    yValue,
+  }: AgCartesianSeriesTooltipRendererParams): AgTooltipRendererResult => ({
+    title,
+    content: `${xValue}: ${numFormatter.format(yValue)}`,
+  }),
+}
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -26,10 +42,13 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Average Station Entries: Victoria Line (2010)",
+    text: "Average Station Entries",
     fontSize: 18,
   },
   subtitle: {
+    text: "Victoria Line (2010)",
+  },
+  footnote: {
     text: "Source: Transport for London",
   },
   series: [
@@ -39,6 +58,7 @@ const options: AgChartOptions = {
       yKey: "early",
       stacked: true,
       yName: "Early",
+      tooltip,
     },
     {
       type: "column",
@@ -46,6 +66,7 @@ const options: AgChartOptions = {
       yKey: "morningPeak",
       yName: "Morning peak",
       stacked: true,
+      tooltip,
     },
     {
       type: "column",
@@ -53,6 +74,7 @@ const options: AgChartOptions = {
       yKey: "interPeak",
       yName: "Between peak",
       stacked: true,
+      tooltip,
     },
     {
       type: "column",
@@ -60,6 +82,7 @@ const options: AgChartOptions = {
       yKey: "afternoonPeak",
       yName: "Afternoon peak",
       stacked: true,
+      tooltip,
     },
     {
       type: "column",
@@ -67,6 +90,7 @@ const options: AgChartOptions = {
       yKey: "evening",
       yName: "Evening",
       stacked: true,
+      tooltip,
     },
   ],
   axes: [
@@ -81,7 +105,7 @@ const options: AgChartOptions = {
       type: "number",
       position: "left",
       label: {
-        formatter: (params) => {
+        formatter: params => {
           return params.value / 1000 + "k"
         },
       },
@@ -95,4 +119,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

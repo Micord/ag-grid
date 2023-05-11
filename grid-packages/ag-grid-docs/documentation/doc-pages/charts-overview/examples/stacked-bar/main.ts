@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 function getTotal(datum: any) {
   return (
@@ -33,10 +32,11 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "UK Housing Stock (2016)",
+    text: "UK Housing Stock",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Ministry of Housing, Communities & Local Government",
   },
   series: [
@@ -77,6 +77,7 @@ const options: AgChartOptions = {
     {
       type: "number",
       position: "top",
+      nice: false,
     },
   ],
   legend: {
@@ -84,4 +85,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

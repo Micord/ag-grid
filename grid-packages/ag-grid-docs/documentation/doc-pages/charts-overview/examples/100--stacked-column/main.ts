@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -20,6 +19,9 @@ const options: AgChartOptions = {
     },
     overrides: {
       column: {
+        legend: {
+          position: "bottom",
+        },
         series: {
           strokeWidth: 0,
           highlightStyle: {
@@ -32,10 +34,11 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Ethnic Diversity of School Pupils (2019)",
+    text: "Ethnic Diversity of School Pupils",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Education",
   },
   series: [
@@ -103,4 +106,4 @@ const options: AgChartOptions = {
   ],
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

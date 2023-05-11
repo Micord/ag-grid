@@ -4,7 +4,11 @@ declare var dateComparator: any;
 var defaultFilterParams: IProvidedFilterParams = { readOnly: true }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: true, filterParams: defaultFilterParams },
+  {
+    field: 'athlete',
+    filter: 'agTextColumnFilter',
+    filterParams: defaultFilterParams
+  },
   {
     field: 'age',
     filter: 'agNumberColumnFilter',
@@ -132,15 +136,17 @@ function sportsCombined() {
   sportsFilterComponent.setModel({
     filterModels: [
       {
-        condition2: {
-          type: 'endsWith',
-          filter: 'g',
-        },
+        conditions: [
+          {
+            type: 'endsWith',
+            filter: 'g',
+          },
+          {
+            type: 'startsWith',
+            filter: 's',
+          },
+        ],
         operator: 'AND',
-        condition1: {
-          type: 'startsWith',
-          filter: 's',
-        },
       },
     ],
   })
@@ -173,17 +179,19 @@ function ageAbove30() {
 function ageBelow25OrAbove30() {
   var ageFilterComponent = gridOptions.api!.getFilterInstance('age')!
   ageFilterComponent.setModel({
-    condition1: {
-      type: 'greaterThan',
-      filter: 30,
-      filterTo: null,
-    },
+    conditions: [
+      {
+        type: 'greaterThan',
+        filter: 30,
+        filterTo: null,
+      },
+      {
+        type: 'lessThan',
+        filter: 25,
+        filterTo: null,
+      },
+    ],
     operator: 'OR',
-    condition2: {
-      type: 'lessThan',
-      filter: 25,
-      filterTo: null,
-    },
   })
 
   gridOptions.api!.onFilterChanged()
@@ -231,17 +239,19 @@ function before2012() {
 function dateCombined() {
   var dateFilterComponent = gridOptions.api!.getFilterInstance('date')!
   dateFilterComponent.setModel({
-    condition1: {
-      type: 'lessThan',
-      dateFrom: '2012-01-01',
-      dateTo: null,
-    },
+    conditions: [
+      {
+        type: 'lessThan',
+        dateFrom: '2012-01-01',
+        dateTo: null,
+      },
+      {
+        type: 'greaterThan',
+        dateFrom: '2010-01-01',
+        dateTo: null,
+      },
+    ],
     operator: 'OR',
-    condition2: {
-      type: 'greaterThan',
-      dateFrom: '2010-01-01',
-      dateTo: null,
-    },
   })
 
   gridOptions.api!.onFilterChanged()

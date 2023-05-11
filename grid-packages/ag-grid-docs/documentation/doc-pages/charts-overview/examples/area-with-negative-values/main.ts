@@ -1,6 +1,5 @@
-import * as agCharts from "ag-charts-community";
-import { AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -26,10 +25,11 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Changes in UK Energy Stock (2018)",
+    text: "Changes in UK Energy Stock",
     fontSize: 18,
+    spacing: 25,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Business, Energy & Industrial Strategy",
   },
   series: [
@@ -82,4 +82,4 @@ const options: AgChartOptions = {
   },
 }
 
-var chart = agCharts.AgChart.create(options)
+var chart = AgChart.create(options)

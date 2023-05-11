@@ -8,15 +8,17 @@ This section explains the components of a chart and how they are laid out inside
 
 ![Chart Layout](cartesian-chart-layout.png)
 
-Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title and subtitle. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
+Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title, subtitle and footnote. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
 
 Components are laid out in the following order; earlier elements take up space that is then unavailable for the layout
 of later elements:
 - Chart padding
 - Title plus its configured spacing
 - Sub-title plus its configured spacing
+- Footnote plus its configured spacing
 - Legend plus its configured spacing
 - Navigator plus its configured margin
+- Series area padding
 - Axes
 - Series area
 
@@ -38,6 +40,10 @@ height of the title and its additional `title.spacing`.
 `subtitle` configuration applies next, horizontally centring on the remaining space and consuming the
 height of the title and its additional `subtitle.spacing`.
 
+### Footnote
+
+`footnote` configuration applies next, horizontally centring on the remaining space and consuming the height of the footnote and its additional `footnote.spacing` at the bottom.
+
 ### Legend
 
 `legend` configuration is applied to the remaining space. The exact space consumed depends on how the
@@ -51,6 +57,10 @@ height of the title and its additional `subtitle.spacing`.
 [navigator](/charts-navigator/) is configured.
 
 `navigator.margin` can be used to adjust the space between the navigator and later components.
+
+### Series Area Padding
+
+`seriesAreaPadding` configuration is applied. It can be used to avoid the overlapping of series items with legend, title and axes labels.
 
 ### Axes
 
@@ -70,7 +80,3 @@ and most other components just move around or adjust alignment.
 By default, the chart will resize automatically to fill the container element. If either the `width` or `height` configs are set, auto-sizing will be disabled unless the `autoSize` config is explicitly set to `true`.
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
-
-## Next Up
-
-Continue to the next section to learn about the [legend and its layout](/charts-legend/).
