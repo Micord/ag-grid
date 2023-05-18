@@ -1,13 +1,13 @@
 {
   "packages": [
-    "community-modules/core",
-    "community-modules/angular",
-    "community-modules/solid",
-    "community-modules/styles",
-    "community-modules/client-side-row-model",
-    "community-modules/infinite-row-model",
-    "community-modules/csv-export",
-    "community-modules/all-modules",
+    "grid-community-modules/core",
+    "grid-community-modules/angular",
+    "grid-community-modules/solid",
+    "grid-community-modules/styles",
+    "grid-community-modules/client-side-row-model",
+    "grid-community-modules/infinite-row-model",
+    "grid-community-modules/csv-export",
+    "grid-community-modules/all-modules",
     "grid-packages/ag-grid-community",
     "grid-packages/ag-grid-angular"
   ],
