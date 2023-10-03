@@ -4056,6 +4056,9 @@ export class ColumnModel extends BeanStub {
     }
 
     public getHeaderHeight(): number | null | undefined {
+        if (this.gridOptionsService.getNum('headerHeight') === 0) {
+            return 0;
+        }
         return this.gridOptionsService.getNum('headerHeight') || this.environment.getFromTheme(25, 'headerHeight');
     }
     public getFloatingFiltersHeight(): number | null | undefined {
