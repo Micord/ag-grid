@@ -1,14 +1,14 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "29.0.0-micord.5",
+  "version": "29.0.0-micord.3335",
   "license": "MIT",
   "peerDependencies": {
-    "@ag-grid-community/core": "29.0.0-micord.5",
-    "@angular/common": "7.2.15",
-    "@angular/core": "7.2.15"
+    "@ag-grid-community/core": "29.0.0-micord.3335",
+    "@angular/common": ">= 12.0.0",
+    "@angular/core": ">= 12.0.0"
   },
   "dependencies": {
-    "tslib": "1.9.3"
+    "tslib": "^2.3.0"
   },
   "repository": {
     "type": "git",
