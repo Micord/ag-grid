@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/core",
-  "version": "29.0.0-micord.5",
+  "version": "29.0.0-angular7-micord.6",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
